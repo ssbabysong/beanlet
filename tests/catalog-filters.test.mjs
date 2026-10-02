@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import {countryOf,processOf,matchesFilters,emptyFilters} from '../lib/catalog-filters.ts';
+import {builtInCatalog,bilingualBean} from '../lib/catalog.ts';
+assert.equal(countryOf('China · Yunnan'),'中国');
+assert.equal(countryOf('中国 · 云南'),'中国');
+assert.equal(countryOf(''),'未记录');
+assert.equal(processOf('Anaerobic honey'),'蜜处理');
+assert.equal(processOf('Double anaerobic thermal shock'),'发酵处理');
+assert.equal(processOf('Natural, dark room drying'),'日晒');
+assert.equal(builtInCatalog.filter(b=>matchesFilters(b,emptyFilters)).length,14);
+const filtered=builtInCatalog.filter(b=>matchesFilters(b,{brand:'Hydrangea',roast:'浅烘焙',origin:'中国',process:'蜜处理'}));
+assert.equal(filtered.length,1);
+assert.match(bilingualBean(filtered[0]).en,/Gaosanlin/);
+assert.equal(builtInCatalog.filter(b=>matchesFilters(b,{...emptyFilters,origin:'中国',process:'日晒'})).length,0);
+const custom={roaster:'My roaster',roast:'深烘焙',origin:'Brazil',process:'Natural'};
+assert.ok(matchesFilters(custom,{brand:'My roaster',roast:'深烘焙',origin:'Brazil',process:'日晒'}));
+assert.ok(!matchesFilters(custom,{...emptyFilters,brand:'Hydrangea'}));
+for(const b of builtInCatalog){const names=bilingualBean(b);assert.notEqual(names.zh,names.en);assert.ok(names.originEn);assert.ok(names.processEn);assert.ok(names.flavorEn)}
+assert.equal(bilingualBean({...builtInCatalog[0],name:'我的自定义名'}).en,'我的自定义名');
+console.log('Catalog: bilingual names, custom names, combined filters, reset, empty results passed');

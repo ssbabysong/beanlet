@@ -1,0 +1,5 @@
+export type CatalogFilters={brand:string;roast:string;origin:string;process:string};
+export const emptyFilters:CatalogFilters={brand:'全部',roast:'全部',origin:'全部',process:'全部'};
+export function countryOf(origin:string){const value=origin.trim();if(!value)return '未记录';for(const [zh,en] of [['哥伦比亚','colombia'],['巴拿马','panama'],['肯尼亚','kenya'],['中国','china'],['埃塞俄比亚','ethiopia']])if(value.includes(zh)||value.toLowerCase().includes(en))return zh;return value.split(/[·,，/]/)[0].trim()||'未记录'}
+export function processOf(process:string){if(!process||process==='未记录')return '未记录';if(/蜜|honey/i.test(process))return '蜜处理';if(/日晒|natural/i.test(process))return '日晒';if(/水洗|washed/i.test(process))return '水洗';if(/发酵|厌氧|热冲击|ferment|anaerobic|thermal/i.test(process))return '发酵处理';return '其他'}
+export function matchesFilters(b:{roaster:string;roast:string;origin:string;process:string},f:CatalogFilters){return (f.brand==='全部'||(b.roaster||'未记录')===f.brand)&&(f.roast==='全部'||(b.roast||'未记录')===f.roast)&&(f.origin==='全部'||countryOf(b.origin)===f.origin)&&(f.process==='全部'||processOf(b.process)===f.process)}
