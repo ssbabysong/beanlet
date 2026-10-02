@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {readFile,access} from 'node:fs/promises';
+const root=await readFile('index.html','utf8');
+assert.ok(root.includes('url=./docs/'));assert.ok(!root.includes('main.tsx'));
+const page=await readFile('docs/index.html','utf8');
+assert.ok(!page.includes('.tsx'));assert.ok(page.includes('type="module"'));
+for(const [,path] of page.matchAll(/(?:src|href)="(\.\/[^"#]+)"/g))await access('docs/'+path);
+await access('.nojekyll');await access('docs/.nojekyll');
+const workflow=await readFile('.github/workflows/pages.yml','utf8');
+assert.ok(!workflow.includes('actions/deploy-pages'),'Only branch Pages should deploy');
+console.log('Pages: root launcher, compiled entry, asset links and single deployment path passed');

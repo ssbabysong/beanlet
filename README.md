@@ -28,7 +28,7 @@ npm run build
 
 ## GitHub Pages
 
-Source branch: `main`. Enable **Settings → Pages → Source → GitHub Actions**. The included workflow tests, builds and publishes the `docs/` output whenever `main` changes. For manual branch-based publishing, `main /docs` also contains the built site. Do not use both methods at the same time.
+Source branch: `main`, publishing directory `/` (or `/docs`). The root is a lightweight launcher to the compiled `docs/` app; source HTML lives in `client/`. Only GitHub's branch-based Pages workflow deploys. `Check Beanlet` validates tests and ensures committed `docs/` matches a fresh build, without a competing deployment.
 
 ## Fonts and artwork
 
