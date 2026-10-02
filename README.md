@@ -4,10 +4,10 @@ A small bilingual coffee journal: coffee shelf, built-in coffee library, roast f
 
 ## Use
 
-- On first use, your shelf starts with 14 Hydrangea coffees, including their original artwork. Roast dates are blank. Deleted or finished starter coffees are never re-added on reload.
-- Open Settings to choose 中文 or English.
+- Your shelf starts empty. Bean atlas contains 14 Hydrangea coffees and their original artwork; add individual bags to your shelf. The previous untouched starter bags are removed once, while edited bags and bags with brew records are preserved.
+- Open Bean atlas → Me to choose 中文 or English and manage backups.
 - Your coffees, photos, custom library and brew records are saved in **IndexedDB in this browser**. There is no account or cloud sync.
-- Settings → Export backup saves all your records and photos as one JSON file. Import backup adds missing records; matching IDs are skipped, preserving existing records.
+- Bean atlas → Me → Export backup saves all your records and photos as one JSON file. Import backup adds missing records; matching IDs are skipped, preserving existing records.
 - Export before clearing browser/site data. Changing browser, device or website address creates a separate local collection.
 - To migrate from the original cloud app, open https://bean-island-journal.csscss.chatgpt.site/ → Settings → Export backup for migration, then import that file here.
 

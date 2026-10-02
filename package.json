@@ -9,7 +9,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "node --experimental-strip-types tests/coffee-guide.test.mjs && node --experimental-strip-types tests/catalog-filters.test.mjs && node --experimental-strip-types tests/local-store.test.mjs"
+    "test": "node --experimental-strip-types tests/coffee-guide.test.mjs && node --experimental-strip-types tests/catalog-filters.test.mjs && node --experimental-strip-types tests/local-store.test.mjs && node --experimental-strip-types tests/bean-names.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
