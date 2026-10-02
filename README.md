@@ -11,6 +11,10 @@ A small bilingual coffee journal: coffee shelf, built-in coffee library, roast f
 - Export before clearing browser/site data. Changing browser, device or website address creates a separate local collection.
 - To migrate from the original cloud app, open https://bean-island-journal.csscss.chatgpt.site/ → Settings → Export backup for migration, then import that file here.
 
+## Tasted atlas
+
+Discover and Tasted share the atlas tab. Logging a brew or finishing a bag saves a coffee sticker; manual marks and custom tasting entries need no inventory bag. Bags with the same catalog ID share one sticker. Memories survive deleting a bag and are included in JSON backups; unknown dates remain blank.
+
 ## Development
 
 Node.js 22.13+:

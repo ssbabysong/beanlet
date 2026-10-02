@@ -4,6 +4,7 @@ import ts from 'typescript';
 import {readFile} from 'node:fs/promises';
 const url=new URL('../lib/local-store.ts',import.meta.url);
 let source=await readFile(url,'utf8');
+source=source.replace("'./tasted'",JSON.stringify(new URL('../lib/tasted.ts',import.meta.url).href));
 source=source.replace("'zod'",JSON.stringify(new URL('../node_modules/zod/index.js',import.meta.url).href)).replace("'./catalog'",JSON.stringify(new URL('../lib/catalog.ts',import.meta.url).href)).replace("'./coffee-guide'",JSON.stringify(new URL('../lib/coffee-guide.ts',import.meta.url).href));
 const js=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
 const {localApi,importBackup,backupSchema,migrateStarters}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
@@ -29,3 +30,14 @@ assert.throws(()=>backupSchema.parse({...backup,brews:[{...backup.brews[0],beanI
 await request('DELETE',{kind:'bean',id});state=await localApi('/api/journal');assert.equal(state.brews.length,0);assert.equal(state.beans.length,1);
 await assert.rejects(request('POST',{kind:'bean',data:{...base,roast:''}}));
 console.log('Local storage: save, catalog, brew, photo backup, merge, invalid import and cascading delete passed');
+
+const before=(await localApi('/api/journal')).beans.length;
+await request('POST',{kind:'taste',data:initial.catalog[0]});
+state=await localApi('/api/journal');assert.equal(state.beans.length,before);assert.ok(state.tasted.some(x=>x.id===initial.catalog[0].id));
+await request('POST',{kind:'taste',data:initial.catalog[0]});assert.equal((await localApi('/api/journal')).tasted.filter(x=>x.id===initial.catalog[0].id).length,1);
+await request('DELETE',{kind:'taste',id:initial.catalog[0].id});assert.ok(!(await localApi('/api/journal')).tasted.some(x=>x.id===initial.catalog[0].id));
+assert.ok(state.tasted.some(x=>x.bean.name==='测试豆'),'brew memory survives deletion');
+const importedTaste={format:'beanlet',version:1,beans:[],catalog:[],brews:[],tasted:[{id:initial.catalog[2].id,bean:initial.catalog[2],firstDate:'',manual:true}]};
+assert.equal(await importBackup(new File([JSON.stringify(importedTaste)],'taste.json')),1);
+assert.equal(await importBackup(new File([JSON.stringify(importedTaste)],'taste.json')),0);
+console.log('Tasted storage: manual marking, undo, deduplication, persistent memory and backup passed');
