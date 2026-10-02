@@ -25,6 +25,7 @@
     "lib",
     "main.tsx",
     "vite.config.ts",
-    "components"
+    "components",
+    "client"
   ]
 }

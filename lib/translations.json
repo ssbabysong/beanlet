@@ -232,5 +232,10 @@
   "返回": "Back",
   "取消收藏": "Remove favorite",
   "收藏这款豆子": "Favorite this coffee",
-  "已收藏": "Favorited"
+  "已收藏": "Favorited",
+  "豆袋样式": "Bag style",
+  "经典": "Classic",
+  "插画": "Illustrated",
+  "这款图鉴豆子": "this coffee",
+  "从发现豆子中移除，豆仓和手冲记录会保留。": "Remove from Discover. Your bags and brew records will stay."
 }

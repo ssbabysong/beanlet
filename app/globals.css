@@ -330,3 +330,78 @@ html[lang=en] .catalog-filters .field,html[lang=en] .catalog-filters .choice{fon
 .form-scroll>*{min-width:0;max-width:100%}
 .form-submit{flex-shrink:0;padding:12px 0 max(0px,env(safe-area-inset-bottom,0px));border-top:1px solid #eeeee8;background:white}
 .editor.form-editor .form-submit .save{width:100%;margin:0;min-height:48px}
+
+/* Local design preview: little illustrated coffee pouches. */
+.bean-shelf .coffee-bag{position:relative;width:150px;height:188px;margin:auto;transform:rotate(-3deg);--bag-fill:#dce7f1;--bag-line:#8b9aa4;--bag-side:#c6d5e0;isolation:isolate}
+.bean-shelf .bean-card:nth-child(even) .coffee-bag{transform:rotate(3deg)}
+.bean-shelf .coffee-bag.bag-tone-1{--bag-fill:#e9dff0;--bag-line:#a297af;--bag-side:#d7cce1}
+.bean-shelf .coffee-bag.bag-tone-2{--bag-fill:#e3e9d7;--bag-line:#939d83;--bag-side:#cfd8bd}
+.bean-shelf .coffee-bag.bag-tone-3{--bag-fill:#f0e6d6;--bag-line:#afa38c;--bag-side:#e1d3bd}
+.bean-shelf .coffee-bag.bag-tone-4{--bag-fill:#e1e9e6;--bag-line:#8eaaa1;--bag-side:#c8d9d3}
+.coffee-bag-body{display:block;width:100%;height:100%;filter:drop-shadow(0 3px 2px #66715b0b)}
+.bag-paper{fill:var(--bag-fill);stroke:var(--bag-line);stroke-width:1.7;stroke-linejoin:round}
+.bag-side{fill:var(--bag-side);opacity:.7}.bag-fold,.bag-crease{fill:none;stroke:var(--bag-line);stroke-width:1.3;stroke-linecap:round;opacity:.75}
+.bag-tape{fill:#fff8e8;stroke:var(--bag-line);stroke-width:1.3}
+.coffee-bag-label{position:absolute;left:24%;top:32%;width:57%;height:47%;display:grid;place-items:center;background:#fffaf0;border-radius:39% 34% 30% 38% / 31% 36% 28% 39%;overflow:hidden}
+.bean-shelf .coffee-bag-label>.sticker{width:90%;height:90%;max-width:none;transform:none}
+.bean-shelf .coffee-bag-label>.bean-thumb{width:100%;height:100%;object-fit:cover;border-radius:0;margin:0;padding:0}
+.coffee-bag-label.has-picture{border-radius:9px 12px 8px 11px;background:#fffaf0;border:3px solid #fffaf0;transform:rotate(-2deg)}
+.bag-heart{position:absolute;right:12%;top:22%;color:#b77990}
+.bean-shelf .bean-card .bean-info{padding-top:9px}
+@media(max-width:700px){.bean-shelf .coffee-bag{width:138px;height:173px}.bean-shelf .bean-card:nth-child(even){padding-top:16px}.bean-shelf .cards{gap:23px 14px}}
+@media(prefers-reduced-motion:reduce){.bean-shelf .coffee-bag{transform:none!important}}
+
+/* Local comparison: illustrated paper pouch alongside the classic silhouette. */
+.bag-style-switch{display:flex;justify-content:flex-end;gap:14px;margin:0 4px 14px}
+.bag-style-switch button{font-size:13px;padding:4px 0;color:#a2a697;background:none;border:0;border-bottom:1px solid transparent}
+.bag-style-switch button[aria-pressed=true]{color:#74816b;border-bottom-color:#9ba98c}
+.bean-shelf .illustrated-bag-body{width:100%;height:100%;object-fit:contain;display:block}
+.bean-shelf .illustrated-bag .coffee-bag-label{left:23%;top:33%;width:57%;height:44%;background:#fff9ed}
+.bean-shelf .illustrated-bag .coffee-bag-label.has-picture{border-color:#fff9ed;border-radius:7px 12px 8px 10px}
+.bean-shelf .illustrated-bag .bag-heart{right:12%;top:23%}
+
+/* Warm pouch colors. */
+.bean-shelf .coffee-bag.bag-tone-5{--bag-fill:#f1dce0;--bag-line:#b89b9f;--bag-side:#e4c5cd}
+.bean-shelf .coffee-bag.bag-tone-6{--bag-fill:#ebdceb;--bag-line:#ad96b1;--bag-side:#dac5de}
+.bean-shelf .coffee-bag.bag-tone-7{--bag-fill:#f2e0db;--bag-line:#bc9f95;--bag-side:#e6ccc4}
+/* A date tag near the seal and roast printed below the artwork. */
+.bean-shelf .bag-date-tag{position:absolute;left:13%;top:22%;max-width:66%;box-sizing:border-box;padding:3px 5px;background:#fff9e9;border:1px solid #dad4c2;border-radius:2px 4px 3px 2px;color:#85816f;font-size:9px;line-height:1.1;letter-spacing:.02em;white-space:nowrap;transform:rotate(-6deg)}
+.bean-shelf .bag-date-tag::before{content:'';position:absolute;width:3px;height:3px;border-radius:50%;left:3px;top:50%;background:#d3cdbb;transform:translateY(-50%)}
+.bean-shelf .bag-date-tag time{padding-left:4px}
+.bean-shelf .bag-roast-print{position:absolute;left:23%;bottom:12%;width:59%;text-align:center;font-size:10px;line-height:1.2;letter-spacing:.1em;color:#697062;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+html[lang=en] .bean-shelf .bag-roast-print{font-size:12px;letter-spacing:.025em}
+.bean-shelf .bean-card .bean-info{padding-top:8px;min-height:0}
+.bean-shelf .bean-card .bean-info h3{margin:0;font-size:15px;line-height:1.5}
+
+/* A tiny tilted paper tag and quiet bilingual names. */
+.bean-shelf .bag-date-tag{left:14%;top:23%;padding:2px 4px 2px 5px;font-size:8px;line-height:1.1;letter-spacing:0;border:0;border-radius:2px 5px 3px 2px;background:#fff5db;transform:rotate(-11deg);box-shadow:1px 1px 0 #b9af9326}
+.bean-shelf .bag-date-tag::before{width:2px;height:2px;left:3px;background:#c4ad8d}
+.bean-shelf .bag-date-tag::after{content:'';position:absolute;left:43%;top:-3px;width:10px;height:5px;background:#ddc6bb99;border-radius:1px;transform:rotate(15deg)}
+.bean-shelf .bag-date-tag time{padding-left:3px}
+.bean-shelf .bag-roast-print{left:auto;right:15%;bottom:12%;width:auto;max-width:54%;text-align:right;font-size:8px;letter-spacing:.03em;transform:rotate(2deg);opacity:.85}
+html[lang=en] .bean-shelf .bag-roast-print{font-size:10px;letter-spacing:0}
+.bean-shelf .shelf-name-secondary{margin:3px 0 0;font-size:14px;line-height:1.3;color:#959888;overflow-wrap:anywhere}
+.bean-shelf .shelf-name-secondary[lang=zh-CN]{font-size:11px;line-height:1.5}
+
+/* Shared coffee colors and compact shelf details. */
+.bean-shelf .bag-roast-print{right:20%;bottom:15%}
+.catalog-art{border-radius:17px}
+.swipe-row{position:relative;overflow:hidden;border-radius:18px;min-width:0}
+.swipe-content{position:relative;background:var(--background);touch-action:pan-y;transition:transform .2s ease;z-index:1}
+.swipe-delete{position:absolute;right:0;top:0;bottom:0;width:72px;display:grid;place-items:center;background:#f1dce0;color:#a15f70;border:0}
+.main-tabs{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:0!important;padding:5px 9px!important}
+.main-tabs .nav-active{position:absolute;left:9px;top:5px;width:calc((100% - 18px)/3);height:60px;border-radius:23px;background:#edecf9;transition:transform .28s cubic-bezier(.22,.75,.25,1);pointer-events:none}
+.main-tabs button{position:relative;z-index:1;min-width:0!important;width:100%}
+.main-tabs button[data-state=active]{background:transparent!important;box-shadow:none!important}
+.brew-calendar .rdp-day button[data-has-coffee=true]{background:var(--day-coffee)!important}
+.brew-calendar .rdp-day button[data-selected-single=true]{box-shadow:inset 0 0 0 2px #9a97bc}
+.day-bean{border-radius:8px}
+.brew-calendar .day-beans{opacity:1}
+/* Inset focus borders stay inside the scrollable form on narrow screens. */
+.form-editor .field input:focus-visible,.form-editor .field textarea:focus-visible,.form-editor .choice:focus-visible{outline:2px solid #a7b6dc!important;outline-offset:-2px!important;box-shadow:none!important}
+.bean-editor .roast-required{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+.bean-editor .roast-required .field{min-width:0}
+.bean-editor .roast-required input,.bean-editor .roast-required .choice{box-sizing:border-box;height:46px!important;min-height:46px!important;max-height:46px;width:100%;min-width:0;padding:10px 12px!important;border-radius:12px;line-height:24px;font-size:16px}
+.bean-editor input[type=date]{appearance:none;-webkit-appearance:none;display:block}
+.bean-editor input[type=date]::-webkit-date-and-time-value{text-align:left;min-height:24px}
+@media(prefers-reduced-motion:reduce){.main-tabs .nav-active,.swipe-content{transition:none}}
