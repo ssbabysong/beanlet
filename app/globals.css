@@ -283,5 +283,14 @@ html[lang=en] .catalog-filters .field,html[lang=en] .catalog-filters .choice{fon
 .atlas-switch button[aria-pressed=true]{background:none;box-shadow:none;color:#58664e}
 .atlas-switch button[aria-pressed=true]::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:2px;border-radius:50%;background:#94a582;transform:rotate(-3deg)}
 .taste-art,.taste-sticker:nth-child(3n+2) .taste-art,.taste-sticker:nth-child(3n) .taste-art{background:none;border-radius:0;box-shadow:none}
-.taste-art .sticker,.taste-art .bean-thumb{width:90%;height:90%;border:0;background:none;box-shadow:none;border-radius:0;object-fit:contain}
+.taste-art .sticker,.taste-art .bean-thumb{width:90%;height:90%;border:0;box-shadow:none;border-radius:0;object-fit:contain}
 .taste-stamp{bottom:0;right:0}
+
+/* One soft, stable silhouette around raster pictures; sprite artwork stays intact. */
+.taste-art.taste-shape-0{--picture-edge:37% 23% 34% 25% / 25% 36% 24% 39%;transform:rotate(-4deg)}
+.taste-art.taste-shape-1{--picture-edge:22% 36% 25% 33% / 35% 23% 37% 24%;transform:rotate(3deg)}
+.taste-art.taste-shape-2{--picture-edge:31% 23% 38% 21% / 22% 38% 26% 34%;transform:rotate(-2deg)}
+.taste-art.taste-shape-3{--picture-edge:25% 39% 21% 32% / 37% 26% 33% 22%;transform:rotate(4deg)}
+.taste-art.taste-shape-4{--picture-edge:34% 24% 29% 38% / 26% 34% 23% 35%;transform:rotate(-3deg)}
+.tasted-wall .taste-art .bean-thumb{border-radius:var(--picture-edge);border:2px solid #fffdf6;box-shadow:0 2px 4px #60675512}
+.tasted-wall .taste-art .bean-thumb:not(.original-art){object-fit:cover}

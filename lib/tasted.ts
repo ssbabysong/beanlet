@@ -13,3 +13,6 @@ export function collectTasted<T extends TastedBean>(beans:T[],brews:{beanId:stri
  }
  return [...result.values()];
 }
+
+// A coffee keeps its silhouette when searching, reordering or reloading.
+export function stickerShape(id:string){let hash=0;for(const char of id)hash=(Math.imul(hash,31)+char.charCodeAt(0))|0;return (hash>>>0)%5;}

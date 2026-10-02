@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {collectTasted,coffeeIdentity} from '../lib/tasted.ts';
+import {collectTasted,coffeeIdentity,stickerShape} from '../lib/tasted.ts';
 const bag={id:'a',catalogId:'coffee-1',name:'Coffee',status:'未开封',rating:0,repurchase:false};
 assert.equal(collectTasted([bag],[]).length,0);
 let result=collectTasted([bag],[{beanId:'a',date:'2026-09-20'}]);
@@ -13,3 +13,6 @@ assert.equal(collectTasted([bag,{...second,catalogId:'coffee-2'}],[{beanId:'a',d
 assert.equal(coffeeIdentity({...bag,catalogId:''}),'a');
 assert.equal(collectTasted([bag],[],[{id:'coffee-1',bean:bag,firstDate:'',manual:true}]).length,1);
 console.log('Tasted atlas: unopened, brewed, finished, multiple bags, dates, separate coffees and preserved memories passed');
+
+assert.equal(stickerShape('coffee-1'),stickerShape('coffee-1'));
+assert.equal(new Set(Array.from({length:30},(_,i)=>stickerShape('coffee-'+i))).size,5);
