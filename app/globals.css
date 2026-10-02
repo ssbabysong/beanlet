@@ -306,3 +306,16 @@ html[lang=en] .catalog-filters .field,html[lang=en] .catalog-filters .choice{fon
 .editor .draft-guide,.editor .backup-note,.editor .notes{overflow-wrap:anywhere}
 [data-slot=dialog-overlay]{touch-action:none}
 @media(max-width:360px){.editor .roast-required{grid-template-columns:minmax(0,1fr)}.editor .form-grid{gap:14px 10px}}
+
+/* A single organic outline for photos, soft paper behind transparent icons. */
+.tasted-wall .taste-shape-0{--picture-edge:61% 39% 58% 42% / 35% 64% 36% 65%;--sticker-paper:#e5eadb}
+.tasted-wall .taste-shape-1{--picture-edge:32% 68% 38% 62% / 62% 36% 64% 38%;--sticker-paper:#eee2ef}
+.tasted-wall .taste-shape-2{--picture-edge:66% 34% 60% 40% / 42% 63% 37% 58%;--sticker-paper:#dfebef}
+.tasted-wall .taste-shape-3{--picture-edge:39% 61% 29% 71% / 65% 32% 68% 35%;--sticker-paper:#f1e8d8}
+.tasted-wall .taste-shape-4{--picture-edge:57% 43% 69% 31% / 33% 67% 43% 57%;--sticker-paper:#e7e3f0}
+.tasted-wall .taste-art:has(>.sticker){background-color:var(--sticker-paper);border-radius:var(--picture-edge)}
+.tasted-wall .taste-art:has(>.sticker)>.sticker{width:82%;height:82%}
+.discovery-search{display:block;width:100%;margin:0 0 14px;box-sizing:border-box}
+.detail-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
+.detail-back,.favorite-toggle{display:flex;align-items:center;justify-content:center;gap:7px;min-width:44px;min-height:44px;background:transparent;border:0;color:#74816b}
+.detail-back{font-size:14px}.favorite-toggle[aria-pressed=true]{color:#b4778e}

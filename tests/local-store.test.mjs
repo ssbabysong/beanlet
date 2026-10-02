@@ -41,3 +41,18 @@ const importedTaste={format:'beanlet',version:1,beans:[],catalog:[],brews:[],tas
 assert.equal(await importBackup(new File([JSON.stringify(importedTaste)],'taste.json')),1);
 assert.equal(await importBackup(new File([JSON.stringify(importedTaste)],'taste.json')),0);
 console.log('Tasted storage: manual marking, undo, deduplication, persistent memory and backup passed');
+
+const favoriteId=initial.catalog[4].id;
+await request('POST',{kind:'favorite',id:favoriteId});
+assert.ok((await localApi('/api/journal')).favorites.includes(favoriteId));
+await request('POST',{kind:'favorite',id:favoriteId});
+assert.ok(!(await localApi('/api/journal')).favorites.includes(favoriteId));
+const favoriteBackup={format:'beanlet',version:1,beans:[],catalog:[],brews:[],favorites:[favoriteId]};
+assert.equal(await importBackup(new File([JSON.stringify(favoriteBackup)],'favorites.json')),1);
+assert.equal(await importBackup(new File([JSON.stringify(favoriteBackup)],'favorites.json')),0);
+const oldFavorite={format:'beanlet',version:1,beans:[{...base,id:'old-favorite',repurchase:true}],catalog:[],brews:[]};
+await importBackup(new File([JSON.stringify(oldFavorite)],'legacy.json'));
+assert.ok((await localApi('/api/journal')).favorites.includes('old-favorite'));
+await request('POST',{kind:'favorite',id:'old-favorite'});
+assert.ok(!(await localApi('/api/journal')).favorites.includes('old-favorite'),'old repurchase does not restore removed heart');
+console.log('Favorites: toggle, reload, backup merge and legacy import passed');
