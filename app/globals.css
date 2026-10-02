@@ -319,3 +319,14 @@ html[lang=en] .catalog-filters .field,html[lang=en] .catalog-filters .choice{fon
 .detail-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0}
 .detail-back,.favorite-toggle{display:flex;align-items:center;justify-content:center;gap:7px;min-width:44px;min-height:44px;background:transparent;border:0;color:#74816b}
 .detail-back{font-size:14px}.favorite-toggle[aria-pressed=true]{color:#b4778e}
+
+/* Give the wordmark breathing room below the phone's top safe area. */
+.top{margin-top:calc(18px + env(safe-area-inset-top,0px))}
+/* Only the form fields scroll; the submit action occupies its own bottom row. */
+.editor.form-editor[data-slot=dialog-content]{display:flex;flex-direction:column;height:min(760px,90dvh);max-height:90dvh;overflow:hidden}
+.form-editor>[data-slot=dialog-title]{flex-shrink:0;padding-right:24px}
+.editor.form-editor form{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
+.editor.form-editor .form-scroll{flex:1;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;padding:0 3px 12px;scroll-padding-block:12px}
+.form-scroll>*{min-width:0;max-width:100%}
+.form-submit{flex-shrink:0;padding:12px 0 max(0px,env(safe-area-inset-bottom,0px));border-top:1px solid #eeeee8;background:white}
+.editor.form-editor .form-submit .save{width:100%;margin:0;min-height:48px}
