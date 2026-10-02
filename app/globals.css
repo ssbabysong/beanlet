@@ -294,3 +294,15 @@ html[lang=en] .catalog-filters .field,html[lang=en] .catalog-filters .choice{fon
 .taste-art.taste-shape-4{--picture-edge:34% 24% 29% 38% / 26% 34% 23% 35%;transform:rotate(-3deg)}
 .tasted-wall .taste-art .bean-thumb{border-radius:var(--picture-edge);border:2px solid #fffdf6;box-shadow:0 2px 4px #60675512}
 .tasted-wall .taste-art .bean-thumb:not(.original-art){object-fit:cover}
+
+/* Dialogs scroll vertically without allowing their form tracks to widen the viewport. */
+.editor[data-slot=dialog-content]{box-sizing:border-box;width:calc(100vw - 24px);max-width:min(540px,calc(100vw - 24px))!important;min-width:0;grid-template-columns:minmax(0,1fr);overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+.editor.settings-dialog{max-width:min(380px,calc(100vw - 24px))!important}
+.editor form,.editor form>*,.editor .field,.editor .sticker-option{min-width:0;max-width:100%}
+.editor .form-grid,.editor .roast-required{grid-template-columns:repeat(2,minmax(0,1fr))}
+.editor input,.editor textarea,.editor .choice{box-sizing:border-box;min-width:0;max-width:100%}
+.editor .choice>[data-slot=select-value]{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.editor .pick-list{overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y}
+.editor .draft-guide,.editor .backup-note,.editor .notes{overflow-wrap:anywhere}
+[data-slot=dialog-overlay]{touch-action:none}
+@media(max-width:360px){.editor .roast-required{grid-template-columns:minmax(0,1fr)}.editor .form-grid{gap:14px 10px}}
