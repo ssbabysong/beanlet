@@ -15,16 +15,16 @@ assert.equal(builtInCatalog.filter(b=>matchesFilters(b,{...emptyFilters,origin:'
 const custom={roaster:'My roaster',roast:'深烘焙',origin:'Brazil',process:'Natural'};
 assert.ok(matchesFilters(custom,{brand:'My roaster',roast:'深烘焙',origin:'Brazil',process:'日晒'}));
 assert.ok(!matchesFilters(custom,{...emptyFilters,brand:'Hydrangea'}));
-for(const b of builtInCatalog){const names=bilingualBean(b);assert.notEqual(names.zh,names.en);assert.ok(names.originEn);assert.ok(names.processEn);assert.ok(names.flavorEn)}
+for(const b of builtInCatalog){const names=bilingualBean(b);assert.equal(names.zh,names.en);assert.ok(names.originEn);assert.ok(names.processEn);assert.ok(names.flavorEn)}
 assert.equal(bilingualBean({...builtInCatalog[0],name:'我的自定义名'}).en,'我的自定义名');
 console.log('Catalog: bilingual names, custom names, combined filters, reset, empty results passed');
 
 const {editableBeanNames}=await import('../lib/catalog.ts');
 const letty=builtInCatalog.find(b=>b.name==='El Paraiso · Letty');
-assert.deepEqual(editableBeanNames(letty),{name:'天堂庄园 · 蕾蒂',nameEn:'El Paraiso · Letty'});
+assert.deepEqual(editableBeanNames(letty),{name:'El Paraiso · Letty',nameEn:'El Paraiso · Letty'});
 assert.equal(bilingualBean({name:'我的豆子',nameEn:'My coffee'}).en,'My coffee');
 assert.equal(bilingualBean({name:'我的豆子',nameEn:''}).en,'我的豆子');
-assert.equal(bilingualBean({...letty,...editableBeanNames(letty)}).zh,'天堂庄园 · 蕾蒂');
+assert.equal(bilingualBean({...letty,...editableBeanNames(letty)}).zh,'El Paraiso · Letty');
 assert.equal(bilingualBean({...letty,...editableBeanNames(letty)}).en,'El Paraiso · Letty');
 assert.equal(bilingualBean({...letty,...editableBeanNames(letty),name:'自定义中文'}).en,'El Paraiso · Letty');
 
@@ -36,3 +36,9 @@ for(const b of builtInCatalog){
  const names=bilingualBean(b);assert.equal(names.zh,local.zh.name);assert.equal(names.en,local.en.name);assert.equal(names.flavorEn,local.en.flavor);
 }
 console.log('Built-in bilingual names and flavor text complete for every coffee');
+
+assert.equal(bilingualBean({...letty,name:'天堂庄园 · 蕾蒂',nameEn:'El Paraiso · Letty'}).zh,'El Paraiso · Letty');
+assert.equal(bilingualBean({roaster:'Hydrangea',name:'中文旧名',nameEn:'Original Name'}).zh,'Original Name');
+assert.equal(bilingualBean({roaster:'Other',name:'中文名称',nameEn:'English Name'}).zh,'中文名称');
+
+assert.equal(bilingualBean({...letty,name:'天堂庄园 · 蕾蒂',nameEn:''}).zh,'El Paraiso · Letty');
