@@ -374,7 +374,7 @@ html[lang=en] .bean-shelf .bag-roast-print{font-size:12px;letter-spacing:.025em}
 .bean-shelf .bean-card .bean-info h3{margin:0;font-size:15px;line-height:1.5}
 
 /* A tiny tilted paper tag and quiet bilingual names. */
-.bean-shelf .bag-date-tag{left:14%;top:23%;padding:1px 3px 1px 4px;font-size:7px;line-height:1.1;letter-spacing:0;border:0;border-radius:2px 5px 3px 2px;background:#e5edf4;color:#798a9f;transform:rotate(-11deg);box-shadow:1px 1px 0 #8599af26}
+.bean-shelf .bag-date-tag{left:17%;top:auto;bottom:12%;padding:1px 3px 1px 4px;font-size:7px;line-height:1.1;letter-spacing:0;border:0;border-radius:2px 5px 3px 2px;background:#e5edf4;color:#798a9f;transform:rotate(-11deg);box-shadow:1px 1px 0 #8599af26}
 .bean-shelf .bag-date-tag::before{width:2px;height:2px;left:3px;background:#a3b4c6}
 .bean-shelf .bag-date-tag::after{content:'';position:absolute;left:43%;top:-2px;width:7px;height:4px;background:#bacadb99;border-radius:1px;transform:rotate(15deg)}
 .bean-shelf .bag-date-tag time{padding-left:2px}
@@ -542,8 +542,8 @@ html[lang=en] .bean-shelf .bag-roast-print{font-size:10px;letter-spacing:0}
 /* Print the remaining grams below the artwork, beside a small roast sticker. */
 .bean-shelf .coffee-bag-label{height:43%}
 .bean-shelf .bag-meta-row{position:absolute;left:20%;right:14%;top:79%;display:flex;align-items:center;justify-content:space-between;gap:4px;min-height:15px;pointer-events:none}
-.bag-remaining{color:#6e7080;font-size:9px;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
-.bag-remaining small{font-size:7px;margin-left:1px;color:#85818c}
+.bag-remaining{margin-left:auto;color:#6e7080;font-size:7px;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.bag-remaining small{font-size:6px;margin-left:1px;color:#85818c}
 .bag-roast-tag{margin-left:auto;max-width:65%;padding:0;background:none;color:#79736f;font-size:6px;line-height:1.2;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 html[lang=en] .bag-roast-tag{font-size:7px}
 .bag-liquid{transform-box:view-box}
