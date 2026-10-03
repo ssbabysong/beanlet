@@ -18,3 +18,12 @@ assert.ok(!matchesFilters(custom,{...emptyFilters,brand:'Hydrangea'}));
 for(const b of builtInCatalog){const names=bilingualBean(b);assert.notEqual(names.zh,names.en);assert.ok(names.originEn);assert.ok(names.processEn);assert.ok(names.flavorEn)}
 assert.equal(bilingualBean({...builtInCatalog[0],name:'我的自定义名'}).en,'我的自定义名');
 console.log('Catalog: bilingual names, custom names, combined filters, reset, empty results passed');
+
+const {editableBeanNames}=await import('../lib/catalog.ts');
+const letty=builtInCatalog.find(b=>b.name==='El Paraiso · Letty');
+assert.deepEqual(editableBeanNames(letty),{name:'天堂庄园 · 蕾蒂',nameEn:'El Paraiso · Letty'});
+assert.equal(bilingualBean({name:'我的豆子',nameEn:'My coffee'}).en,'My coffee');
+assert.equal(bilingualBean({name:'我的豆子',nameEn:''}).en,'我的豆子');
+assert.equal(bilingualBean({...letty,...editableBeanNames(letty)}).zh,'天堂庄园 · 蕾蒂');
+assert.equal(bilingualBean({...letty,...editableBeanNames(letty)}).en,'El Paraiso · Letty');
+assert.equal(bilingualBean({...letty,...editableBeanNames(letty),name:'自定义中文'}).en,'El Paraiso · Letty');

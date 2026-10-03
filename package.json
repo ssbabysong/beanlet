@@ -9,10 +9,18 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "node --experimental-strip-types tests/coffee-guide.test.mjs && node --experimental-strip-types tests/catalog-filters.test.mjs && node --experimental-strip-types tests/local-store.test.mjs && node --experimental-strip-types tests/bean-names.test.mjs && node --experimental-strip-types tests/tasted.test.mjs"
+    "test": "node --experimental-strip-types tests/coffee-guide.test.mjs && node --experimental-strip-types tests/catalog-filters.test.mjs && node --experimental-strip-types tests/local-store.test.mjs && node --experimental-strip-types tests/bean-names.test.mjs && node --experimental-strip-types tests/tasted.test.mjs && node --experimental-strip-types tests/brew-types.test.mjs && node --experimental-strip-types tests/bean-stock.test.mjs",
+    "ios:sync": "tsc --noEmit && vite build --outDir ../dist-ios && cap sync ios",
+    "ios:open": "cap open ios",
+    "ios:run": "npm run ios:sync && cap run ios"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/filesystem": "^8.1.4",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/ios": "^8.5.2",
+    "@capacitor/share": "^8.0.3",
     "@hookform/resolvers": "^5.7.1",
     "@shadcn/react": "^0.3.0",
     "class-variance-authority": "0.7.1",
@@ -36,6 +44,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.2",
     "@tailwindcss/postcss": "4.2.1",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",

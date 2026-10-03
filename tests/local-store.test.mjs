@@ -4,6 +4,7 @@ import ts from 'typescript';
 import {readFile} from 'node:fs/promises';
 const url=new URL('../lib/local-store.ts',import.meta.url);
 let source=await readFile(url,'utf8');
+source=source.replace("'./bean-stock'",JSON.stringify(new URL('../lib/bean-stock.ts',import.meta.url).href));
 source=source.replace("'./tasted'",JSON.stringify(new URL('../lib/tasted.ts',import.meta.url).href));
 source=source.replace("'zod'",JSON.stringify(new URL('../node_modules/zod/index.js',import.meta.url).href)).replace("'./catalog'",JSON.stringify(new URL('../lib/catalog.ts',import.meta.url).href)).replace("'./coffee-guide'",JSON.stringify(new URL('../lib/coffee-guide.ts',import.meta.url).href));
 const js=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
@@ -74,3 +75,61 @@ const custom=(await localApi('/api/journal')).catalog.find(b=>!b.id.startsWith('
 await request('DELETE',{kind:'catalog',id:custom.id});
 assert.ok(!(await localApi('/api/journal')).catalog.some(b=>b.id===custom.id));
 console.log('Catalog removal: built-in/custom, retained bags/brews/memories, reload and backup passed');
+
+const bilingualId=(await request('POST',{kind:'bean',data:{...base,name:'天堂庄园',nameEn:'El Paraiso'},saveToCatalog:true})).id;
+state=await localApi('/api/journal');
+const bilingual=state.beans.find(b=>b.id===bilingualId);
+assert.equal(bilingual.nameEn,'El Paraiso');
+assert.equal(state.catalog.find(b=>b.id===bilingual.catalogId).nameEn,'El Paraiso');
+assert.equal(backupSchema.parse(state).beans.find(b=>b.id===bilingualId).nameEn,'El Paraiso');
+await request('PUT',{kind:'bean',id:bilingualId,data:{...bilingual,nameEn:''}});
+assert.equal((await localApi('/api/journal')).beans.find(b=>b.id===bilingualId).nameEn,'');
+console.log('Bilingual names: saved, catalog copy, backup and clearing passed');
+
+const milkId=(await request('POST',{kind:'brew',data:{beanId:bilingualId,date:'2026-10-02',kind:'milk',dose:18,yield:36,milkAmount:150,milkType:'燕麦奶',serving:'冰',grind:'细',time:'0:28',notes:'',rating:0}})).id;
+state=await localApi('/api/journal');
+const milk=backupSchema.parse(state).brews.find(b=>b.id===milkId);
+assert.equal(milk.kind,'milk');assert.equal(milk.yield,36);assert.equal(milk.milkAmount,150);assert.equal(milk.water,undefined);
+assert.equal(backupSchema.parse({...state,brews:[{id:'legacy',beanId:bilingualId,date:'2026-10-02',dose:15,water:225,temp:92,grind:'',time:'2:30',notes:'',rating:4}]}).brews[0].kind,'pourOver');
+await request('POST',{kind:'brew',data:{beanId:bilingualId,date:'2026-10-02',kind:'milk',dose:18,grind:'',time:'',notes:'',rating:0}});
+await assert.rejects(request('POST',{kind:'brew',data:{beanId:bilingualId,date:'2026-10-02',kind:'milk',dose:18,milkAmount:-1,grind:'',time:'',notes:'',rating:0}}));
+console.log('Coffee types: legacy import, milk recipe, optional parameters and validation passed');
+
+state=await localApi('/api/journal');
+const countBeforeEdit=state.brews.length;
+const original=state.brews.find(b=>b.id===milkId);
+await request('PUT',{kind:'brew',id:milkId,data:{...original,date:'2026-10-01',kind:'pourOver',water:250,yield:undefined,milkAmount:undefined,milkType:undefined,serving:undefined,notes:'edited'}});
+state=await localApi('/api/journal');
+assert.equal(state.brews.length,countBeforeEdit);
+assert.equal(state.brews.filter(b=>b.id===milkId).length,1);
+assert.equal(state.brews.find(b=>b.id===milkId).date,'2026-10-01');
+assert.equal(state.brews.find(b=>b.id===milkId).kind,'pourOver');
+assert.equal(state.brews.find(b=>b.id===milkId).milkAmount,undefined);
+await assert.rejects(request('PUT',{kind:'brew',id:'missing-record',data:original}));
+assert.equal((await localApi('/api/journal')).brews.length,countBeforeEdit);
+console.log('Coffee editing: update in place, date/type changes and missing record rejection passed');
+
+for(const kind of ['pourOver','milk'])for(const dose of [undefined,0,-1,201]){
+ await assert.rejects(request('POST',{kind:'brew',data:{beanId:bilingualId,date:'2026-10-02',kind,dose,grind:'',time:'',notes:'',rating:0}}),/粉量/);
+}
+await assert.rejects(request('PUT',{kind:'brew',id:milkId,data:{...original,dose:undefined}}),/粉量/);
+assert.equal(backupSchema.parse({...state,brews:[{...original,dose:undefined}]}).brews[0].dose,undefined,'legacy backups can still omit dose');
+console.log('Required dose: both types, edits, invalid values and legacy backup compatibility passed');
+
+const stockBag=(await request('POST',{kind:'bean',saveToCatalog:true,data:{...base,weight:200}})).id;
+const stockBrew=(await request('POST',{kind:'brew',data:{beanId:stockBag,date:'2026-10-02',dose:15,kind:'pourOver',grind:'',time:'',notes:'',rating:0}})).id;
+await request('PUT',{kind:'stock',id:stockBag,remaining:170});
+state=await localApi('/api/journal');
+const stockBean=state.beans.find(b=>b.id===stockBag);
+assert.equal(stockBean.stockAdjustment,-15);
+assert.equal(state.catalog.find(b=>b.id===stockBean.catalogId).weight,undefined);
+const {beanStock}=await import('../lib/bean-stock.ts');
+assert.equal(beanStock(stockBean,state.brews).remaining,170);
+await request('PUT',{kind:'brew',id:stockBrew,data:{...state.brews.find(b=>b.id===stockBrew),dose:20}});
+state=await localApi('/api/journal');assert.equal(beanStock(stockBean,state.brews).remaining,165);
+await request('DELETE',{kind:'brew',id:stockBrew});
+state=await localApi('/api/journal');assert.equal(beanStock(stockBean,state.brews).remaining,185);
+assert.equal(backupSchema.parse(state).beans.find(b=>b.id===stockBag).stockAdjustment,-15);
+await assert.rejects(request('PUT',{kind:'stock',id:stockBag,remaining:201}));
+await assert.rejects(request('PUT',{kind:'stock',id:stockBag,remaining:-1}));
+console.log('Stock storage: corrections, brew edit/delete, backup and catalog isolation passed');

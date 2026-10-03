@@ -67,10 +67,13 @@ const englishDetails=[
  ['Gaosanlin · Anaerobic Honey','China · Menglian, Yunnan','Anaerobic honey','Valencia orange, dried apricot, black tea'],
  ['Potosi · XO','Colombia · Valle del Cauca','XO natural','Rum, pineapple, oak'],
 ];
-type NamedBean={id?:string;catalogId?:string;sourceUrl?:string;name?:string;origin?:string;process?:string;flavor?:string};
+type NamedBean={nameEn?:string;id?:string;catalogId?:string;sourceUrl?:string;name?:string;origin?:string;process?:string;flavor?:string};
 export function bilingualBean(b?:NamedBean){
  const i=builtInCatalog.findIndex(c=>c.id===b?.id||c.id===b?.catalogId||c.sourceUrl===b?.sourceUrl);
- if(i<0||!b)return {zh:b?.name||'咖啡豆',en:b?.name||'Coffee',originEn:b?.origin||'',processEn:b?.process||'',flavorEn:b?.flavor||''};
+ if(i<0||!b)return {zh:b?.name||'咖啡豆',en:b?.nameEn?.trim()||b?.name||'Coffee',originEn:b?.origin||'',processEn:b?.process||'',flavorEn:b?.flavor||''};
  const c=builtInCatalog[i],e=englishDetails[i],unchanged=b.name===c.name;
- return {zh:unchanged?beanLabel(c):b.name||beanLabel(c),en:unchanged?e[0]:b.name||e[0],originEn:b.origin===c.origin?e[1]:b.origin||'',processEn:b.process===c.process?e[2]:b.process||'',flavorEn:b.flavor===c.flavor?e[3]:b.flavor||''};
+ return {zh:unchanged?beanLabel(c):b.name||beanLabel(c),en:b.nameEn!==undefined?(b.nameEn.trim()||b.name||e[0]):unchanged?e[0]:b.name||e[0],originEn:b.origin===c.origin?e[1]:b.origin||'',processEn:b.process===c.process?e[2]:b.process||'',flavorEn:b.flavor===c.flavor?e[3]:b.flavor||''};
 }
+
+// Fill the two editable names without altering the catalog identity or details.
+export function editableBeanNames(b:NamedBean){const names=bilingualBean(b);return {name:names.zh,nameEn:b.nameEn??(names.en!==names.zh?names.en:'')}}

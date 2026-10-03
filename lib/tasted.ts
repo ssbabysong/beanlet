@@ -16,3 +16,10 @@ export function collectTasted<T extends TastedBean>(beans:T[],brews:{beanId:stri
 
 // A coffee keeps its silhouette when searching, reordering or reloading.
 export function stickerShape(id:string){let hash=0;for(const char of id)hash=(Math.imul(hash,31)+char.charCodeAt(0))|0;return (hash>>>0)%5;}
+
+// Group only bags belonging to the same coffee, never merely the same icon/roast.
+export function groupFinished<T extends TastedBean>(beans:T[]):T[][]{
+ const groups=new Map<string,T[]>();
+ for(const bean of beans){if(bean.status!=='已喝完')continue;const key=coffeeIdentity(bean);const group=groups.get(key)||[];group.push(bean);groups.set(key,group)}
+ return [...groups.values()];
+}

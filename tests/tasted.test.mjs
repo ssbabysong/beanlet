@@ -16,3 +16,15 @@ console.log('Tasted atlas: unopened, brewed, finished, multiple bags, dates, sep
 
 assert.equal(stickerShape('coffee-1'),stickerShape('coffee-1'));
 assert.equal(new Set(Array.from({length:30},(_,i)=>stickerShape('coffee-'+i))).size,5);
+
+const {groupFinished}=await import('../lib/tasted.ts');
+const bags=[
+ {id:'bag-a',catalogId:'same-coffee',name:'A',status:'已喝完',rating:0,repurchase:false},
+ {id:'bag-b',catalogId:'same-coffee',name:'A',status:'已喝完',rating:0,repurchase:false},
+ {id:'bag-c',catalogId:'different-coffee',name:'A',status:'已喝完',rating:0,repurchase:false},
+ {id:'bag-d',catalogId:'same-coffee',name:'A',status:'正在喝',rating:0,repurchase:false},
+];
+assert.deepEqual(groupFinished(bags).map(g=>g.map(b=>b.id)),[['bag-a','bag-b'],['bag-c']]);
+assert.equal(bags.length,4);
+assert.equal(groupFinished(bags.slice(3)).length,0);
+console.log('Finished bags: same coffee grouped, distinct coffees separated, originals retained');

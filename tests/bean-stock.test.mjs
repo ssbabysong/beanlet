@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {beanStock,usedGrams} from '../lib/bean-stock.ts';
+const bag={id:'a',weight:200};
+const records=[{beanId:'a',dose:15},{beanId:'a',dose:16},{beanId:'b',dose:18},{beanId:'a'}];
+assert.equal(usedGrams('a',records),31);
+assert.equal(beanStock(bag,records).remaining,169);
+assert.equal(beanStock({id:'b',weight:200},records).remaining,182);
+assert.equal(beanStock({id:'unknown'},records),null);
+assert.equal(beanStock(bag,[{beanId:'a',dose:220}]).remaining,0);
+assert.equal(beanStock({...bag,stockAdjustment:-9},records).remaining,160);
+assert.equal(beanStock(bag,records.slice(1)).remaining,184);
+assert.equal(beanStock(bag,[{beanId:'a',dose:20}]).remaining,180);
+assert.equal(beanStock({...bag,status:'已喝完'},[]).remaining,0);
+assert.equal(beanStock({id:'a',weight:20},[{beanId:'a',dose:15.1}]).remaining,4.9);
+console.log('Bean stock: isolated bags, unknown weights, edits/deletes, adjustments and zero passed');

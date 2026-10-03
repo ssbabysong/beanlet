@@ -405,3 +405,127 @@ html[lang=en] .bean-shelf .bag-roast-print{font-size:10px;letter-spacing:0}
 .bean-editor input[type=date]{appearance:none;-webkit-appearance:none;display:block}
 .bean-editor input[type=date]::-webkit-date-and-time-value{text-align:left;min-height:24px}
 @media(prefers-reduced-motion:reduce){.main-tabs .nav-active,.swipe-content{transition:none}}
+
+.atlas-swipe{touch-action:pan-y;min-height:55vh}
+.english-name-field{margin-top:12px}
+.add-english-name{display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:5px 0;background:none;border:0;color:#929ab2;font-size:12px}
+
+.brew-kind-picker{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:4px 0 18px}
+.brew-kind-picker button{display:flex;align-items:center;justify-content:center;gap:8px;border:2px solid transparent;border-radius:19px;background:#f5f4f8;padding:7px;color:#80869a}
+.brew-kind-picker button[aria-pressed=true]{border-color:#b7b7d0;background:#eeedf7;color:#626d8c}
+.brew-kind-picker .sticker{width:46px}
+.brew-kind-label{display:flex;align-items:center;gap:4px;font-size:12px;color:#9397aa}
+.brew-kind-label .sticker{width:28px}
+.brew-calendar .rdp-day button{position:relative}
+.brew-recipe{margin-top:12px}
+
+.brew-body>.row:first-child{align-items:center;gap:10px}
+.brew-body>.row:first-child .brew-kind-label{margin-left:auto;flex-shrink:0;white-space:nowrap}
+.brew-record-date{display:block;margin-top:3px}
+
+/* Empty recipe fields should not reserve space in a coffee card. */
+.brew-card .parameters:empty{display:none}
+.brew-card .parameters{margin:8px 0 6px}
+.brew-card .brew-method{margin:6px 0}
+.brew-card.brew-card-compact{align-items:center;padding-top:12px;padding-bottom:12px}
+.brew-card h3{margin:0}
+@media(max-width:420px){.brew-card{gap:8px}.brew-card .brew-kind-label{gap:2px;font-size:11px}.brew-card .brew-kind-label .sticker{width:24px}.brew-card .brew-delete{width:28px;min-width:28px}}
+
+
+.brew-card{touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .15s ease,background-color .15s ease}
+.brew-card img{-webkit-user-drag:none;pointer-events:none}
+.brew-card.is-pressing{transform:scale(.985);background-color:#eeedf7}
+.record-action-menu[data-slot=dialog-content]{top:auto;left:16px;right:16px;margin-inline:auto;bottom:max(18px,env(safe-area-inset-bottom));transform:none;translate:none;border:0;border-radius:26px;padding:18px;gap:8px;width:calc(100% - 32px);max-width:420px;background:#fbfaff}
+.record-action-menu [data-slot=dialog-title]{font-size:16px;text-align:center}
+.record-action-menu [data-slot=dialog-description]{text-align:center;font-size:12px;margin-bottom:8px;color:#989cb0}
+.record-action-menu>button{display:flex;align-items:center;justify-content:center;gap:9px;min-height:48px;border:0;border-radius:15px;background:#efedf7;color:#737b99}
+.record-action-menu>button.record-action-delete{background:#f8ecef;color:#ad7788}
+.record-action-menu>button.record-action-cancel{background:transparent;color:#9a9daf}
+@media(prefers-reduced-motion:reduce){.brew-card{transition:none}}
+
+/* Keep horizontal positioning independent of the dialog's animated transform. */
+.record-action-menu[data-slot=dialog-content][data-state=open]{animation:record-menu-in .2s ease-out both}
+.record-action-menu[data-slot=dialog-content][data-state=closed]{animation:record-menu-out .15s ease-in both}
+@keyframes record-menu-in{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes record-menu-out{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(22px)}}
+@media(prefers-reduced-motion:reduce){.record-action-menu[data-slot=dialog-content][data-state]{animation:none}}
+
+.sticker-brownie{background-image:url('../public/flavor-icons/brownie-light.png');background-size:contain;background-position:center}
+
+.form-editor .brew-basics{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.form-editor .brew-basics input{box-sizing:border-box;width:100%;min-width:0;height:46px;min-height:46px;padding:10px 12px;line-height:24px;appearance:none;-webkit-appearance:none}
+.form-editor .brew-basics input[type=date]::-webkit-date-and-time-value{text-align:left;min-height:24px}
+
+.bean-shelf .bag-stock{position:absolute;bottom:5%;left:24%;width:58%;text-align:center;font-size:10px;color:#6e7683;line-height:1.2;pointer-events:none}
+.bag-weight-field{margin:12px 0 16px}
+.weight-presets{display:flex;gap:8px;margin-top:7px}
+.weight-presets button{padding:4px 12px;border:0;border-radius:10px;background:#f1eff7;color:#8a8fa3;font-size:12px}
+.weight-presets button[aria-pressed=true]{background:#e4e1ef;color:#666e89}
+.stock-details{background:#f4f3f9;padding:14px;border-radius:18px;margin:16px 0;color:#858b9e;font-size:13px}
+.stock-summary{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.stock-summary strong{color:#636e88;font-weight:500}
+.stock-adjust{background:none;border:0;color:#8b85a4;font-size:12px;padding:8px 0}
+.stock-adjust-form{display:flex;align-items:end;gap:10px;margin-top:12px}
+.stock-adjust-form .field{flex:1;min-width:0}
+.stock-empty-hint{font-size:12px;margin-top:8px}
+
+/* Keep the selected art outline inside the form's clipping boundary. */
+.bean-editor .original-art-choice{padding:7px 9px;border:0!important;box-sizing:border-box}
+.bean-editor .original-art-choice[aria-pressed=true]{outline:none;box-shadow:inset 0 0 0 2px #c1cbe0}
+.bean-editor .original-art-choice:focus-visible{outline:2px solid #a7b6dc;outline-offset:-2px}
+.stock-adjust-form{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px 14px}
+.stock-adjust-form .stock-slider-field{grid-column:1/-1;gap:0}
+.stock-slider-heading,.stock-slider-scale{display:flex;align-items:center;justify-content:space-between}
+.stock-slider-heading output{font-size:16px;color:#69758f;font-variant-numeric:tabular-nums}
+.stock-slider-scale{font-size:11px;color:#a0a3b0}
+.stock-slider-field input.stock-slider{appearance:none;-webkit-appearance:none;width:100%;height:44px;min-height:44px;padding:0;border:0;border-radius:0;background:transparent!important;box-shadow:none;cursor:pointer;touch-action:pan-y}
+.stock-slider::-webkit-slider-runnable-track{height:6px;border-radius:9px;background:linear-gradient(to right,#afa7cb var(--stock-percent),#e3e0ec var(--stock-percent))}
+.stock-slider::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:23px;height:23px;border:3px solid white;border-radius:50%;background:#b6accd;margin-top:-8.5px;box-shadow:0 2px 6px #75708e26}
+.stock-slider::-moz-range-track{height:6px;border-radius:9px;background:#e3e0ec}
+.stock-slider::-moz-range-progress{height:6px;border-radius:9px;background:#afa7cb}
+.stock-slider::-moz-range-thumb{width:18px;height:18px;border:3px solid white;border-radius:50%;background:#b6accd}
+.beanlet-toaster [data-sonner-toast].beanlet-toast{width:fit-content;max-width:100%;left:50%;translate:-50% 0;padding:10px 17px;gap:9px;border:1px solid #e7e4ef;border-radius:22px;background:#faf9ff;color:#747b91;box-shadow:0 4px 18px #77708d12;font-family:var(--font-sans);font-size:13px;font-weight:400}
+.beanlet-toast [data-title]{font-weight:400;line-height:1.5}
+.beanlet-toast .toast-tick{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#e9eee5;color:#87997b;font-size:13px}
+.beanlet-toaster [data-sonner-toast][data-type=error]{background:#fff8f8;color:#a96f79;border-color:#f0dfe3}
+
+/* A coffee's atlas entry focuses on its tasting history. */
+.memory-panel .memory-flavor{text-align:center;margin:14px 0 5px;color:#69738a;font-size:16px;line-height:1.7}
+.memory-panel .memory-first-date{text-align:center;margin:0 0 20px;font-size:12px}
+.memory-bags-fold{margin:12px 0 20px;border-block:1px solid #e8e7ef}
+.memory-bags-trigger{display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 2px;background:none;border:0;color:#858a9e;font-size:14px}
+.memory-bags-trigger svg{transition:transform .18s}
+.memory-bags-trigger[data-state=open] svg{transform:rotate(180deg)}
+.memory-bags-list{padding:0 0 8px}
+.memory-panel .memory-bag{background:#f0f0f5;margin:0 0 8px;padding:12px 14px;border-radius:16px}
+.memory-panel .memory-bag small{line-height:1.7}
+.memory-coffee-list{display:flex;flex-direction:column;gap:12px;margin:8px 0 20px}
+.memory-panel .memory-coffee-record{margin:0;padding:15px 17px;border-radius:20px}
+.memory-coffee-record h3{font-size:15px;font-weight:400}
+.memory-coffee-record .parameters{margin-top:9px}
+.memory-no-coffee{text-align:center;padding:16px 0}
+@media(prefers-reduced-motion:reduce){.memory-bags-trigger svg{transition:none}}
+
+.bean-shelf .finished-count{position:absolute;z-index:2;top:3%;right:0;display:inline-flex;align-items:center;font-size:13px;line-height:1.3;color:#817b94;transform:rotate(6deg);pointer-events:none}
+/* A quiet timeline for individual bags. */
+.memory-bag-dots{display:flex;flex-direction:column;gap:0;padding:0 0 14px}
+.memory-bag-dot{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:48px;padding:10px 0 10px 27px;border:0;background:none;color:#82899a;text-align:left}
+.memory-bag-dot:not(:last-child)::after{content:"";position:absolute;left:6px;top:24px;bottom:-13px;width:1px;background:#dedbe8}
+.bag-dot-heading{display:flex;align-items:center;gap:10px;font-size:12px;line-height:24px}
+.bag-dot-number{position:absolute;left:1px;top:18px;width:11px;height:11px;border-radius:50%;background:var(--bag-dot-color);border:2px solid #fbfaff;box-shadow:0 0 0 1px #d8d2e4;z-index:1}
+.bag-sequence{color:#a09bad;font-size:11px}
+.bag-dot-amount,.bag-dot-date{font-size:11px;color:#a3a4b2}
+.memory-bag-dot:hover .bag-dot-heading{color:#676b88}
+.bean-shelf .finished-count .finished-times{font-size:19px;line-height:1;margin-right:2px}
+
+.bag-dot-heading{width:100%;gap:8px;flex-wrap:wrap}
+.bag-dot-heading .bag-dot-date{margin-left:auto;font-size:10px;white-space:nowrap}
+
+.memory-bag-dots{padding-inline:clamp(12px,4vw,24px)}
+.bag-dot-heading{align-items:center}
+
+.memory-bag-dots{width:fit-content;max-width:100%;margin-inline:auto;padding-inline:8px}
+.bag-dot-heading{justify-content:flex-start;column-gap:8px}
+.bag-dot-heading .bag-dot-date{margin-left:10px}
+
+.memory-bag-dots{margin-inline:0;padding-inline:0}

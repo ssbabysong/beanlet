@@ -26,6 +26,7 @@
     "main.tsx",
     "vite.config.ts",
     "components",
-    "client"
+    "client",
+    "capacitor.config.ts"
   ]
 }
