@@ -593,3 +593,9 @@ img,svg{-webkit-user-drag:none}
 .taste-roaster{display:block;margin-top:-8px;color:#9a9ba8;font-size:9px;line-height:1.35;font-weight:400;overflow-wrap:anywhere}
 
 .tasted-wall .taste-name{display:block;width:100%;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;-webkit-line-clamp:unset;line-height:1.35}
+
+/* A folded fabric label peeking out of the bag's side seam. */
+.bean-shelf .bag-brand-tag{position:absolute;left:85%;top:49%;width:23px;height:62px;display:grid;place-items:center;background:#f9f4e9;color:#898073;border:1px solid #d9d0bf;border-left:0;border-radius:0 3px 3px 0;transform:rotate(-3deg);box-shadow:1px 2px 2px #6b635014;pointer-events:none}
+.bean-shelf .bag-brand-tag::before{content:'';position:absolute;left:5px;top:4px;bottom:4px;border-left:1px dashed #c8bda8}
+.bean-shelf .bag-brand-tag>span{display:block;width:52px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;transform:rotate(90deg);font-size:9px;line-height:1;text-align:center;margin-left:4px}
+.bean-shelf .coffee-bag-body{position:relative;pointer-events:none}
