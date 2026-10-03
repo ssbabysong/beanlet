@@ -69,7 +69,7 @@ const englishDetails=[
 ];
 // Bundled bilingual product text: works offline and switches without translation requests.
 export const builtInLocales=Object.fromEntries(builtInCatalog.map((bean,i)=>[bean.id,{
- zh:{name:englishDetails[i][0],origin:bean.origin,process:bean.process,flavor:bean.flavor},
+ zh:{name:englishDetails[i][0],origin:englishDetails[i][1],process:englishDetails[i][2],flavor:englishDetails[i][3]},
  en:{name:englishDetails[i][0],origin:englishDetails[i][1],process:englishDetails[i][2],flavor:englishDetails[i][3]},
 }]));
 type NamedBean={roaster?:string;nameEn?:string;id?:string;catalogId?:string;sourceUrl?:string;name?:string;origin?:string;process?:string;flavor?:string};
@@ -90,3 +90,11 @@ export function bilingualBean(b?:NamedBean){
 
 // Fill the two editable names without altering the catalog identity or details.
 export function editableBeanNames(b:NamedBean){const names=bilingualBean(b);if(usesOriginalBeanName(b))return {name:names.en,nameEn:names.en};return {name:names.zh,nameEn:b.nameEn??(names.en!==names.zh?names.en:'')}}
+
+// Hydrangea product facts retain their English wording in either interface language.
+export function beanInfo(b:NamedBean|undefined,key:'origin'|'process'|'flavor',language:'zh'|'en'){
+ return language==='en'||usesOriginalBeanName(b)?bilingualBean(b)[`${key}En`]:b?.[key]||'';
+}
+export function editableBeanInfo(b:NamedBean){
+ return usesOriginalBeanName(b)?{origin:beanInfo(b,'origin','en'),process:beanInfo(b,'process','en'),flavor:beanInfo(b,'flavor','en')}:{};
+}

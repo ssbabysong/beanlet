@@ -42,3 +42,11 @@ assert.equal(bilingualBean({roaster:'Hydrangea',name:'中文旧名',nameEn:'Orig
 assert.equal(bilingualBean({roaster:'Other',name:'中文名称',nameEn:'English Name'}).zh,'中文名称');
 
 assert.equal(bilingualBean({...letty,name:'天堂庄园 · 蕾蒂',nameEn:''}).zh,'El Paraiso · Letty');
+
+const {beanInfo,editableBeanInfo}=await import('../lib/catalog.ts');
+for(const b of builtInCatalog){
+ for(const key of ['origin','process','flavor'])assert.equal(beanInfo(b,key,'zh'),builtInLocales[b.id].en[key]);
+ assert.equal(editableBeanInfo(b).flavor,builtInLocales[b.id].en.flavor);
+}
+assert.equal(beanInfo({...letty,flavor:'Custom tasting notes'},'flavor','zh'),'Custom tasting notes');
+assert.equal(beanInfo({roaster:'Other',flavor:'茉莉'},'flavor','zh'),'茉莉');

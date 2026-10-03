@@ -1,7 +1,7 @@
 "use client";
 import {createContext,useContext,useEffect,useState,type ReactNode} from 'react';
 import dictionary from './translations.json';
-import {bilingualBean} from './catalog';
+import {bilingualBean,beanInfo} from './catalog';
 export type Language='zh'|'en';
 const LocaleContext=createContext<{language:Language;setLanguage:(l:Language)=>void}>({language:'zh',setLanguage:()=>{}});
 export function LocaleProvider({children}:{children:ReactNode}){const [language,setLanguageState]=useState<Language>('zh');useEffect(()=>{try{if(localStorage.getItem('beanlet-language')==='en')setLanguageState('en')}catch{}},[]);useEffect(()=>{document.documentElement.lang=language==='en'?'en':'zh-CN'},[language]);function setLanguage(l:Language){setLanguageState(l);try{localStorage.setItem('beanlet-language',l)}catch{}}return <LocaleContext.Provider value={{language,setLanguage}}>{children}</LocaleContext.Provider>}
@@ -25,4 +25,4 @@ export function translate(value:string,language:Language):string{
  for(const [r,fn] of rules){const m=value.match(r);if(m)return fn(...m.slice(1))}
  return value;
 }
-export function useI18n(){const {language,setLanguage}=useContext(LocaleContext);const t=(s:string)=>translate(s,language);return {language,setLanguage,t,label:(b?:Parameters<typeof bilingualBean>[0])=>bilingualBean(b)[language],otherLabel:(b?:Parameters<typeof bilingualBean>[0])=>bilingualBean(b)[language==='en'?'zh':'en'],info:(b:Parameters<typeof bilingualBean>[0],key:'origin'|'process'|'flavor')=>language==='en'?bilingualBean(b)[`${key}En`]:b?.[key]||''}}
+export function useI18n(){const {language,setLanguage}=useContext(LocaleContext);const t=(s:string)=>translate(s,language);return {language,setLanguage,t,label:(b?:Parameters<typeof bilingualBean>[0])=>bilingualBean(b)[language],otherLabel:(b?:Parameters<typeof bilingualBean>[0])=>bilingualBean(b)[language==='en'?'zh':'en'],info:(b:Parameters<typeof bilingualBean>[0],key:'origin'|'process'|'flavor')=>beanInfo(b,key,language)}}
