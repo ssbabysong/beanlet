@@ -67,11 +67,16 @@ const englishDetails=[
  ['Gaosanlin · Anaerobic Honey','China · Menglian, Yunnan','Anaerobic honey','Valencia orange, dried apricot, black tea'],
  ['Potosi · XO','Colombia · Valle del Cauca','XO natural','Rum, pineapple, oak'],
 ];
+// Bundled bilingual product text: works offline and switches without translation requests.
+export const builtInLocales=Object.fromEntries(builtInCatalog.map((bean,i)=>[bean.id,{
+ zh:{name:shortNames[bean.id.slice('hydrangea-'.length)]||bean.name,origin:bean.origin,process:bean.process,flavor:bean.flavor},
+ en:{name:englishDetails[i][0],origin:englishDetails[i][1],process:englishDetails[i][2],flavor:englishDetails[i][3]},
+}]));
 type NamedBean={nameEn?:string;id?:string;catalogId?:string;sourceUrl?:string;name?:string;origin?:string;process?:string;flavor?:string};
 export function bilingualBean(b?:NamedBean){
  const i=builtInCatalog.findIndex(c=>c.id===b?.id||c.id===b?.catalogId||c.sourceUrl===b?.sourceUrl);
  if(i<0||!b)return {zh:b?.name||'咖啡豆',en:b?.nameEn?.trim()||b?.name||'Coffee',originEn:b?.origin||'',processEn:b?.process||'',flavorEn:b?.flavor||''};
- const c=builtInCatalog[i],e=englishDetails[i],unchanged=b.name===c.name;
+ const c=builtInCatalog[i],local=builtInLocales[c.id],e=[local.en.name,local.en.origin,local.en.process,local.en.flavor],unchanged=b.name===c.name;
  return {zh:unchanged?beanLabel(c):b.name||beanLabel(c),en:b.nameEn!==undefined?(b.nameEn.trim()||b.name||e[0]):unchanged?e[0]:b.name||e[0],originEn:b.origin===c.origin?e[1]:b.origin||'',processEn:b.process===c.process?e[2]:b.process||'',flavorEn:b.flavor===c.flavor?e[3]:b.flavor||''};
 }
 

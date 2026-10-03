@@ -27,3 +27,12 @@ assert.equal(bilingualBean({name:'我的豆子',nameEn:''}).en,'我的豆子');
 assert.equal(bilingualBean({...letty,...editableBeanNames(letty)}).zh,'天堂庄园 · 蕾蒂');
 assert.equal(bilingualBean({...letty,...editableBeanNames(letty)}).en,'El Paraiso · Letty');
 assert.equal(bilingualBean({...letty,...editableBeanNames(letty),name:'自定义中文'}).en,'El Paraiso · Letty');
+
+const {builtInLocales}=await import('../lib/catalog.ts');
+assert.equal(Object.keys(builtInLocales).length,builtInCatalog.length);
+for(const b of builtInCatalog){
+ const local=builtInLocales[b.id];
+ for(const language of ['zh','en'])for(const field of ['name','origin','process','flavor'])assert.ok(local[language][field]);
+ const names=bilingualBean(b);assert.equal(names.zh,local.zh.name);assert.equal(names.en,local.en.name);assert.equal(names.flavorEn,local.en.flavor);
+}
+console.log('Built-in bilingual names and flavor text complete for every coffee');
