@@ -590,4 +590,6 @@ img,svg{-webkit-user-drag:none}
 
 .photo-rotate{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;color:#7780a5;font-size:13px}.photo-editor .photo-crop-frame{width:min(100%,calc(100dvh - var(--safe-top) - var(--safe-bottom) - 344px))}
 
-.taste-roaster{display:block;margin-top:2px;color:#9a9ba8;font-size:9px;line-height:1.35;font-weight:400;overflow-wrap:anywhere}
+.taste-roaster{display:block;margin-top:-8px;color:#9a9ba8;font-size:9px;line-height:1.35;font-weight:400;overflow-wrap:anywhere}
+
+.tasted-wall .taste-name{display:block;width:100%;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;-webkit-line-clamp:unset;line-height:1.35}
