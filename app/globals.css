@@ -590,4 +590,8 @@ img,svg{-webkit-user-drag:none}
 
 .photo-rotate{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;color:#7780a5;font-size:13px}.photo-editor .photo-crop-frame{width:min(100%,calc(100dvh - var(--safe-top) - var(--safe-bottom) - 344px))}
 
-.taste-roaster{position:absolute;bottom:8px;left:9px;max-width:78%;font-size:10px;line-height:1.4;color:#55515f;text-shadow:0 0 3px #fff,0 1px 2px #fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
+.taste-roaster{position:absolute;bottom:7px;left:0;width:64px;height:27px;display:grid;place-items:center;transform:rotate(-8deg);color:#82798c;pointer-events:none}
+.taste-roaster>svg{position:absolute;inset:0;width:100%;height:100%;fill:#fffdf7ed;stroke:currentColor;stroke-width:1.1;overflow:visible}
+.taste-roaster .stamp-inner{fill:none;stroke-width:.6;stroke-dasharray:1.8 1.8;opacity:.55}
+.taste-roaster>span{position:relative;max-width:50px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:8px;line-height:1.2}
+.taste-sticker:nth-child(even) .taste-roaster{transform:rotate(6deg);color:#7f887b}
