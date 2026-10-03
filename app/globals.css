@@ -346,7 +346,7 @@ html[lang=en] .catalog-filters .field,html[lang=en] .catalog-filters .choice{fon
 .bean-shelf .coffee-bag-label>.sticker{width:90%;height:90%;max-width:none;transform:none}
 .bean-shelf .coffee-bag-label>.bean-thumb{width:100%;height:100%;object-fit:cover;border-radius:0;margin:0;padding:0}
 .coffee-bag-label.has-picture{border-radius:9px 12px 8px 11px;background:#fffaf0;border:3px solid #fffaf0;transform:rotate(-2deg)}
-.bag-heart{position:absolute;right:12%;top:22%;color:#b77990}
+.bag-heart{position:absolute;left:14%;right:auto;top:22%;z-index:2;color:#b77990}
 .bean-shelf .bean-card .bean-info{padding-top:9px}
 @media(max-width:700px){.bean-shelf .coffee-bag{width:138px;height:173px}.bean-shelf .bean-card:nth-child(even){padding-top:16px}.bean-shelf .cards{gap:23px 14px}}
 @media(prefers-reduced-motion:reduce){.bean-shelf .coffee-bag{transform:none!important}}
@@ -358,7 +358,7 @@ html[lang=en] .catalog-filters .field,html[lang=en] .catalog-filters .choice{fon
 .bean-shelf .illustrated-bag-body{width:100%;height:100%;object-fit:contain;display:block}
 .bean-shelf .illustrated-bag .coffee-bag-label{left:23%;top:33%;width:57%;height:44%;background:#fff9ed}
 .bean-shelf .illustrated-bag .coffee-bag-label.has-picture{border-color:#fff9ed;border-radius:7px 12px 8px 10px}
-.bean-shelf .illustrated-bag .bag-heart{right:12%;top:23%}
+.bean-shelf .illustrated-bag .bag-heart{left:14%;right:auto;top:23%}
 
 /* Warm pouch colors. */
 .bean-shelf .coffee-bag.bag-tone-5{--bag-fill:#f1dce0;--bag-line:#b89b9f;--bag-side:#e4c5cd}
