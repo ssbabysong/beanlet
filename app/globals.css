@@ -532,8 +532,8 @@ html[lang=en] .bean-shelf .bag-roast-print{font-size:10px;letter-spacing:0}
 
 /* Keep every subpage's controls below the status bar / Dynamic Island. */
 :root{--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
-.detail-panel[data-slot=sheet-content]{top:var(--safe-top)!important;height:calc(100dvh - var(--safe-top))!important;padding:18px max(24px,env(safe-area-inset-right,0px)) calc(24px + var(--safe-bottom)) max(24px,env(safe-area-inset-left,0px))!important;touch-action:pan-y}
-.detail-panel .detail-nav{position:sticky;top:-18px;z-index:5;background:#f5f5fb;margin:-18px -12px 0;padding:24px 0 8px}
+.detail-panel[data-slot=sheet-content]{top:0!important;height:100dvh!important;padding:18px max(24px,env(safe-area-inset-right,0px)) calc(24px + var(--safe-bottom)) max(24px,env(safe-area-inset-left,0px))!important;touch-action:pan-y}
+.detail-panel .detail-nav{position:sticky;top:-18px;z-index:5;background:inherit;margin:-18px calc(-1 * max(24px,env(safe-area-inset-right,0px))) 0 calc(-1 * max(24px,env(safe-area-inset-left,0px)));padding:calc(24px + var(--safe-top)) max(12px,env(safe-area-inset-right,0px)) 8px max(12px,env(safe-area-inset-left,0px))}
 .editor[data-slot=dialog-content]{top:calc(var(--safe-top) + (100dvh - var(--safe-top) - var(--safe-bottom))/2)!important;max-height:calc(100dvh - var(--safe-top) - var(--safe-bottom) - 24px)!important;touch-action:pan-y}
 .editor.form-editor[data-slot=dialog-content]{height:min(760px,calc(100dvh - var(--safe-top) - var(--safe-bottom) - 24px))}
 .menu-swipe{min-height:70dvh;touch-action:pan-y}
