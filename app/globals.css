@@ -589,3 +589,5 @@ img,svg{-webkit-user-drag:none}
 
 
 .photo-rotate{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;color:#7780a5;font-size:13px}.photo-editor .photo-crop-frame{width:min(100%,calc(100dvh - var(--safe-top) - var(--safe-bottom) - 344px))}
+
+.taste-roaster{display:block;margin-top:3px;font-size:12px;line-height:1.4;color:#9295a7;overflow-wrap:anywhere}
