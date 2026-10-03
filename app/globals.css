@@ -435,7 +435,7 @@ html[lang=en] .bean-shelf .bag-roast-print{font-size:10px;letter-spacing:0}
 .brew-card{touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .15s ease,background-color .15s ease}
 .brew-card img{-webkit-user-drag:none;pointer-events:none}
 .brew-card.is-pressing{transform:scale(.985);background-color:#eeedf7}
-.record-action-menu[data-slot=dialog-content]{top:auto;left:16px;right:16px;margin-inline:auto;bottom:max(18px,env(safe-area-inset-bottom));transform:none;translate:none;border:0;border-radius:26px;padding:18px;gap:8px;width:calc(100% - 32px);max-width:420px;background:#fbfaff}
+.record-action-menu[data-slot=dialog-content]{top:calc(var(--safe-top) + (100dvh - var(--safe-top) - var(--safe-bottom))/2);left:50%;right:auto;bottom:auto;margin:0;transform:none;translate:-50% -50%;max-height:calc(100dvh - var(--safe-top) - var(--safe-bottom) - 32px);overflow-y:auto;border:0;border-radius:26px;padding:18px;gap:8px;width:calc(100% - 32px);max-width:420px;background:#fbfaff}
 .record-action-menu [data-slot=dialog-title]{font-size:16px;text-align:center}
 .record-action-menu [data-slot=dialog-description]{text-align:center;font-size:12px;margin-bottom:8px;color:#989cb0}
 .record-action-menu>button{display:flex;align-items:center;justify-content:center;gap:9px;min-height:48px;border:0;border-radius:15px;background:#efedf7;color:#737b99}
@@ -446,8 +446,8 @@ html[lang=en] .bean-shelf .bag-roast-print{font-size:10px;letter-spacing:0}
 /* Keep horizontal positioning independent of the dialog's animated transform. */
 .record-action-menu[data-slot=dialog-content][data-state=open]{animation:record-menu-in .2s ease-out both}
 .record-action-menu[data-slot=dialog-content][data-state=closed]{animation:record-menu-out .15s ease-in both}
-@keyframes record-menu-in{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
-@keyframes record-menu-out{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(22px)}}
+@keyframes record-menu-in{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+@keyframes record-menu-out{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.96)}}
 @media(prefers-reduced-motion:reduce){.record-action-menu[data-slot=dialog-content][data-state]{animation:none}}
 
 .sticker-brownie{background-image:url('../public/flavor-icons/brownie-light.png');background-size:contain;background-position:center}
@@ -529,3 +529,49 @@ html[lang=en] .bean-shelf .bag-roast-print{font-size:10px;letter-spacing:0}
 .bag-dot-heading .bag-dot-date{margin-left:10px}
 
 .memory-bag-dots{margin-inline:0;padding-inline:0}
+
+/* Keep every subpage's controls below the status bar / Dynamic Island. */
+:root{--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
+.detail-panel[data-slot=sheet-content]{top:var(--safe-top)!important;height:calc(100dvh - var(--safe-top))!important;padding:18px max(24px,env(safe-area-inset-right,0px)) calc(24px + var(--safe-bottom)) max(24px,env(safe-area-inset-left,0px))!important;touch-action:pan-y}
+.detail-panel .detail-nav{position:sticky;top:-18px;z-index:5;background:#f5f5fb;margin:-18px -12px 0;padding:24px 0 8px}
+.editor[data-slot=dialog-content]{top:calc(var(--safe-top) + (100dvh - var(--safe-top) - var(--safe-bottom))/2)!important;max-height:calc(100dvh - var(--safe-top) - var(--safe-bottom) - 24px)!important;touch-action:pan-y}
+.editor.form-editor[data-slot=dialog-content]{height:min(760px,calc(100dvh - var(--safe-top) - var(--safe-bottom) - 24px))}
+.menu-swipe{min-height:70dvh;touch-action:pan-y}
+.menu-swipe [data-slot=tabs-content][data-state=active]{animation:menu-arrive .2s ease-out}
+@keyframes menu-arrive{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+/* Print the remaining grams below the artwork, beside a small roast sticker. */
+.bean-shelf .coffee-bag-label{height:43%}
+.bean-shelf .bag-meta-row{position:absolute;left:20%;right:14%;top:79%;display:flex;align-items:center;justify-content:space-between;gap:4px;min-height:15px;pointer-events:none}
+.bag-remaining{color:#6e7080;font-size:9px;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.bag-remaining small{font-size:7px;margin-left:1px;color:#85818c}
+.bag-roast-tag{margin-left:auto;max-width:65%;padding:0;background:none;color:#79736f;font-size:6px;line-height:1.2;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[lang=en] .bag-roast-tag{font-size:7px}
+.bag-liquid{transform-box:view-box}
+.bag-liquid.is-swaying{animation:coffee-sway 2.4s ease-in-out both}
+@keyframes coffee-sway{0%,100%{transform:rotate(0deg)}20%{transform:rotate(2.2deg)}42%{transform:rotate(-1.8deg)}63%{transform:rotate(1deg)}82%{transform:rotate(-.4deg)}}
+@media(prefers-reduced-motion:reduce){.bag-liquid.is-swaying,.menu-swipe [data-slot=tabs-content][data-state=active]{animation:none}}
+
+/* Compact artwork alongside the bean name leaves room for useful details. */
+.bean-detail-heading{display:flex;align-items:center;gap:16px;margin-top:12px}
+.bean-detail-copy{flex:1;min-width:0}
+.bean-detail-copy .detail-title{margin:0;overflow-wrap:anywhere}
+.bean-detail-copy .original-product-name{margin:4px 0;font-size:14px}
+.bean-detail-copy [data-slot=sheet-description]{margin-top:4px;font-size:12px}
+.bean-detail-thumbnail{flex:0 0 64px;width:64px;height:64px;display:grid;place-items:center;overflow:hidden;border-radius:19px 22px 18px 23px;background:#eeedf8}
+.bean-detail-thumbnail img,.bean-detail-thumbnail .sticker,.bean-detail-thumbnail .original-art{width:100%;height:100%;max-width:100%;object-fit:contain}
+
+.coffee-guide .guide-roast-date{margin:0 0 6px;font-size:12px;color:#858a99;line-height:1.5}
+
+.bean-detail-actions{display:flex;align-items:stretch;gap:6px;margin-top:18px}
+.bean-detail-actions .finish-button{width:auto;flex:1.15;min-width:0;margin:0;padding:8px 6px;gap:4px;font-size:12px;border-radius:14px}
+.bean-detail-actions .finish-button .sticker{width:22px;flex-shrink:0}
+.bean-detail-actions .primary,.bean-detail-actions .secondary{min-width:0;min-height:44px;padding:8px 6px;gap:4px;font-size:12px}
+.bean-detail-actions .primary{flex:1}
+.bean-detail-actions .secondary{flex:.7}
+.bean-detail-actions .icon-button{flex:0 0 36px;min-width:36px;padding:6px}
+.bean-detail-actions svg{flex-shrink:0}
+
+.stock-details:has(.stock-direct){padding:8px 12px;margin:10px 0;border-radius:14px}
+.stock-direct{gap:0}
+.stock-direct .stock-slider-heading{line-height:20px}
+.stock-direct .stock-slider-scale{line-height:14px}.stock-direct .stock-slider-heading output{font-size:18px;color:#727db7}.stock-direct .stock-slider{margin:0}

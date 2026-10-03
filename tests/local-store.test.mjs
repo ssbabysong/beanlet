@@ -8,7 +8,7 @@ source=source.replace("'./bean-stock'",JSON.stringify(new URL('../lib/bean-stock
 source=source.replace("'./tasted'",JSON.stringify(new URL('../lib/tasted.ts',import.meta.url).href));
 source=source.replace("'zod'",JSON.stringify(new URL('../node_modules/zod/index.js',import.meta.url).href)).replace("'./catalog'",JSON.stringify(new URL('../lib/catalog.ts',import.meta.url).href)).replace("'./coffee-guide'",JSON.stringify(new URL('../lib/coffee-guide.ts',import.meta.url).href));
 const js=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
-const {localApi,importBackup,backupSchema,migrateStarters}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
+const {localApi,importBackup,exportBackup,backupSchema,migrateStarters}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
 const request=(method,body)=>localApi('/api/journal',{method,body:JSON.stringify(body)});
 let initial=await localApi('/api/journal');assert.equal(initial.beans.length,0);assert.equal(initial.catalog.length,14);assert.equal((await localApi('/api/journal')).beans.length,0);
 const starters=initial.catalog.map(b=>({...b,id:'starter-'+b.id,catalogId:b.id,recordType:'bean',status:'未开封',useOriginalArt:true}));
@@ -133,3 +133,26 @@ assert.equal(backupSchema.parse(state).beans.find(b=>b.id===stockBag).stockAdjus
 await assert.rejects(request('PUT',{kind:'stock',id:stockBag,remaining:201}));
 await assert.rejects(request('PUT',{kind:'stock',id:stockBag,remaining:-1}));
 console.log('Stock storage: corrections, brew edit/delete, backup and catalog isolation passed');
+
+// Exercise the real export path and inspect the downloadable backup payload.
+let exportedBlob, clickedDownload;
+const savedDocument=globalThis.document;
+const savedCreateURL=URL.createObjectURL, savedRevokeURL=URL.revokeObjectURL;
+URL.createObjectURL=blob=>{exportedBlob=blob;return 'blob:qa-backup'};
+URL.revokeObjectURL=()=>{};
+globalThis.document={createElement:tag=>{assert.equal(tag,'a');return {click(){clickedDownload={href:this.href,download:this.download}}}}};
+try{
+ await exportBackup();
+ assert.equal(clickedDownload.href,'blob:qa-backup');
+ assert.match(clickedDownload.download,/^beanlet-\d{4}-\d{2}-\d{2}\.json$/);
+ const payload=JSON.parse(await exportedBlob.text());
+ const current=await localApi('/api/journal');
+ assert.ok(payload.exportedAt);
+ assert.deepEqual(payload.catalog.filter(b=>!payload.hiddenCatalog.includes(b.id)),JSON.parse(JSON.stringify(current.catalog.filter(b=>!b.id.startsWith('hydrangea-')))));
+ assert.ok(!payload.catalog.some(b=>b.id.startsWith('hydrangea-')),'built-in catalog stays bundled in app');
+ for(const key of ['beans','brews','tasted','favorites','hiddenCatalog'])assert.deepEqual(payload[key],JSON.parse(JSON.stringify(current[key])),key+' is preserved in export');
+ assert.equal(payload.beans.find(b=>b.id==='photo-bean').photo,photo);
+ assert.equal(payload.beans.find(b=>b.id===stockBag).stockAdjustment,-15);
+ assert.equal(await importBackup(new File([JSON.stringify(payload)],'roundtrip.json')),0);
+ console.log('Backup export: real payload, photo, stock, favorites and idempotent reimport passed');
+}finally{globalThis.document=savedDocument;URL.createObjectURL=savedCreateURL;URL.revokeObjectURL=savedRevokeURL}

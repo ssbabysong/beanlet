@@ -4,6 +4,8 @@ import * as React from "react"
 import { XIcon } from "lucide-react"
 import { Dialog as SheetPrimitive } from "radix-ui"
 
+import {useSwipeNavigation} from '@/components/use-swipe-navigation'
+
 import { cn } from "@/lib/utils"
 
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
@@ -49,16 +51,20 @@ function SheetContent({
   children,
   side = "right",
   showCloseButton = true,
+  onSwipeBack,
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Content> & {
   side?: "top" | "right" | "bottom" | "left"
+  onSwipeBack?: () => void
   showCloseButton?: boolean
 }) {
+  const swipe=useSwipeNavigation(direction=>{if(direction==='previous')onSwipeBack?.()},!!onSwipeBack)
   return (
     <SheetPortal>
       <SheetOverlay />
       <SheetPrimitive.Content
         data-slot="sheet-content"
+        {...swipe}
         className={cn(
           "fixed z-50 flex flex-col gap-4 bg-background shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:animate-in data-[state=open]:duration-500",
           side === "right" &&
