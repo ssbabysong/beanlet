@@ -590,4 +590,4 @@ img,svg{-webkit-user-drag:none}
 
 .photo-rotate{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;color:#7780a5;font-size:13px}.photo-editor .photo-crop-frame{width:min(100%,calc(100dvh - var(--safe-top) - var(--safe-bottom) - 344px))}
 
-.taste-roaster{display:block;margin-top:3px;font-size:12px;line-height:1.4;color:#9295a7;overflow-wrap:anywhere}
+.taste-roaster{position:absolute;top:7px;left:0;max-width:90%;padding:4px 9px 4px 7px;background:#fff9e9;color:#7e786e;font-size:10px;line-height:1.3;transform:rotate(-5deg);border-radius:3px 5px 4px 2px;box-shadow:0 2px 4px #625a4614;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}.taste-sticker:nth-child(even) .taste-roaster{transform:rotate(3deg);background:#f5f0fb;color:#82758e}
