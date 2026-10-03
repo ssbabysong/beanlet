@@ -8,6 +8,17 @@ const brewSchema=z.object({id:z.string().min(1),beanId:z.string(),date:z.string(
 const tasteSchema=z.object({id:z.string().min(1),bean:beanSchema,firstDate:z.string().refine(v=>!v||civilDay(v)!==null),manual:z.boolean()}).refine(v=>v.id===coffeeIdentity(v.bean),'Coffee identity mismatch');
 export const backupSchema=z.object({format:z.literal('beanlet'),version:z.literal(1),starterCleanupVersion:z.literal(1).optional(),hiddenCatalog:z.array(z.string().min(1)).max(10000).default([]),favorites:z.array(z.string().min(1)).max(10000).default([]),tasted:z.array(tasteSchema).max(10000).default([]),beans:z.array(beanSchema).max(10000),catalog:z.array(beanSchema).max(10000),brews:z.array(brewSchema).max(100000)}).superRefine((s,ctx)=>{const ids=new Set(s.beans.map(b=>b.id));if(ids.size!==s.beans.length||new Set(s.catalog.map(b=>b.id)).size!==s.catalog.length||new Set(s.brews.map(b=>b.id)).size!==s.brews.length||new Set(s.tasted.map(b=>b.id)).size!==s.tasted.length)ctx.addIssue({code:'custom',message:'Duplicate IDs'});if(s.brews.some(b=>!ids.has(b.beanId)))ctx.addIssue({code:'custom',message:'Missing coffee for brew'});});
 type State=z.infer<typeof backupSchema>;
+const sharedFields=['name','nameEn','roaster','origin','process','roast','flavor','photo','icon','useOriginalArt','sourceUrl','sourceDate','variety','roastNote'] as const;
+function syncCatalog(s:State,source:State['catalog'][number]){
+ const copy=(bean:State['beans'][number])=>{
+  const shared=Object.fromEntries(sharedFields.map(key=>[key,source[key]]));
+  return beanSchema.parse({...bean,...shared});
+ };
+ s.beans=s.beans.map(bean=>bean.catalogId===source.id?copy(bean):bean);
+ s.tasted=s.tasted.map(taste=>taste.id===source.id?{...taste,bean:copy(taste.bean)}:taste);
+}
+function mergedCatalog(s:State){return [...new Map([...builtInCatalog,...s.catalog].map(b=>[b.id,b])).values()]}
+
 const empty=():State=>({format:'beanlet',version:1,starterCleanupVersion:1,hiddenCatalog:[],favorites:[],tasted:[],beans:[],catalog:[],brews:[]});
 export function migrateStarters(state:State):State{
  if(state.starterCleanupVersion===1)return state;
@@ -26,7 +37,7 @@ function mutate<T>(fn:(s:State)=>Promise<T>){const task=pending.then(async()=>fn
 function readPhoto(file:File){if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>5*1024*1024)throw new Error('照片请使用 5 MB 内的 JPG、PNG 或 WebP');return new Promise<string>((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result));r.onerror=()=>reject(new Error('照片读取失败'));r.readAsDataURL(file)})}
 export async function localApi(url:string,options?:RequestInit):Promise<any>{
  if(url==='/api/photos'){const file=(options?.body as FormData).get('photo');if(!(file instanceof File))throw new Error('照片读取失败');return {key:await readPhoto(file)}}
- if(!options?.method||options.method==='GET'){await pending;const s=await read();return {...s,catalog:[...builtInCatalog,...s.catalog].filter(b=>!s.hiddenCatalog.includes(b.id))}}
+ if(!options?.method||options.method==='GET'){await pending;const s=await read();return {...s,catalog:mergedCatalog(s).filter(b=>!s.hiddenCatalog.includes(b.id))}}
  return mutate(async s=>{const body=JSON.parse(String(options.body));const {id,kind}=body;
  if(kind==='catalog'&&options.method==='DELETE'){if(![...builtInCatalog,...s.catalog].some(b=>b.id===id))throw new Error('记录不存在');if(!s.hiddenCatalog.includes(id))s.hiddenCatalog.push(id);await write(s);return {ok:true}}
  if(kind==='stock'){const bean=s.beans.find(b=>b.id===id);if(!bean?.weight)throw new Error('先填写包装重量');if(typeof body.remaining!=='number'||!Number.isFinite(body.remaining)||body.remaining<0||body.remaining>bean.weight)throw new Error('余量应在 0 和包装重量之间');bean.stockAdjustment=body.remaining-bean.weight+usedGrams(bean.id,s.brews);await write(s);return {ok:true}}
@@ -41,7 +52,7 @@ export async function localApi(url:string,options?:RequestInit):Promise<any>{
  const updating=options.method==='PUT';const data={...body.data,id:updating?id:crypto.randomUUID()};
  if(kind==='bean'){
  if(!roastOptions.includes(data.roast))throw new Error('先选一个烘焙度');if(data.roastDate>`${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}-${String(new Date().getDate()).padStart(2,'0')}`)throw new Error('烘焙日期不能在未来');
- const b=beanSchema.parse(data);const list=b.recordType==='catalog'?s.catalog:s.beans;const at=list.findIndex(x=>x.id===b.id);if(updating){if(at<0)throw new Error('记录不存在');list[at]=b}else{if(body.saveToCatalog&&b.recordType!=='catalog'&&!b.catalogId){const c={...b,weight:undefined,stockAdjustment:undefined,id:crypto.randomUUID(),recordType:'catalog' as const};s.catalog.unshift(c);b.catalogId=c.id}list.unshift(b)}
+ const b=beanSchema.parse(data);const list=b.recordType==='catalog'?s.catalog:s.beans;const at=list.findIndex(x=>x.id===b.id);if(updating){if(at<0){if(b.recordType==='catalog'&&builtInCatalog.some(x=>x.id===b.id))list.push(b);else throw new Error('记录不存在')}else list[at]=b;if(b.recordType==='catalog')syncCatalog(s,b)}else{if(body.saveToCatalog&&b.recordType!=='catalog'&&!b.catalogId){const c={...b,weight:undefined,stockAdjustment:undefined,id:crypto.randomUUID(),recordType:'catalog' as const};s.catalog.unshift(c);b.catalogId=c.id}list.unshift(b)}
  }else{if(typeof data.dose!=='number'||!Number.isFinite(data.dose)||data.dose<=0||data.dose>200)throw new Error('请填写粉量（大于 0，最多 200 g）');const b=brewSchema.parse(data);if(!s.beans.some(x=>x.id===b.beanId))throw new Error('豆子不存在');if(updating){const at=s.brews.findIndex(x=>x.id===id);if(at<0)throw new Error('记录不存在');s.brews[at]=b}else s.brews.unshift(b)}await write(s);return {id:data.id}});
 }
 export async function exportBackup(){await pending;const s=await read();const contents=JSON.stringify({...s,exportedAt:new Date().toISOString()},null,2);const filename=`beanlet-${new Date().toISOString().slice(0,10)}.json`;if((globalThis as any).Capacitor?.isNativePlatform?.()){const {shareNativeBackup}=await import('./native-backup');await shareNativeBackup(contents,filename);return}const blob=new Blob([contents],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`beanlet-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}

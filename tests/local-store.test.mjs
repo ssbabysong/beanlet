@@ -156,3 +156,22 @@ try{
  assert.equal(await importBackup(new File([JSON.stringify(payload)],'roundtrip.json')),0);
  console.log('Backup export: real payload, photo, stock, favorites and idempotent reimport passed');
 }finally{globalThis.document=savedDocument;URL.createObjectURL=savedCreateURL;URL.revokeObjectURL=savedRevokeURL}
+
+// Catalog edits propagate shared identity/art, preserving each physical bag's data.
+const cSync=await request('POST',{kind:'bean',data:{...base,recordType:'catalog',name:'同步来源'}});
+const bagSync=await request('POST',{kind:'bean',data:{...base,catalogId:cSync.id,weight:200,stockAdjustment:-20,roastDate:'2026-09-01',notes:'袋子笔记',status:'已喝完'}});
+const solo=await request('POST',{kind:'bean',data:{...base,name:'独立豆子'}});
+await localApi('/api/journal');
+const updated={...base,recordType:'catalog',name:'同步新名字',nameEn:'Updated',roaster:'New roaster',photo:'data:image/jpeg;base64,YQ==',icon:'peach',useOriginalArt:false,flavor:'莓果'};
+await request('PUT',{kind:'bean',id:cSync.id,data:updated});
+let syncState=await localApi('/api/journal');const linked=syncState.beans.find(b=>b.id===bagSync.id);
+for(const key of ['name','nameEn','roaster','photo','icon','useOriginalArt','flavor'])assert.equal(linked[key],updated[key]);
+assert.equal(linked.weight,200);assert.equal(linked.stockAdjustment,-20);assert.equal(linked.roastDate,'2026-09-01');assert.equal(linked.notes,'袋子笔记');assert.equal(linked.status,'已喝完');
+assert.equal(syncState.beans.find(b=>b.id===solo.id).name,'独立豆子');
+assert.equal(syncState.tasted.find(t=>t.id===cSync.id).bean.photo,updated.photo);
+await request('PUT',{kind:'bean',id:cSync.id,data:{...updated,photo:'',icon:'cup'}});
+assert.equal((await localApi('/api/journal')).beans.find(b=>b.id===bagSync.id).photo,'');
+const built=initial.catalog[0];
+await request('PUT',{kind:'bean',id:built.id,data:{...built,recordType:'catalog',name:'内置豆编辑'}});
+syncState=await localApi('/api/journal');assert.equal(syncState.catalog.filter(b=>b.id===built.id).length,1);assert.equal(syncState.catalog.find(b=>b.id===built.id).name,'内置豆编辑');
+console.log('Catalog sync: shared fields, photo removal, bag isolation, memories and built-in overrides passed');
