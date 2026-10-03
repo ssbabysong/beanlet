@@ -211,7 +211,7 @@ html[lang="zh-CN"] .heading h1{letter-spacing:.09em;font-size:28px}html[lang="zh
 :root{--font-sans:"Annie Use Your Telescope","Beanlet Typewriter CN","Songti SC",serif;--font-illustration:var(--font-sans)}
 html[lang=en] body{font-size:18px}html[lang=en] .heading h1{font-size:32px;line-height:1.35}html[lang=en] .catalog-copy h3{font-size:22px;line-height:1.35}html[lang=en] .collection .bean-info h3{font-size:21px;line-height:1.4}html[lang=en] .primary,html[lang=en] .secondary,html[lang=en] .catalog-entry{font-size:18px}html[lang=en] .meta,html[lang=en] .subtitle,html[lang=en] .catalog-filters .field,html[lang=en] .catalog-filters .choice{font-size:14px}html[lang=en] .field input,html[lang=en] .field textarea{font-size:18px}.catalog-copy .bilingual-name,.pick-list .bilingual-name{font-size:14px}html[lang=en] .catalog-copy .bilingual-name,html[lang=en] .pick-list .bilingual-name{font-size:13px}
 
-:root{--font-sans:"Patrick Hand","Beanlet Xiaolai",sans-serif;--font-illustration:var(--font-sans)}
+:root{--font-sans:"Annie Use Your Telescope","Beanlet Xiaolai",sans-serif;--font-illustration:var(--font-sans)}
 html[lang="zh-CN"] .heading h1{letter-spacing:.02em}html[lang="zh-CN"] .collection .bean-info h3,html[lang="zh-CN"] .catalog-copy h3{letter-spacing:0}
 .backup-actions{display:grid;gap:12px;margin-top:16px}.backup-note{font-size:13px;line-height:1.8}.backup-actions label{cursor:pointer}
 
@@ -374,9 +374,9 @@ html[lang=en] .bean-shelf .bag-roast-print{font-size:12px;letter-spacing:.025em}
 .bean-shelf .bean-card .bean-info h3{margin:0;font-size:15px;line-height:1.5}
 
 /* A tiny tilted paper tag and quiet bilingual names. */
-.bean-shelf .bag-date-tag{left:14%;top:23%;padding:2px 4px 2px 5px;font-size:8px;line-height:1.1;letter-spacing:0;border:0;border-radius:2px 5px 3px 2px;background:#fff5db;transform:rotate(-11deg);box-shadow:1px 1px 0 #b9af9326}
-.bean-shelf .bag-date-tag::before{width:2px;height:2px;left:3px;background:#c4ad8d}
-.bean-shelf .bag-date-tag::after{content:'';position:absolute;left:43%;top:-3px;width:10px;height:5px;background:#ddc6bb99;border-radius:1px;transform:rotate(15deg)}
+.bean-shelf .bag-date-tag{left:14%;top:23%;padding:2px 4px 2px 5px;font-size:8px;line-height:1.1;letter-spacing:0;border:0;border-radius:2px 5px 3px 2px;background:#e5edf4;color:#798a9f;transform:rotate(-11deg);box-shadow:1px 1px 0 #8599af26}
+.bean-shelf .bag-date-tag::before{width:2px;height:2px;left:3px;background:#a3b4c6}
+.bean-shelf .bag-date-tag::after{content:'';position:absolute;left:43%;top:-3px;width:10px;height:5px;background:#bacadb99;border-radius:1px;transform:rotate(15deg)}
 .bean-shelf .bag-date-tag time{padding-left:3px}
 .bean-shelf .bag-roast-print{left:auto;right:15%;bottom:12%;width:auto;max-width:54%;text-align:right;font-size:8px;letter-spacing:.03em;transform:rotate(2deg);opacity:.85}
 html[lang=en] .bean-shelf .bag-roast-print{font-size:10px;letter-spacing:0}
@@ -594,8 +594,9 @@ img,svg{-webkit-user-drag:none}
 
 .tasted-wall .taste-name{display:block;width:100%;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;-webkit-line-clamp:unset;line-height:1.35}
 
-/* A folded fabric label peeking out of the bag's side seam. */
-.bean-shelf .bag-brand-tag{position:absolute;left:85%;top:49%;width:23px;height:62px;display:grid;place-items:center;background:#f9f4e9;color:#898073;border:1px solid #d9d0bf;border-left:0;border-radius:0 3px 3px 0;transform:rotate(-3deg);box-shadow:1px 2px 2px #6b635014;pointer-events:none}
-.bean-shelf .bag-brand-tag::before{content:'';position:absolute;left:5px;top:4px;bottom:4px;border-left:1px dashed #c8bda8}
-.bean-shelf .bag-brand-tag>span{display:block;width:52px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;transform:rotate(90deg);font-size:9px;line-height:1;text-align:center;margin-left:4px}
+/* A small brand tag attached at the upper-right seam. */
+.bean-shelf .bag-brand-tag{position:absolute;z-index:1;left:79%;top:19%;width:37px;height:15px;display:flex;align-items:center;justify-content:center;padding:0 3px 0 7px;background:#faf5e9;color:#8b8070;border:1px solid #d9cfbc;border-radius:7px 4px 8px 5px / 6px 7px 5px 8px;transform:rotate(-18deg);transform-origin:4px 50%;box-shadow:1px 3px 3px #6b635019;pointer-events:none}
+.bean-shelf .bag-brand-tag::before{content:'';position:absolute;left:2px;top:5px;width:3px;height:3px;border:1px solid #c6b89f;border-radius:50%;background:var(--bag-fill)}
+.bean-shelf .bag-brand-tag::after{content:'';position:absolute;left:-7px;top:6px;width:11px;height:4px;border-top:1px solid #bcae95;border-radius:50%;transform:rotate(12deg)}
+.bean-shelf .bag-brand-tag>span{display:block;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:7px;line-height:1;text-align:center}
 .bean-shelf .coffee-bag-body{position:relative;pointer-events:none}
