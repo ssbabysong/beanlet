@@ -291,5 +291,10 @@
   "款": " coffees",
   "查看豆袋": "View bag",
   "烘焙日期未记录": "Roast date not recorded",
-  "豆子、照片和咖啡记录仅保存在当前浏览器。清理浏览器数据前请导出备份。": "Your coffees, photos and coffee records stay on this device. Export a backup before clearing app or browser data."
+  "豆子、照片和咖啡记录仅保存在当前浏览器。清理浏览器数据前请导出备份。": "Your coffees, photos and coffee records stay on this device. Export a backup before clearing app or browser data.",
+  "咖啡豆全集": "Coffee library",
+  "去咖啡豆全集": "Explore coffees",
+  "添加到咖啡豆全集": "Add to coffee library",
+  "已加入咖啡豆全集": "Added to coffee library",
+  "从咖啡豆全集中移除，豆仓和咖啡记录会保留。": "Remove from the coffee library. Your bags and coffee records will stay."
 }

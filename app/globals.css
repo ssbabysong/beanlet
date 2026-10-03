@@ -575,3 +575,15 @@ html[lang=en] .bag-roast-tag{font-size:7px}
 .stock-direct{gap:0}
 .stock-direct .stock-slider-heading{line-height:20px}
 .stock-direct .stock-slider-scale{line-height:14px}.stock-direct .stock-slider-heading output{font-size:18px;color:#727db7}.stock-direct .stock-slider{margin:0}
+
+/* Artwork stays tappable without native selection or image callouts. */
+img,svg,.sticker,.coffee-bag,.bean-image,.catalog-art,.bean-detail-thumbnail,.detail-sticker,.memory-hero-art{
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+}
+img,svg{-webkit-user-drag:none}
+
+.photo-upload-row{display:flex;align-items:center;justify-content:center;gap:12px}.photo-upload-row .upload{margin:0;flex:1}.photo-editor{width:calc(100% - 32px)!important}.photo-crop-frame{position:relative;width:100%;aspect-ratio:1;overflow:hidden;background:#eeedf8;border-radius:20px;touch-action:none;cursor:grab}.photo-crop-frame:active{cursor:grabbing}.photo-crop-frame img{position:absolute;max-width:none;pointer-events:none;object-fit:fill}.photo-editor-actions{display:flex;gap:10px}.photo-editor-actions button{flex:1}
+.photo-editor .photo-crop-frame{width:min(100%,calc(100dvh - var(--safe-top) - var(--safe-bottom) - 300px));margin-inline:auto;flex-shrink:0}.photo-editor-actions{position:sticky;bottom:-30px;background:white;padding:10px 0}
+
+.roast-required .roaster-field{margin:0;min-width:0}.roast-required .roaster-field input{height:46px;min-width:0}
+
