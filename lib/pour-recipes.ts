@@ -1,0 +1,15 @@
+export type PourStep={at:number;fraction:number;zh:string;en:string};
+export type PourRecipe={id:string;zh:string;en:string;ratio:number;seconds:number;temp?:number;grindZh:string;grindEn:string;noteZh:string;noteEn:string;source:string;steps:PourStep[]};
+export const pourRecipes:PourRecipe[]=[
+ {id:'basic',zh:'HARIO 基础',en:'HARIO Basic',ratio:250/15,seconds:150,grindZh:'中细研磨',grindEn:'Medium-fine',noteZh:'闷蒸后缓慢绕圈注水。30 g 闷蒸量为 Beanlet 的计量建议；滤杯水位高时稍停。',noteEn:'Bloom, then pour slowly in circles. The 30 g bloom is a Beanlet suggestion. Pause if the dripper fills.',source:'https://www.hario.co.uk/pages/brew-guides-v60-basic',steps:[{at:0,fraction:30/250,zh:'浸湿粉床，闷蒸',en:'Wet the grounds; bloom'},{at:30,fraction:1,zh:'缓慢绕圈注水，再等待滴滤',en:'Pour slowly in circles, then drain'}]},
+ {id:'kasuya',zh:'粕谷哲 4:6',en:'Tetsu Kasuya 4:6',ratio:15,seconds:210,temp:92,grindZh:'粗研磨',grindEn:'Coarse',noteZh:'采用 HARIO 发布的偏甜版本：原配方 20 g 粉、300 g 水，前两段 50 / 70 g。时刻为参考，结合下水速度调整。',noteEn:'HARIO’s sweeter version: originally 20 g coffee and 300 g water, starting with 50 / 70 g pours. Adjust timing to drainage.',source:'https://www.hario-europe.com/blogs/hario-community/v60-ambassadors-tetsu-kasuya',steps:[{at:0,fraction:50/300,zh:'第一段 · 闷蒸',en:'First pour · bloom'},{at:45,fraction:120/300,zh:'第二段注水',en:'Second pour'},{at:90,fraction:180/300,zh:'第三段注水',en:'Third pour'},{at:130,fraction:240/300,zh:'第四段注水',en:'Fourth pour'},{at:160,fraction:1,zh:'最后注水，等待滴滤',en:'Final pour, then drain'}]},
+ {id:'hoffmann',zh:'Hoffmann 单杯',en:'Hoffmann One Cup',ratio:250/15,seconds:180,temp:100,grindZh:'中细研磨',grindEn:'Medium-fine',noteZh:'原配方 15 g 粉、250 g 水。沸水建议针对浅烘焙；闷蒸与最后注水后轻晃滤杯。每段约注 10–15 秒，再等待下一段。',noteEn:'Originally 15 g coffee and 250 g water. Boiling water is for light roasts. Swirl after blooming and the final pour. Pour each pulse for 10–15 seconds, then wait.',source:'https://www.hario-usa.com/blogs/recipes-and-more-from-friends/james-hoffmann-1-cup-v60-technique',steps:[{at:0,fraction:.2,zh:'闷蒸，轻晃滤杯',en:'Bloom and gently swirl'},{at:45,fraction:.4,zh:'注水至目标，等待',en:'Pour to target, then wait'},{at:70,fraction:.6,zh:'注水至目标，等待',en:'Pour to target, then wait'},{at:90,fraction:.8,zh:'注水至目标，等待',en:'Pour to target, then wait'},{at:110,fraction:1,zh:'最后注水，轻晃后滴滤',en:'Final pour, swirl, then drain'}]}
+];
+export function pourPlan(recipe:PourRecipe,dose:number){
+ if(!Number.isFinite(dose)||dose<1||dose>60)throw new Error('Dose must be between 1 and 60 g');
+ const total=Math.round(dose*recipe.ratio);
+ return {total,steps:recipe.steps.map((step,i)=>{const target=Math.round(total*step.fraction);return {...step,target,amount:target-(i?Math.round(total*recipe.steps[i-1].fraction):0)}})};
+}
+export function pourStepIndex(recipe:PourRecipe,elapsed:number){let index=0;for(let i=0;i<recipe.steps.length;i++)if(recipe.steps[i].at<=elapsed)index=i;return index}
+export function timerSeconds(accumulated:number,started:number|null,now:number){return Math.max(0,Math.floor((accumulated+(started===null?0:now-started))/1000))}
+export function timerText(seconds:number){return `${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`}
