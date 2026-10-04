@@ -610,3 +610,30 @@ img,svg{-webkit-user-drag:none}
 .pour-timer-target{display:flex;align-items:center;flex-direction:column;gap:6px;padding:16px 8px;background:#eaf0ed;border-radius:20px 24px 19px 25px;color:#728e84}.pour-timer-target>span,.pour-timer-target>small{font-size:12px}.pour-timer-target>strong{font-weight:400;font-size:16px}.pour-timer-target b{font-size:32px;font-weight:400;margin-left:6px}
 .pour-timer-steps{list-style:none;padding:0;margin:16px 0}.pour-timer-steps li{display:flex;align-items:center;gap:12px;padding:8px 10px;color:#a1a5b5;font-size:13px;border-radius:10px}.pour-timer-steps li[aria-current=step]{background:#eeedf7;color:#7b83ad}.pour-timer-steps time{width:38px}.pour-timer-steps li>span{flex:1}.pour-timer-steps small{margin-left:5px}.pour-timer-steps strong{font-weight:400}.pour-timer-notes{font-size:11px;color:#9398a8;line-height:1.7}.pour-timer-notes p{margin:8px 0}.pour-timer-notes a{text-decoration:underline}
 .pour-timer-actions{display:flex;gap:10px;flex-shrink:0;padding-top:6px}.pour-timer-actions .primary,.pour-timer-actions .secondary{flex:1;justify-content:center;min-height:44px}.pour-timer-actions button{font-size:14px}
+
+/* Quick timer is an action beside the three main views. */
+.main-tabs{width:min(310px,calc(100vw - 32px))!important;grid-template-columns:repeat(4,minmax(0,1fr))}
+.main-tabs .nav-active{width:calc((100% - 18px)/4)}
+.main-tabs .pour-timer-shortcut{align-items:center;justify-content:center}
+.main-tabs .pour-timer-shortcut .sticker{width:49px;opacity:.85}
+.main-tabs .shortcut-clock{position:absolute;right:5px;bottom:6px;color:#818bbb;fill:#f8f8fd;stroke-width:1.7}
+.pour-timer-bean{margin-bottom:14px}
+.pour-timer-bean .brew-coffee-trigger{height:auto!important;min-height:54px}
+
+/* Keep the live clock and the scale target together; details stay optional. */
+.pour-timer-dialog{gap:10px!important}
+.pour-timer-facts{display:flex;justify-content:center;gap:14px;margin:10px 0;font-size:12px}
+.pour-timer-focus{background:#eeedf7;border-radius:23px;padding:16px 18px 12px;color:#697499}
+.pour-timer-focus .pour-timer-clock{margin:0 0 10px;gap:3px}
+.pour-timer-focus .pour-timer-clock>strong{font-family:ui-rounded,'SF Pro Rounded',system-ui,sans-serif;font-size:56px;font-weight:400;letter-spacing:-2px;line-height:1.1;color:#647096}
+.pour-stage-track{display:flex;gap:5px;margin:12px 0 16px}
+.pour-stage-track>span{height:4px;flex:1;border-radius:5px;background:#dadcec}
+.pour-stage-track>span[data-past=true]{background:#b6bfcc}.pour-stage-track>span[aria-current=step]{background:#8c98b9}
+.pour-timer-focus .pour-timer-target{background:none;padding:0;gap:7px;color:#728c84;text-align:center;border-radius:0}
+.pour-timer-focus .pour-timer-target>strong{display:flex;align-items:baseline;justify-content:center;gap:8px;flex-wrap:wrap}
+.pour-timer-focus .pour-timer-target b{font-family:ui-rounded,system-ui,sans-serif;font-size:40px;font-weight:450;line-height:1.15;margin:0;letter-spacing:-1px}
+.pour-timer-focus .pour-timer-target small{font-size:12px;font-weight:400}
+.pour-timer-focus .pour-timer-target>span{font-size:12px;line-height:1.6}
+.pour-timer-next{display:flex;justify-content:space-between;gap:10px;border-top:1px solid #dcdfea;margin-top:14px;padding-top:10px;font-size:12px;color:#828ba4}.pour-timer-next strong{font-weight:400;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pour-plan{font-size:12px;color:#858ca3;margin:12px 0 4px}.pour-plan summary{cursor:pointer;min-height:34px;line-height:34px}.pour-plan summary>span{float:right;color:#a0a5b5;font-size:11px}.pour-plan p{font-size:11px;margin:8px 0}.pour-plan .pour-timer-steps{margin:4px 0}
+@media(max-height:740px){.pour-timer-dialog{padding:15px!important;gap:8px!important}.pour-timer-bean{margin-bottom:10px}.pour-timer-focus{padding:12px 15px}.pour-timer-focus .pour-timer-clock>strong{font-size:48px}.pour-stage-track{margin:9px 0 11px}.pour-timer-focus .pour-timer-target b{font-size:34px}}
