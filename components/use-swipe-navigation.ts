@@ -8,7 +8,7 @@ export function useSwipeNavigation(onSwipe:(direction:SwipeDirection)=>void,enab
    start.current=null;moved.current=false;
    if(!enabled||e.button!==0||!e.isPrimary)return;
    const target=e.target as HTMLElement;
-   if(target.closest('input,textarea,select,[role=slider],[role=combobox],[role=listbox],.swipe-row,.main-tabs'))return;
+   if(target.closest('button,a,input,textarea,select,[role=button],[role=slider],[role=combobox],[role=listbox],.swipe-row,.main-tabs'))return;
    // Portaled dialogs must never drive the page underneath them.
    if(target.closest('[role=dialog]')!==e.currentTarget.closest('[role=dialog]'))return;
    start.current={x:e.clientX,y:e.clientY};
