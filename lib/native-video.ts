@@ -8,3 +8,9 @@ export async function shareNativeVideo(blob:Blob,name:string){
  try{await Share.share({title:'Beanlet Reel',files:[uri]})}
  finally{await Filesystem.deleteFile({path,directory:Directory.Cache}).catch(()=>{})}
 }
+
+export async function shareNativeImage(blob:Blob,name:string,title:string){
+ const path=`reports/${name}`,data=await blobBase64(blob),{uri}=await Filesystem.writeFile({path,data,directory:Directory.Cache,recursive:true});
+ try{await Share.share({title,files:[uri]})}
+ finally{await Filesystem.deleteFile({path,directory:Directory.Cache}).catch(()=>{})}
+}

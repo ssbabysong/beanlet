@@ -1,4 +1,13 @@
 export type MonthlyBrew={date:string;kind?:'pourOver'|'milk';dose?:number;beanId:string};
+type MonthlyReportInput={language:'zh'|'en';month:string;cups:number;pourOvers:number;milks:number;beanCount:number;topBean?:{name:string;count:number}};
+
+export function monthlyReportText({language,month,cups,pourOvers,milks,beanCount,topBean}:MonthlyReportInput){
+ const lines=language==='en'
+  ?[`BEANLET · ${month}`,`${cups} coffees`,`${pourOvers} pour-over · ${milks} milk`,`${beanCount} beans`]
+  :[`BEANLET · ${month}`,`${cups} 杯咖啡`,`手冲 ${pourOvers} · 奶咖 ${milks}`,`尝了 ${beanCount} 款豆子`];
+ if(topBean)lines.push(language==='en'?`Most brewed: ${topBean.name} ×${topBean.count}`:`最常喝：${topBean.name} ×${topBean.count}`);
+ return lines.join('\n');
+}
 
 export function monthlyBrewStats<T extends MonthlyBrew>(brews:T[],year:number,month:number){
  const prefix=`${year}-${String(month).padStart(2,'0')}`,daysInMonth=new Date(year,month,0).getDate(),records=brews.filter(b=>b.date.startsWith(prefix));
