@@ -37,7 +37,7 @@ import { zhCN,enUS } from 'date-fns/locale';
 import {fileDataUrl,makeCoffeeSticker} from '@/lib/coffee-sticker';
 import {monthlyBrewStats,monthlyReportText} from '@/lib/monthly-stats';
 import {createMonthlyReportImage} from '@/lib/monthly-report-image';
-import {stickerPlacement,wallStickerPlacement} from '@/lib/sticker-layout';
+import {stickerPlacement} from '@/lib/sticker-layout';
 import {CoffeeReel} from '@/components/coffee-reel';
 import {ResponsiveContainer,BarChart,Bar,XAxis,YAxis,Tooltip,PieChart,Pie,Cell} from 'recharts';
 type Bean={weight?:number;stockAdjustment?:number;nameEn?:string;useOriginalArt?:boolean;recordType?:string;catalogId?:string;sourceUrl?:string;sourceDate?:string;variety?:string;roastNote?:string;icon?:string;id:string;name:string;roaster:string;origin:string;process:string;roast:string;flavor:string;status:string;rating:number;repurchase:boolean;photo:string;roastDate:string;notes:string};
@@ -68,7 +68,7 @@ function Journal(){
 
  const [photoSource,setPhotoSource]=useState<File|string|null>(null);
  const [editing,setEditing]=useState<string|null>(null),[beanOpen,setBeanOpen]=useState(false),[draft,setDraft]=useState<any>(fresh),[file,setFile]=useState<File|null>(null),[preview,setPreview]=useState(''),[detail,setDetail]=useState<string|null>(null),[busy,setBusy]=useState(false),[formError,setFormError]=useState('');
- const [brewView,setBrewView]=useState('calendar'),[calendarDay,setCalendarDay]=useState(()=>new Date()),[calendarMonth,setCalendarMonth]=useState(()=>new Date()),[sharingMonth,setSharingMonth]=useState(false),[monthReport,setMonthReport]=useState<{blob:Blob;url:string;name:string;text:string}|null>(null);
+ const [brewView,setBrewView]=useState('calendar'),[calendarDay,setCalendarDay]=useState(()=>new Date()),[calendarMonth,setCalendarMonth]=useState(()=>new Date()),[sharingMonth,setSharingMonth]=useState(false),[monthReport,setMonthReport]=useState<{blob:Blob;url:string;name:string;text:string}|null>(null),[stickerWallMoving,setStickerWallMoving]=useState(false);
  const [brewActions,setBrewActions]=useState<Brew|null>(null);
 
  const [editingBrew,setEditingBrew]=useState<string|null>(null);
@@ -701,7 +701,9 @@ function Journal(){
                      <button className="icon-button" aria-label={t("下个月")} onClick={()=>setCalendarMonth(month=>new Date(month.getFullYear(),month.getMonth()+1,1))}><ChevronRight size={19}/></button>
                    </header>
                    {photoStickerBrews.length>0&&<section className="month-sticker-wall" aria-label={t("所有咖啡照片贴纸")}>
-                     <div className="month-sticker-collage">{photoStickerBrews.map((brew,index)=>{const place=wallStickerPlacement(brew.id,index,photoStickerBrews.length);return <figure className={brew.photoCutout?'is-cutout':''} key={brew.id} style={{'--wall-sticker-size':`${place.size}%`,'--wall-sticker-lift':`${place.lift}px`,'--wall-sticker-rotation':`${place.rotation}deg`} as CSSProperties}><img src={brew.photo} alt={label(beans.find(bean=>bean.id===brew.beanId))}/></figure>})}</div>
+                     <button type="button" className={`month-sticker-stage${stickerWallMoving?' is-moving':''}`} aria-label={t("晃动咖啡贴纸")} onClick={()=>{setStickerWallMoving(false);requestAnimationFrame(()=>{setStickerWallMoving(true);navigationFeedback();setTimeout(()=>setStickerWallMoving(false),1450)})}}>
+                       <span className="month-sticker-collage">{photoStickerBrews.map((brew,index)=>{const place=stickerPlacement(brew.id,index,photoStickerBrews.length,false),flyX=((index%5)-2)*10,flySpin=(index%2?1:-1)*(18+index%4*7);return <figure className={brew.photoCutout?'is-cutout':''} key={brew.id} style={{'--sticker-x':`${place.x}%`,'--sticker-y':`${place.y}%`,'--sticker-size':`${Math.min(29,place.size*1.08)}%`,'--sticker-z':place.z,'--sticker-rotation':`${place.rotation}deg`,'--sticker-delay':`${index*24}ms`,'--sticker-fly-x':`${flyX}px`,'--sticker-fly-x-back':`${-flyX}px`,'--sticker-fly-spin':`${flySpin}deg`,'--sticker-fly-spin-back':`${-flySpin*.55}deg`} as CSSProperties}><img src={brew.photo} alt={label(beans.find(bean=>bean.id===brew.beanId))}/></figure>})}</span>
+                     </button>
                    </section>}
                    <div className="month-analysis-grid">
                      <section className="month-chart-card month-trend-card">
