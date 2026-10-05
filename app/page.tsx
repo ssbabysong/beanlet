@@ -743,7 +743,7 @@ function Journal(){
                    </div>
                    <div className="month-share-actions">
                      <button type="button" className="month-share-button" disabled={!monthBrews.length||sharingMonth} onClick={openMonthlyReport}><Share2 size={18}/><span>{sharingMonth?t("正在生成…"):t("分享月报")}</span></button>
-                     <CoffeeReel fullButton photos={photoStickerBrews.map(brew=>({id:brew.id,src:brew.photo!,cutout:brew.photoCutout}))} month={monthLabel}/>
+                     <CoffeeReel fullButton photos={photoStickerBrews.map(brew=>({id:brew.id,src:brew.photo!,cutout:brew.photoCutout}))} month={`${calendarMonth.getFullYear()}.${String(calendarMonth.getMonth()+1).padStart(2,'0')}`}/>
                    </div>
                  </section>
                )}
