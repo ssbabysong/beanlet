@@ -22,3 +22,12 @@ for(const base of [{w:1,h:1},{w:1,h:2},{w:3,h:1}])for(const angle of [-179,-90,-
 }
 assert.equal(transformCrop(start,{w:1,h:1},c,c,1,22).angle,22);
 console.log('Free rotation: arbitrary angles and all crop corners stay covered');
+const {transformSticker}=await import('../lib/photo-gesture.ts');
+const free=transformSticker(start,c,{x:.7,y:.35},.5,31);
+assert.equal(free.angle,31);
+assert.equal(free.zoom,.5);
+assert.ok(Number.isFinite(free.cx)&&Number.isFinite(free.cy));
+assert.notDeepEqual({cx:free.cx,cy:free.cy},{cx:start.cx,cy:start.cy});
+assert.equal(transformSticker(start,c,c,.01).zoom,.35);
+assert.equal(transformSticker(start,c,c,10).zoom,4);
+console.log('Sticker gestures: transparent margins, pan, zoom and free rotation passed');

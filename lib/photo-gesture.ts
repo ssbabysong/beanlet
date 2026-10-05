@@ -23,3 +23,16 @@ export function transformCrop(view:FreeCrop,base:{w:number;h:number},from:CropPo
  const bx=clamp(ux,-mx,mx),by=clamp(uy,-my,my);
  return {zoom,angle,cx:.5+bx*c-by*s,cy:.5+bx*s+by*c};
 }
+
+// Sticker editing intentionally allows transparent space around the cut-out subject.
+export function transformSticker(view:FreeCrop,from:CropPoint,to:CropPoint,factor=1,turn=0):FreeCrop{
+ const angle=((view.angle+turn+180)%360+360)%360-180,zoom=clamp(view.zoom*factor,.35,4);
+ const delta=turn*Math.PI/180,dc=Math.cos(delta),ds=Math.sin(delta),ratio=zoom/view.zoom;
+ const x=view.cx-from.x,y=view.cy-from.y;
+ return {
+  zoom,
+  angle,
+  cx:clamp(to.x+(x*dc-y*ds)*ratio,-.65,1.65),
+  cy:clamp(to.y+(x*ds+y*dc)*ratio,-.65,1.65),
+ };
+}
