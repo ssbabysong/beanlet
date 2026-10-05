@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
-import {swipeDirection,adjacentMenu} from '../lib/swipe-navigation.ts';
+import {swipeDirection,adjacentTab} from '../lib/swipe-navigation.ts';
 assert.equal(swipeDirection(-100,10),'next');
 assert.equal(swipeDirection(100,-10),'previous');
 for(const [x,y] of [[30,0],[100,90],[12,160],[0,0]])assert.equal(swipeDirection(x,y),null);
-assert.equal(adjacentMenu('beans','next'),'brews');
-assert.equal(adjacentMenu('brews','next'),'catalog');
-assert.equal(adjacentMenu('catalog','previous'),'brews');
-assert.equal(adjacentMenu('beans','previous'),null);
-assert.equal(adjacentMenu('catalog','next'),null);
+assert.equal(adjacentTab('calendar','next',['calendar','stats']),'stats');
+assert.equal(adjacentTab('stats','previous',['calendar','stats']),'calendar');
+assert.equal(adjacentTab('tasted','next',['tasted','discover']),'discover');
+assert.equal(adjacentTab('discover','previous',['tasted','discover']),'tasted');
+assert.equal(adjacentTab('calendar','previous',['calendar','stats']),null);
+assert.equal(adjacentTab('stats','next',['calendar','stats']),null);
 console.log('Navigation: horizontal thresholds, vertical rejection and menu boundaries passed');

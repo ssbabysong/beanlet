@@ -2,7 +2,6 @@
 import { useEffect,useState,useRef,FormEvent,type CSSProperties } from 'react';
 import {coffeeIdentity,stickerShape,groupFinished,type Taste} from '@/lib/tasted';
 import {beanPalette,calendarColors} from '@/lib/bean-appearance';
-import {SwipeToDelete} from '@/components/swipe-to-delete';
 import {brewDraftFor,brewPayload,type BrewRecord,type BrewKind} from '@/lib/brew-types';
 import {RoasterInput} from '@/components/roaster-input';
 import {PhotoEditor} from '@/components/photo-editor';
@@ -30,7 +29,7 @@ import { LocaleProvider,useI18n } from '@/lib/i18n';
 import {countryOf,processOf,matchesFilters,emptyFilters,type CatalogFilters} from '@/lib/catalog-filters';
 import {PressableRecord} from '@/components/pressable-record';
 import {useSwipeNavigation} from '@/components/use-swipe-navigation';
-import {adjacentMenu} from '@/lib/swipe-navigation';
+import {adjacentTab} from '@/lib/swipe-navigation';
 import {navigationFeedback} from '@/lib/haptic-feedback';
 import {BagPaper} from '@/components/bag-paper';
 import {bilingualBean,editableBeanNames,editableBeanInfo,usesOriginalBeanName} from '@/lib/catalog';
@@ -84,7 +83,7 @@ function Journal(){
  async function addBrewPhoto(file?:File){if(!file)return;setBrewPhotoBusy(true);setFormError('');try{const sticker=await makeCoffeeSticker(file);setBrewPhotoEdit({source:sticker.photo,cutout:sticker.photoCutout})}catch(error){setFormError((error as Error).message)}finally{setBrewPhotoBusy(false)}}
  async function saveBean(e:FormEvent){e.preventDefault();if(!roastOptions.includes(draft.roast)){setFormError('先选一个烘焙度');return;}if(draft.recordType!=='catalog'&&draft.roastDate>dateKey(new Date())){setFormError('烘焙日期不能在未来');return;}setBusy(true);setFormError('');try{let key=draft.photo;if(file){const f=new FormData();f.set('photo',file);key=(await api('/api/photos',{method:'POST',body:f})).key;setDraft((d:any)=>({...d,photo:key}));setFile(null)}const data={...draft,...(draft.recordType==='catalog'&&!editing?{roastDate:'',status:'未开封',notes:''}:{}),roaster:draft.roaster.trim(),weight:draft.recordType==='catalog'||draft.weight===''||draft.weight==null?undefined:Number(draft.weight),stockAdjustment:draft.recordType==='catalog'?undefined:draft.stockAdjustment,nameEn:draft.nameEn?.trim()||'',name:draft.name.trim()||draft.nameEn?.trim()||randomBeanName(language,[...beans,...catalog].map(b=>b.name)),photo:key};const saved=await api('/api/journal',{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'bean',id:editing,data,saveToCatalog:!editing&&saveToCatalog&&draft.recordType!=='catalog'&&!draft.catalogId})});if(!editing&&draft.recordType==='catalog')setAtlasView('discover');setBeanOpen(false);if(!editing)setTab(draft.recordType==='catalog'?'catalog':'beans');await refresh();toast.success(t(editing?'豆子资料已更新':draft.recordType==='catalog'?'已加入豆子合集':'已放进豆仓'))}catch(e){setFormError((e as Error).message)}finally{setBusy(false)}}
  async function saveBrew(e:FormEvent){e.preventDefault();if(!Number.isFinite(Number(brewDraft.dose))||Number(brewDraft.dose)<=0||Number(brewDraft.dose)>200){setFormError('请填写粉量（大于 0，最多 200 g）');return}setBusy(true);setFormError('');try{await api('/api/journal',{method:editingBrew?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'brew',id:editingBrew,data:brewPayload(brewDraft)})});setBrewOpen(false);const savedDate=new Date(brewDraft.date+'T12:00:00');setCalendarDay(savedDate);setCalendarMonth(savedDate);await refresh();toast.success(t(editingBrew?'咖啡记录已更新':'这杯咖啡，记下了'))}catch(e){setFormError((e as Error).message)}finally{setBusy(false)}}
- async function remove(){if(!deleteId)return;setBusy(true);try{await api('/api/journal',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify(deleteId)});if(deleteId.kind==='bean')setDetail(null);setDeleteId(null);await refresh();toast.success(t('记录已删除'))}catch(e){toast.error(t((e as Error).message))}finally{setBusy(false)}}
+ async function remove(){if(!deleteId)return;setBusy(true);try{await api('/api/journal',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify(deleteId)});if(deleteId.kind==='bean')setDetail(null);if(deleteId.kind==='catalog'){setBeanOpen(false);setEditing(null)}setDeleteId(null);await refresh();toast.success(t('记录已删除'))}catch(e){toast.error(t((e as Error).message))}finally{setBusy(false)}}
  function chooseCatalog(b:Bean){setEditing(null);setDraft({...fresh,...b,...editableBeanNames(b),...editableBeanInfo(b),weight:undefined,stockAdjustment:undefined,id:undefined,recordType:'bean',catalogId:b.id,roastDate:'',status:'未开封',rating:0,repurchase:false,notes:''});setSaveToCatalog(false);setPickerOpen(false);setFile(null);setFormError('');setBeanOpen(true)}
  const catalogShown=catalog.filter(b=>matchesFilters(b,filters)&&[b.name,...Object.values(bilingualBean(b)),b.roaster,b.origin,b.flavor,b.variety,t(b.roast),t(b.process)].join(' ').toLowerCase().includes(catalogQuery.trim().toLowerCase()));
  const tastedShown=tasted.filter(x=>[label(x.bean),otherLabel(x.bean),x.bean.roaster,x.bean.flavor,x.bean.origin].join(' ').toLowerCase().includes(catalogQuery.trim().toLowerCase()));
@@ -110,7 +109,7 @@ function Journal(){
 
  function brewCard(b:Brew,hideDate=false,inMemory=false){const hasDetails=!!(b.dose||b.grind||b.time||b.notes||b.rating||b.photo||(b.kind==='milk'?(b.yield||b.milkAmount||(b.milkType&&b.milkType!=='未记录')||(b.serving&&b.serving!=='未记录')):(b.water||b.temp)));return <PressableRecord className={'brew-card'+(hasDetails?'':' brew-card-compact')+(inMemory?' memory-coffee-record':'')+(b.photo?' has-brew-photo':'')} key={b.id} label={label(beans.find(x=>x.id===b.beanId))+' · '+b.date+' · '+t('点击编辑记录')} onClick={()=>editBrew(b)} onActions={()=>setBrewActions(b)}>{!inMemory&&<span className="brew-bean" style={{backgroundColor:beanPalette(beans.find(x=>x.id===b.beanId)||{id:b.beanId}).fill}} aria-hidden="true"><BeanVisual bean={beans.find(x=>x.id===b.beanId)}/></span>}{b.photo&&<span className={'brew-photo-sticker'+(b.photoCutout?' is-cutout':'')} aria-label={t('这杯咖啡的照片')}><img src={b.photo} alt=""/></span>}<div className="brew-body"><div className="row"><h3>{inMemory?<time dateTime={b.date}>{new Intl.DateTimeFormat(language==='en'?'en-US':'zh-CN',{year:'numeric',month:'short',day:'numeric'}).format(new Date(b.date+'T12:00:00'))}</time>:label(beans.find(x=>x.id===b.beanId))}</h3></div>{!hideDate&&!inMemory&&<span className="meta brew-record-date">{b.date}</span>}<div className="parameters">{b.dose!=null&&<span>{b.dose} {t('g 粉')}</span>}{b.kind==='milk'?<>{b.yield!=null&&<span>{t('出液')} {b.yield} g</span>}{b.milkAmount!=null&&<span>{t('奶量')} {b.milkAmount} ml</span>}{b.milkType&&b.milkType!=='未记录'&&<span>{t(b.milkType)}</span>}{b.serving&&b.serving!=='未记录'&&<span>{t(b.serving)}</span>}</>:<>{b.water!=null&&<span>{b.water} {t('ml 水')}</span>}{b.temp!=null&&<span>{b.temp} °C</span>}{!!b.dose&&!!b.water&&<span>1 : {(b.water/b.dose).toFixed(1)}</span>}</>}</div>{(b.grind||b.time)&&<p className="meta brew-method">{[b.grind&&t(`研磨 ${b.grind}`),b.time&&t(`用时 ${b.time}`)].filter(Boolean).join(' · ')}</p>}{b.notes&&<p className="notes">{b.notes}</p>}{b.rating>0&&<Rating value={b.rating}/>}</div></PressableRecord>}
  function selectMenu(value:string){setTab(value);if(value==='catalog'){setAtlasView(tasted.length?'tasted':'discover');setCatalogQuery('');setFilters({...emptyFilters})}}
- const mainSwipe=useSwipeNavigation(direction=>{const next=adjacentMenu(tab,direction);if(next){selectMenu(next);navigationFeedback()}},!beanOpen&&!brewOpen&&!settingsOpen&&!pickerOpen&&!detail&&!tasteDetail&&!brewActions&&!deleteId);
+ const mainSwipe=useSwipeNavigation(direction=>{const tabs=tab==='brews'?['calendar','stats']:tab==='catalog'?(tasted.length?['tasted','discover']:['discover','tasted']):[];const current=tab==='brews'?brewView:atlasView,next=adjacentTab(current,direction,tabs);if(!next)return;if(tab==='brews')setBrewView(next);else{setAtlasView(next);setCatalogQuery('');setFilters({...emptyFilters})}navigationFeedback()},(tab==='brews'||tab==='catalog')&&!beanOpen&&!brewOpen&&!settingsOpen&&!pickerOpen&&!detail&&!tasteDetail&&!brewActions&&!deleteId);
  return (
    <>
      <Toaster
@@ -227,6 +226,9 @@ function Journal(){
                  </label>
                ))}
              </RadioGroup>
+           )}
+           {tab === "brews" && brewView === "stats" && photoStickerBrews.length > 0 && (
+             <CoffeeReel photos={photoStickerBrews.map(brew=>({id:brew.id,src:brew.photo!,cutout:brew.photoCutout}))} month={new Intl.DateTimeFormat(language==='en'?'en-US':'zh-CN',{year:'numeric',month:'long'}).format(calendarMonth)}/>
            )}
          </div>
          <span className="bottom-menu-backdrop" aria-hidden="true" />
@@ -361,14 +363,7 @@ function Journal(){
                      {filterControls()}
                      <div className="catalog-list">
                        {catalogShown.map((b) => (
-                         <SwipeToDelete
-                           key={b.id}
-                           label={t("删除") + " " + label(b)}
-                           onDelete={() =>
-                             setDeleteId({ id: b.id, kind: "catalog" })
-                           }
-                         >
-                           <article className="catalog-card">
+                           <article className="catalog-card" key={b.id}>
                              <div
                                className="catalog-art"
                                style={{ backgroundColor: beanPalette(b).fill }}
@@ -440,7 +435,6 @@ function Journal(){
                                ) && <small>{t("豆仓里有这款")}</small>}
                              </div>
                            </article>
-                         </SwipeToDelete>
                        ))}
                      </div>
                      {!catalogShown.length && (
@@ -707,7 +701,6 @@ function Journal(){
                    </header>
                    {photoStickerBrews.length>0&&<section className="month-sticker-wall" aria-label={t("所有咖啡照片贴纸")}>
                      <div className="month-sticker-collage">{photoStickerBrews.map((brew,index)=>{const place=wallStickerPlacement(brew.id,index,photoStickerBrews.length);return <figure className={brew.photoCutout?'is-cutout':''} key={brew.id} style={{'--wall-sticker-size':`${place.size}%`,'--wall-sticker-lift':`${place.lift}px`,'--wall-sticker-rotation':`${place.rotation}deg`} as CSSProperties}><img src={brew.photo} alt={label(beans.find(bean=>bean.id===brew.beanId))}/></figure>})}</div>
-                     <CoffeeReel photos={photoStickerBrews.map(brew=>({id:brew.id,src:brew.photo!,cutout:brew.photoCutout}))} month={new Intl.DateTimeFormat(language==='en'?'en-US':'zh-CN',{year:'numeric',month:'long'}).format(calendarMonth)}/>
                    </section>}
                    <div className="month-analysis-grid">
                      <section className="month-chart-card month-trend-card">
@@ -1293,9 +1286,16 @@ function Journal(){
                  {t(formError)}
                </p>
              )}
-             <button type="submit" className="primary save" disabled={busy}>
-               {busy ? t("正在保存…") : t("收好")}
-             </button>
+             <div className="form-submit-actions">
+               {editing && draft.recordType === "catalog" && (
+                 <button type="button" className="edit-delete" disabled={busy} onClick={()=>setDeleteId({id:editing,kind:'catalog'})}>
+                   <Trash2 size={17}/><span>{t("删除")}</span>
+                 </button>
+               )}
+               <button type="submit" className="primary save" disabled={busy}>
+                 {busy ? t("正在保存…") : t("收好")}
+               </button>
+             </div>
            </div>
          </form>
        </DialogContent>
