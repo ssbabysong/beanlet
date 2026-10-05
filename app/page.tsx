@@ -37,7 +37,7 @@ import { zhCN,enUS } from 'date-fns/locale';
 import {fileDataUrl,makeCoffeeSticker} from '@/lib/coffee-sticker';
 import {monthlyBrewStats,monthlyReportText} from '@/lib/monthly-stats';
 import {createMonthlyReportImage} from '@/lib/monthly-report-image';
-import {stickerPlacement} from '@/lib/sticker-layout';
+import {wallStickerPlacement} from '@/lib/sticker-layout';
 import {CoffeeReel} from '@/components/coffee-reel';
 import {ResponsiveContainer,BarChart,Bar,XAxis,YAxis,Tooltip,PieChart,Pie,Cell} from 'recharts';
 type Bean={weight?:number;stockAdjustment?:number;nameEn?:string;useOriginalArt?:boolean;recordType?:string;catalogId?:string;sourceUrl?:string;sourceDate?:string;variety?:string;roastNote?:string;icon?:string;id:string;name:string;roaster:string;origin:string;process:string;roast:string;flavor:string;status:string;rating:number;repurchase:boolean;photo:string;roastDate:string;notes:string};
@@ -703,7 +703,7 @@ function Journal(){
                    </header>
                    {photoStickerBrews.length>0&&<section className="month-sticker-wall" aria-label={t("所有咖啡照片贴纸")}>
                      <button type="button" className={`month-sticker-stage${stickerWallMoving?' is-moving':''}`} aria-label={t("晃动咖啡贴纸")} onClick={()=>{setStickerWallMoving(false);requestAnimationFrame(()=>{setStickerWallMoving(true);navigationFeedback();setTimeout(()=>setStickerWallMoving(false),1450)})}}>
-                       <span className="month-sticker-collage">{photoStickerBrews.map((brew,index)=>{const place=stickerPlacement(brew.id,index,photoStickerBrews.length,false),flyX=((index%5)-2)*10,flySpin=(index%2?1:-1)*(18+index%4*7);return <figure className={brew.photoCutout?'is-cutout':''} key={brew.id} style={{'--sticker-x':`${place.x}%`,'--sticker-y':`${place.y}%`,'--sticker-size':`${Math.min(29,place.size*1.08)}%`,'--sticker-z':place.z,'--sticker-rotation':`${place.rotation}deg`,'--sticker-delay':`${index*24}ms`,'--sticker-fly-x':`${flyX}px`,'--sticker-fly-x-back':`${-flyX}px`,'--sticker-fly-spin':`${flySpin}deg`,'--sticker-fly-spin-back':`${-flySpin*.55}deg`} as CSSProperties}><img src={brew.photo} alt={label(beans.find(bean=>bean.id===brew.beanId))}/></figure>})}</span>
+                       <span className="month-sticker-collage">{photoStickerBrews.map((brew,index)=>{const place=wallStickerPlacement(brew.id,index,photoStickerBrews.length);return <figure className={brew.photoCutout?'is-cutout':''} key={brew.id} style={{'--sticker-size':`${place.size}%`,'--sticker-lift':`${place.lift}px`,'--sticker-rotation':`${place.rotation}deg`,'--sticker-delay':`${Math.min(index,12)*35}ms`} as CSSProperties}><img src={brew.photo} alt={label(beans.find(bean=>bean.id===brew.beanId))}/></figure>})}</span>
                      </button>
                    </section>}
                    <div className="month-analysis-grid">
