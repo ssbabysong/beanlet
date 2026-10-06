@@ -336,6 +336,11 @@ function Journal(){
                        }}
                      >
                        {t(title)}
+                       {value === "tasted" && tasted.length > 0 && (
+                         <span className="atlas-count" aria-label={`${t("我的图鉴")} ${tasted.length}`}>
+                           {tasted.length}
+                         </span>
+                       )}
                      </button>
                    ))}
                  </div>
@@ -841,13 +846,6 @@ function Journal(){
                  </CollapsibleContent>
                </Collapsible>
              )}
-             <div className="memory-coffee-list">
-               {memoryBrews.length ? (
-                 memoryBrews.map((b) => brewCard(b, false, true))
-               ) : (
-                 <p className="meta memory-no-coffee">{t("还没有咖啡记录")}</p>
-               )}
-             </div>
              {memory.manual &&
                !memoryBags.some((b) => b.status === "已喝完") &&
                !memoryBrews.length && (

@@ -282,6 +282,7 @@ html[lang=en] .catalog-filters .field,html[lang=en] .catalog-filters .choice{fon
 .atlas-switch button{position:relative;flex:0 0 auto;padding:5px 0 9px;border-radius:0;background:none;color:#a1a395;box-shadow:none}
 .atlas-switch button[aria-pressed=true]{background:none;box-shadow:none;color:#58664e}
 .atlas-switch button[aria-pressed=true]::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:2px;border-radius:50%;background:#94a582;transform:rotate(-3deg)}
+.atlas-count{display:inline-grid;place-items:center;min-width:20px;height:18px;margin-left:6px;padding:0 5px;border-radius:9px;background:#e7eaf3;color:#78839f;font-family:ui-rounded,"SF Pro Rounded",sans-serif;font-size:10px;line-height:1;vertical-align:1px}.atlas-switch button[aria-pressed=true] .atlas-count{background:#dfe7da;color:#64735c}
 .taste-art,.taste-sticker:nth-child(3n+2) .taste-art,.taste-sticker:nth-child(3n) .taste-art{background:none;border-radius:0;box-shadow:none}
 .taste-art .sticker,.taste-art .bean-thumb{width:90%;height:90%;border:0;box-shadow:none;border-radius:0;object-fit:contain}
 .taste-stamp{bottom:0;right:0}
