@@ -348,5 +348,17 @@
   "关闭": "Close",
   "有照片暂时无法读取": "Some photos could not be loaded",
   "这台设备暂不支持生成视频": "Video creation is not supported on this device",
-  "视频生成失败，请再试一次": "Video creation failed. Try again"
+  "视频生成失败，请再试一次": "Video creation failed. Try again",
+  "统计周期": "Stats period",
+  "月": "Month",
+  "年": "Year",
+  "上一年": "Previous year",
+  "下一年": "Next year",
+  "本年常喝": "Most brewed this year",
+  "每月冲煮": "Monthly brews",
+  "本年每月冲煮杯数图表": "Monthly brews this year",
+  "这一年还没有咖啡记录": "No coffee records this year",
+  "分享年报": "Share year",
+  "查看完整报告图片后再分享": "Preview the full report before sharing",
+  "报告预览": "Report preview"
 }

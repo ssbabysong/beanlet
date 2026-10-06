@@ -17,3 +17,13 @@ export function monthlyBrewStats<T extends MonthlyBrew>(brews:T[],year:number,mo
  const beans=Array.from(records.reduce((counts,b)=>counts.set(b.beanId,(counts.get(b.beanId)||0)+1),new Map<string,number>())).map(([beanId,count])=>({beanId,count})).sort((a,b)=>b.count-a.count);
  return {prefix,records,daily,pourOvers,milks,totalDose,activeDays,averagePerActiveDay:activeDays?Math.round(records.length/activeDays*10)/10:0,peakDay:peak?.cups?peak:null,beans};
 }
+
+export function annualBrewStats<T extends MonthlyBrew>(brews:T[],year:number){
+ const prefix=`${year}-`,records=brews.filter(b=>b.date.startsWith(prefix));
+ const months=Array.from({length:12},(_,index)=>{const month=index+1,key=`${year}-${String(month).padStart(2,'0')}`,items=records.filter(b=>b.date.startsWith(key));return {month,label:String(month),cups:items.length}});
+ const start=new Date(year,0,1),end=new Date(year+1,0,1),days: {date:string;cups:number}[]=[];
+ for(const cursor=new Date(start);cursor<end;cursor.setDate(cursor.getDate()+1)){const date=`${cursor.getFullYear()}-${String(cursor.getMonth()+1).padStart(2,'0')}-${String(cursor.getDate()).padStart(2,'0')}`;days.push({date,cups:records.filter(b=>b.date===date).length})}
+ const pourOvers=records.filter(b=>(b.kind||'pourOver')==='pourOver').length,milks=records.length-pourOvers;
+ const beans=Array.from(records.reduce((counts,b)=>counts.set(b.beanId,(counts.get(b.beanId)||0)+1),new Map<string,number>())).map(([beanId,count])=>({beanId,count})).sort((a,b)=>b.count-a.count);
+ return {prefix,records,months,days,pourOvers,milks,beans};
+}

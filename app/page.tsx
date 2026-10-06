@@ -35,8 +35,9 @@ import {BagPaper} from '@/components/bag-paper';
 import {bilingualBean,editableBeanNames,editableBeanInfo,usesOriginalBeanName} from '@/lib/catalog';
 import { zhCN,enUS } from 'date-fns/locale';
 import {fileDataUrl,makeCoffeeSticker} from '@/lib/coffee-sticker';
-import {monthlyBrewStats,monthlyReportText} from '@/lib/monthly-stats';
+import {annualBrewStats,monthlyBrewStats,monthlyReportText} from '@/lib/monthly-stats';
 import {createMonthlyReportImage} from '@/lib/monthly-report-image';
+import {createAnnualReportImage} from '@/lib/annual-report-image';
 import {wallStickerPlacement} from '@/lib/sticker-layout';
 import {CoffeeReel} from '@/components/coffee-reel';
 import {ResponsiveContainer,BarChart,Bar,XAxis,YAxis,Tooltip,PieChart,Pie,Cell} from 'recharts';
@@ -68,7 +69,7 @@ function Journal(){
 
  const [photoSource,setPhotoSource]=useState<File|string|null>(null);
  const [editing,setEditing]=useState<string|null>(null),[beanOpen,setBeanOpen]=useState(false),[draft,setDraft]=useState<any>(fresh),[file,setFile]=useState<File|null>(null),[preview,setPreview]=useState(''),[detail,setDetail]=useState<string|null>(null),[busy,setBusy]=useState(false),[formError,setFormError]=useState('');
- const [brewView,setBrewView]=useState('calendar'),[calendarDay,setCalendarDay]=useState(()=>new Date()),[calendarMonth,setCalendarMonth]=useState(()=>new Date()),[sharingMonth,setSharingMonth]=useState(false),[monthReport,setMonthReport]=useState<{blob:Blob;url:string;name:string;text:string}|null>(null),[stickerWallMoving,setStickerWallMoving]=useState(false);
+ const [brewView,setBrewView]=useState('calendar'),[statsPeriod,setStatsPeriod]=useState<'month'|'year'>('month'),[calendarDay,setCalendarDay]=useState(()=>new Date()),[calendarMonth,setCalendarMonth]=useState(()=>new Date()),[sharingMonth,setSharingMonth]=useState(false),[monthReport,setMonthReport]=useState<{blob:Blob;url:string;name:string;text:string;title:string}|null>(null),[stickerWallMoving,setStickerWallMoving]=useState(false);
  const statsMonthPointerAt=useRef(0);
  const [brewActions,setBrewActions]=useState<Brew|null>(null);
 
@@ -103,16 +104,18 @@ function Journal(){
  function filterControls(){return <div className="catalog-filter-panel"><div className="catalog-filters">{filterDefinitions.map(([key,title,get])=><Choice key={key} label={t(title)} value={filters[key]} options={['全部',...Array.from(new Set(catalog.map(get))).filter(x=>x!=='全部')]} onChange={value=>setFilters(f=>({...f,[key]:value}))}/>)}</div>{(Object.values(filters).some(v=>v!=='全部')||catalogQuery)&&<button className="clear-filters" onClick={()=>{setFilters({...emptyFilters});setCatalogQuery('')}}>{t('清除筛选')}</button>}</div>}
 
  const selected=beans.find(b=>b.id===detail),shown=beans.filter(b=>b.status!=='已喝完');const d=(key:string,value:unknown)=>setDraft((p:any)=>({...p,[key]:value}));const bd=(key:string,value:unknown)=>setBrewDraft((p:any)=>({...p,[key]:value}));
- const monthStats=monthlyBrewStats(brews,calendarMonth.getFullYear(),calendarMonth.getMonth()+1),monthBrews=monthStats.records,monthPourOvers=monthStats.pourOvers,monthMilks=monthStats.milks,monthBeanCounts=monthStats.beans.map(({beanId,count})=>({bean:beans.find(b=>b.id===beanId),count})).filter((row):row is {bean:Bean;count:number}=>!!row.bean),monthMaxBeanCount=Math.max(1,...monthBeanCounts.map(row=>row.count));
- const monthDailyMax=Math.max(1,...monthStats.daily.map(day=>day.cups)),monthDailyTicks=Array.from(new Set([0,Math.ceil(monthDailyMax/2),monthDailyMax]));
- const monthKindData=(monthBrews.length?[{name:t('手冲'),value:monthPourOvers,color:'#9ba8ce'},{name:t('奶咖'),value:monthMilks,color:'#c8b4d7'}]:[{name:t('暂无记录'),value:1,color:'#e7e8f0'}]).filter(item=>item.value>0);
- const photoStickerBrews=monthBrews.filter(brew=>brew.photo).slice().sort((a,b)=>b.date.localeCompare(a.date)),monthLabel=new Intl.DateTimeFormat(language==='en'?'en-US':'zh-CN',{year:'numeric',month:'long'}).format(calendarMonth);
- function shiftStatsMonth(offset:number){setCalendarMonth(month=>new Date(month.getFullYear(),month.getMonth()+offset,1))}
+ const monthStats=monthlyBrewStats(brews,calendarMonth.getFullYear(),calendarMonth.getMonth()+1),monthBrews=monthStats.records,monthPourOvers=monthStats.pourOvers,monthMilks=monthStats.milks,monthBeanCounts=monthStats.beans.map(({beanId,count})=>({bean:beans.find(b=>b.id===beanId),count})).filter((row):row is {bean:Bean;count:number}=>!!row.bean);
+ const yearStats=annualBrewStats(brews,calendarMonth.getFullYear()),yearBrews=yearStats.records,yearPourOvers=yearStats.pourOvers,yearMilks=yearStats.milks,yearBeanCounts=yearStats.beans.map(({beanId,count})=>({bean:beans.find(b=>b.id===beanId),count})).filter((row):row is {bean:Bean;count:number}=>!!row.bean);
+ const activeBrews=statsPeriod==='year'?yearBrews:monthBrews,activePourOvers=statsPeriod==='year'?yearPourOvers:monthPourOvers,activeMilks=statsPeriod==='year'?yearMilks:monthMilks,activeBeanCounts=statsPeriod==='year'?yearBeanCounts:monthBeanCounts,activeMaxBeanCount=Math.max(1,...activeBeanCounts.map(row=>row.count)),activeTrend=(statsPeriod==='year'?yearStats.months:monthStats.daily).map(({label,cups})=>({label,cups})),activeTrendMax=Math.max(1,...activeTrend.map(day=>day.cups)),activeTrendTicks=Array.from(new Set([0,Math.ceil(activeTrendMax/2),activeTrendMax]));
+ const activeKindData=(activeBrews.length?[{name:t('手冲'),value:activePourOvers,color:'#9ba8ce'},{name:t('奶咖'),value:activeMilks,color:'#c8b4d7'}]:[{name:t('暂无记录'),value:1,color:'#e7e8f0'}]).filter(item=>item.value>0);
+ const photoStickerBrews=activeBrews.filter(brew=>brew.photo).slice().sort((a,b)=>b.date.localeCompare(a.date)),monthLabel=new Intl.DateTimeFormat(language==='en'?'en-US':'zh-CN',{year:'numeric',month:'long'}).format(calendarMonth),statsLabel=statsPeriod==='year'?String(calendarMonth.getFullYear()):monthLabel;
+ function shiftStatsMonth(offset:number){setCalendarMonth(month=>statsPeriod==='year'?new Date(month.getFullYear()+offset,month.getMonth(),1):new Date(month.getFullYear(),month.getMonth()+offset,1))}
  function shiftStatsMonthPointer(event:any,offset:number){if(event.pointerType==='mouse')return;event.preventDefault();event.stopPropagation();statsMonthPointerAt.current=Date.now();shiftStatsMonth(offset)}
  function shiftStatsMonthClick(offset:number){if(Date.now()-statsMonthPointerAt.current<600)return;shiftStatsMonth(offset)}
- useEffect(()=>{if(tab!=='brews'||brewView!=='stats'||!photoStickerBrews.length)return;setStickerWallMoving(false);const start=window.setTimeout(()=>setStickerWallMoving(true),40),stop=window.setTimeout(()=>setStickerWallMoving(false),1500);return()=>{window.clearTimeout(start);window.clearTimeout(stop)}},[tab,brewView,calendarMonth]);
- async function openMonthlyReport(){if(sharingMonth)return;const top=monthBeanCounts[0],topBean=top?{name:label(top.bean),count:top.count}:undefined,text=monthlyReportText({language,month:monthLabel,cups:monthBrews.length,pourOvers:monthPourOvers,milks:monthMilks,beanCount:monthBeanCounts.length,topBean});setSharingMonth(true);try{const blob=await createMonthlyReportImage({language,month:monthLabel,year:calendarMonth.getFullYear(),monthIndex:calendarMonth.getMonth(),cups:monthBrews.length,pourOvers:monthPourOvers,milks:monthMilks,beanCount:monthBeanCounts.length,daily:monthStats.daily,beanRanking:monthBeanCounts.map(row=>({name:label(row.bean),count:row.count})),photos:photoStickerBrews.map(brew=>({id:brew.id,src:brew.photo!,date:brew.date,cutout:brew.photoCutout}))}),name=`beanlet-${calendarMonth.getFullYear()}-${String(calendarMonth.getMonth()+1).padStart(2,'0')}.png`;setMonthReport({blob,url:URL.createObjectURL(blob),name,text})}catch{toast.error(t('分享失败，请再试一次'))}finally{setSharingMonth(false)}}
- async function shareMonthlyReport(){if(!monthReport)return;try{if((globalThis as any).Capacitor?.isNativePlatform?.()){const {shareNativeImage}=await import('@/lib/native-video');await shareNativeImage(monthReport.blob,monthReport.name,`Beanlet · ${monthLabel}`)}else{const file=new File([monthReport.blob],monthReport.name,{type:'image/png'}),shareData={title:`Beanlet · ${monthLabel}`,text:monthReport.text,files:[file]};if(navigator.share&&navigator.canShare?.(shareData))await navigator.share(shareData);else{const link=document.createElement('a');link.href=monthReport.url;link.download=monthReport.name;link.click();toast.success(t('月报图片已保存'))}}}catch(error){if((error as Error).name!=='AbortError')toast.error(t('分享失败，请再试一次'))}}
+ useEffect(()=>{if(tab!=='brews'||brewView!=='stats'||!photoStickerBrews.length)return;setStickerWallMoving(false);const start=window.setTimeout(()=>setStickerWallMoving(true),40),stop=window.setTimeout(()=>setStickerWallMoving(false),1500);return()=>{window.clearTimeout(start);window.clearTimeout(stop)}},[tab,brewView,calendarMonth,statsPeriod]);
+ async function openMonthlyReport(){if(sharingMonth)return;const top=monthBeanCounts[0],topBean=top?{name:label(top.bean),count:top.count}:undefined,text=monthlyReportText({language,month:monthLabel,cups:monthBrews.length,pourOvers:monthPourOvers,milks:monthMilks,beanCount:monthBeanCounts.length,topBean});setSharingMonth(true);try{const blob=await createMonthlyReportImage({language,month:monthLabel,year:calendarMonth.getFullYear(),monthIndex:calendarMonth.getMonth(),cups:monthBrews.length,pourOvers:monthPourOvers,milks:monthMilks,beanCount:monthBeanCounts.length,daily:monthStats.daily,beanRanking:monthBeanCounts.map(row=>({name:label(row.bean),count:row.count})),photos:photoStickerBrews.map(brew=>({id:brew.id,src:brew.photo!,date:brew.date,cutout:brew.photoCutout}))}),name=`beanlet-${calendarMonth.getFullYear()}-${String(calendarMonth.getMonth()+1).padStart(2,'0')}.png`;setMonthReport({blob,url:URL.createObjectURL(blob),name,text,title:`Beanlet · ${monthLabel}`})}catch{toast.error(t('分享失败，请再试一次'))}finally{setSharingMonth(false)}}
+ async function openAnnualReport(){if(sharingMonth)return;const year=calendarMonth.getFullYear(),top=yearBeanCounts[0],text=monthlyReportText({language,month:String(year),cups:yearBrews.length,pourOvers:yearPourOvers,milks:yearMilks,beanCount:yearBeanCounts.length,topBean:top?{name:label(top.bean),count:top.count}:undefined});setSharingMonth(true);try{const blob=await createAnnualReportImage({language,year,cups:yearBrews.length,pourOvers:yearPourOvers,milks:yearMilks,days:yearStats.days,months:yearStats.months,beanRanking:yearBeanCounts.map(row=>({name:label(row.bean),count:row.count})),photos:photoStickerBrews.map(brew=>({id:brew.id,src:brew.photo!,cutout:brew.photoCutout}))}),name=`beanlet-${year}.png`;setMonthReport({blob,url:URL.createObjectURL(blob),name,text,title:`Beanlet · ${year}`})}catch{toast.error(t('分享失败，请再试一次'))}finally{setSharingMonth(false)}}
+ async function shareMonthlyReport(){if(!monthReport)return;try{if((globalThis as any).Capacitor?.isNativePlatform?.()){const {shareNativeImage}=await import('@/lib/native-video');await shareNativeImage(monthReport.blob,monthReport.name,monthReport.title)}else{const file=new File([monthReport.blob],monthReport.name,{type:'image/png'}),shareData={title:monthReport.title,text:monthReport.text,files:[file]};if(navigator.share&&navigator.canShare?.(shareData))await navigator.share(shareData);else{const link=document.createElement('a');link.href=monthReport.url;link.download=monthReport.name;link.click();toast.success(t('月报图片已保存'))}}}catch(error){if((error as Error).name!=='AbortError')toast.error(t('分享失败，请再试一次'))}}
  async function toggleFinished(b:Bean){if(busy)return;setBusy(true);try{await api('/api/journal',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'bean',id:b.id,data:{...b,status:b.status==='已喝完'?'正在喝':'已喝完'}})});await refresh();toast.success(t(b.status==='已喝完'?'放回豆架了':'收进喝完的豆子了'))}catch(e){toast.error(t((e as Error).message))}finally{setBusy(false)}}
  function beanCard(b:Bean,group?:Bean[]){const stock=beanStock(b,brews),fade=stock?1-stock.ratio:0;return <button className="bean-card" key={b.id} aria-label={label(b)+(group?` · ${group.length} ${t('包')}`:'')} onClick={()=>{setReturnToTaste(null);if(group){setTasteDetail(coffeeIdentity(b))}else setDetail(b.id)}}><div className='coffee-bag' style={{'--bag-fill':beanPalette(b).fill,'--bag-line':beanPalette(b).line,'--bag-side':beanPalette(b).side} as CSSProperties}>{group&&group.length>1&&<span className="finished-count"><span className="finished-times">×</span>{group.length}</span>}{b.roaster&&<span className="bag-brand-tag" title={b.roaster}><span>{b.roaster}</span></span>}<BagPaper ratio={stock?.ratio}/><span style={stock?{maskImage:`linear-gradient(to bottom,rgba(0,0,0,.18) ${fade*100}%,#000 ${fade*100}%)`}:undefined} className={'coffee-bag-label'+(b.photo||displayedArt(b)?' has-picture':'')}><BeanVisual bean={b}/></span>{b.roastDate&&(!group||group.length===1)&&<span className="bag-date-tag" title={t('烘焙于')+' '+b.roastDate} aria-label={t('烘焙于')+' '+b.roastDate}><time dateTime={b.roastDate}>{b.roastDate.replaceAll('-','.')}</time></span>}<span className="bag-meta-row">{stock&&!group&&<span className="bag-remaining" aria-label={language==='en'?`${stock.remaining}g remaining`:`剩余 ${stock.remaining}g`}>{stock.remaining}<small>g</small></span>}</span>{isFavorite(b)&&<span className="bag-heart" aria-label={t("已收藏")}><Heart size={16} fill="currentColor"/></span>}</div><div className="bean-info"><h3>{label(b)}</h3>{info(b,'flavor')&&<p className="shelf-name-secondary">{info(b,'flavor')}</p>}</div></button>}
 
@@ -453,12 +456,6 @@ function Journal(){
                                }
                              >
                                <BeanVisual bean={x.bean} />
-                               <span
-                                 className="taste-stamp"
-                                 aria-label={t("已喝过")}
-                               >
-                                 ✓
-                               </span>
                                {bagCount > 0 && (
                                  <span
                                    className="taste-bag-count"
@@ -690,10 +687,14 @@ function Journal(){
                  </>
                ) : (
                  <section className="month-stats">
+                   <div className="stats-period-switch" role="group" aria-label={t("统计周期")}>
+                     <button type="button" aria-pressed={statsPeriod==='month'} onClick={()=>setStatsPeriod('month')}>{t("月")}</button>
+                     <button type="button" aria-pressed={statsPeriod==='year'} onClick={()=>setStatsPeriod('year')}>{t("年")}</button>
+                   </div>
                    <header className="month-stats-heading">
-                     <button type="button" className="icon-button" aria-label={t("上个月")} onPointerUp={event=>shiftStatsMonthPointer(event,-1)} onClick={()=>shiftStatsMonthClick(-1)}><ChevronLeft size={19}/></button>
-                     <h2>{monthLabel}</h2>
-                     <button type="button" className="icon-button" aria-label={t("下个月")} onPointerUp={event=>shiftStatsMonthPointer(event,1)} onClick={()=>shiftStatsMonthClick(1)}><ChevronRight size={19}/></button>
+                     <button type="button" className="icon-button" aria-label={t(statsPeriod==='year'?"上一年":"上个月")} onPointerUp={event=>shiftStatsMonthPointer(event,-1)} onClick={()=>shiftStatsMonthClick(-1)}><ChevronLeft size={19}/></button>
+                     <h2>{statsLabel}</h2>
+                     <button type="button" className="icon-button" aria-label={t(statsPeriod==='year'?"下一年":"下个月")} onPointerUp={event=>shiftStatsMonthPointer(event,1)} onClick={()=>shiftStatsMonthClick(1)}><ChevronRight size={19}/></button>
                    </header>
                    {photoStickerBrews.length>0&&<section className="month-sticker-wall" aria-label={t("所有咖啡照片贴纸")}>
                      <button type="button" className={`month-sticker-stage${stickerWallMoving?' is-moving':''}`} aria-label={t("晃动咖啡贴纸")} onClick={()=>{setStickerWallMoving(false);requestAnimationFrame(()=>{setStickerWallMoving(true);navigationFeedback();setTimeout(()=>setStickerWallMoving(false),1450)})}}>
@@ -701,46 +702,46 @@ function Journal(){
                      </button>
                    </section>}
                    <div className="month-bean-table">
-                     <h3>{t("本月常喝")}</h3>
-                     {monthBeanCounts.length?monthBeanCounts.slice(0,5).map(({bean,count})=><div className="month-bean-row" key={bean.id}>
+                     <h3>{t(statsPeriod==='year'?"本年常喝":"本月常喝")}</h3>
+                     {activeBeanCounts.length?activeBeanCounts.slice(0,5).map(({bean,count})=><div className="month-bean-row" key={bean.id}>
                        <span className="month-bean-art" style={{backgroundColor:beanPalette(bean).fill}}><BeanVisual bean={bean}/></span>
-                       <span className="month-bean-name">{label(bean)}<i><b style={{width:`${count/monthMaxBeanCount*100}%`}}/></i></span>
+                       <span className="month-bean-name">{label(bean)}<i><b style={{width:`${count/activeMaxBeanCount*100}%`}}/></i></span>
                        <strong>{count} {t("杯")}</strong>
-                     </div>):<div className="month-stats-empty"><Sticker icon="cup"/><span>{t("这个月还没有咖啡记录")}</span></div>}
+                     </div>):<div className="month-stats-empty"><Sticker icon="cup"/><span>{t(statsPeriod==='year'?"这一年还没有咖啡记录":"这个月还没有咖啡记录")}</span></div>}
                    </div>
                    <div className="month-analysis-grid">
                      <section className="month-chart-card month-trend-card">
-                       <header><h3>{t("每日冲煮")}</h3></header>
-                       <div className="month-chart" aria-label={t("本月每日冲煮杯数图表")}>
+                       <header><h3>{t(statsPeriod==='year'?"每月冲煮":"每日冲煮")}</h3></header>
+                       <div className="month-chart" aria-label={t(statsPeriod==='year'?"本年每月冲煮杯数图表":"本月每日冲煮杯数图表")}>
                          <ResponsiveContainer width="100%" height="100%">
-                           <BarChart data={monthStats.daily} margin={{top:8,right:2,left:-26,bottom:0}}>
-                             <XAxis dataKey="label" interval={4} axisLine={false} tickLine={false} tick={{fill:'#9a9fb0',fontSize:9}}/>
-                             <YAxis allowDecimals={false} domain={[0,monthDailyMax+1]} ticks={monthDailyTicks} axisLine={false} tickLine={false} tick={{fill:'#a3a7b7',fontSize:9}}/>
-                             <Tooltip cursor={{fill:'#eff0f7'}} contentStyle={{border:0,borderRadius:12,boxShadow:'0 6px 18px #656d8b20',fontSize:11,color:'#687393'}} labelFormatter={label=>`${label} ${t('日')}`}/>
+                           <BarChart data={activeTrend} margin={{top:8,right:2,left:-26,bottom:0}}>
+                             <XAxis dataKey="label" interval={statsPeriod==='year'?1:4} axisLine={false} tickLine={false} tick={{fill:'#9a9fb0',fontSize:9}}/>
+                             <YAxis allowDecimals={false} domain={[0,activeTrendMax+1]} ticks={activeTrendTicks} axisLine={false} tickLine={false} tick={{fill:'#a3a7b7',fontSize:9}}/>
+                             <Tooltip cursor={{fill:'#eff0f7'}} contentStyle={{border:0,borderRadius:12,boxShadow:'0 6px 18px #656d8b20',fontSize:11,color:'#687393'}} labelFormatter={label=>`${label} ${t(statsPeriod==='year'?'月':'日')}`}/>
                              <Bar dataKey="cups" name={t("杯")} fill="#a8b2d1" radius={[6,6,2,2]} maxBarSize={14}/>
                            </BarChart>
                          </ResponsiveContainer>
                        </div>
                      </section>
                      <section className="month-chart-card month-kind-card">
-                       <header><h3>{t("冲煮方式")}</h3><span>{monthBrews.length} {t("杯")}</span></header>
+                       <header><h3>{t("冲煮方式")}</h3><span>{activeBrews.length} {t("杯")}</span></header>
                        <div className="month-kind-chart">
                          <div className="month-donut">
                            <ResponsiveContainer width="100%" height="100%">
-                             <PieChart><Pie data={monthKindData} dataKey="value" nameKey="name" innerRadius={38} outerRadius={58} paddingAngle={monthBrews.length?4:0} stroke="none">{monthKindData.map(item=><Cell key={item.name} fill={item.color}/>)}</Pie></PieChart>
+                             <PieChart><Pie data={activeKindData} dataKey="value" nameKey="name" innerRadius={27} outerRadius={42} paddingAngle={activeBrews.length?4:0} stroke="none">{activeKindData.map(item=><Cell key={item.name} fill={item.color}/>)}</Pie></PieChart>
                            </ResponsiveContainer>
-                           <span><strong>{monthBrews.length}</strong>{t("杯")}</span>
+                           <span><strong>{activeBrews.length}</strong>{t("杯")}</span>
                          </div>
                          <div className="month-kind-legend">
-                           <span><i style={{background:'#9ba8ce'}}/>{t("手冲")}<strong>{monthPourOvers}</strong></span>
-                           <span><i style={{background:'#c8b4d7'}}/>{t("奶咖")}<strong>{monthMilks}</strong></span>
+                           <span><i style={{background:'#9ba8ce'}}/>{t("手冲")}<strong>{activePourOvers}</strong></span>
+                           <span><i style={{background:'#c8b4d7'}}/>{t("奶咖")}<strong>{activeMilks}</strong></span>
                          </div>
                        </div>
                      </section>
                    </div>
                    <div className="month-share-actions">
-                     <button type="button" className="month-share-button" disabled={!monthBrews.length||sharingMonth} onClick={openMonthlyReport}><Share2 size={18}/><span>{sharingMonth?t("正在生成…"):t("分享月报")}</span></button>
-                     <CoffeeReel fullButton photos={photoStickerBrews.map(brew=>({id:brew.id,src:brew.photo!,cutout:brew.photoCutout}))} month={`${calendarMonth.getFullYear()}.${String(calendarMonth.getMonth()+1).padStart(2,'0')}`}/>
+                     <button type="button" className="month-share-button" disabled={!activeBrews.length||sharingMonth} onClick={statsPeriod==='year'?openAnnualReport:openMonthlyReport}><Share2 size={18}/><span>{sharingMonth?t("正在生成…"):t(statsPeriod==='year'?"分享年报":"分享月报")}</span></button>
+                     <CoffeeReel fullButton photos={photoStickerBrews.map(brew=>({id:brew.id,src:brew.photo!,cutout:brew.photoCutout}))} month={statsPeriod==='year'?String(calendarMonth.getFullYear()):`${calendarMonth.getFullYear()}.${String(calendarMonth.getMonth()+1).padStart(2,'0')}`}/>
                    </div>
                  </section>
                )}
@@ -1673,8 +1674,8 @@ function Journal(){
            <DialogTitle>{t("月报预览")}</DialogTitle>
            <span/>
          </header>
-         <DialogDescription className="sr-only">{t("查看完整月报图片后再分享")}</DialogDescription>
-         {monthReport&&<img className="monthly-report-preview" src={monthReport.url} alt={t("月报预览")}/>}
+         <DialogDescription className="sr-only">{t("查看完整报告图片后再分享")}</DialogDescription>
+         {monthReport&&<img className="monthly-report-preview" src={monthReport.url} alt={t("报告预览")}/>} 
          <button type="button" className="primary monthly-report-share" onClick={shareMonthlyReport}><Share2 size={18}/>{t("分享图片")}</button>
        </DialogContent>
      </Dialog>

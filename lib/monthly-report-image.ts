@@ -13,7 +13,6 @@ function roundRect(ctx:CanvasRenderingContext2D,x:number,y:number,w:number,h:num
 function fitText(ctx:CanvasRenderingContext2D,text:string,maxWidth:number,start:number,min:number,font:string){let size=start;while(size>min){ctx.font=`${size}px ${font}`;if(ctx.measureText(text).width<=maxWidth)break;size-=2}return size}
 function card(ctx:CanvasRenderingContext2D,x:number,y:number,w:number,h:number,r=32){ctx.fillStyle='rgba(255,255,255,.57)';roundRect(ctx,x,y,w,h,r);ctx.fill()}
 function drawBean(ctx:CanvasRenderingContext2D,x:number,y:number,size:number,rotation:number,color:string){ctx.save();ctx.translate(x,y);ctx.rotate(rotation);ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(0,0,size*.43,size*.62,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(92,67,57,.28)';ctx.lineWidth=Math.max(2,size*.035);ctx.beginPath();ctx.moveTo(-size*.08,-size*.48);ctx.bezierCurveTo(size*.16,-size*.20,-size*.18,size*.18,size*.08,size*.48);ctx.stroke();ctx.restore()}
-function drawCheckSquare(ctx:CanvasRenderingContext2D,x:number,y:number,cups:number,index:number){const colors=['rgba(148,161,202,.72)','rgba(194,174,207,.72)','rgba(178,196,183,.72)'],size=34;ctx.save();ctx.translate(x,y);ctx.rotate(((index%5)-2)*.018);ctx.fillStyle=colors[index%colors.length];roundRect(ctx,-size/2,-size/2,size,size,7);ctx.fill();ctx.strokeStyle='rgba(255,255,255,.65)';ctx.lineWidth=1.4;roundRect(ctx,-size/2+4,-size/2+4,size-8,size-8,4);ctx.stroke();if(cups>1){ctx.fillStyle='#f8f5f0';roundRect(ctx,11,9,22,18,7);ctx.fill();ctx.fillStyle='rgba(82,91,120,.75)';ctx.font='600 10px Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(`×${cups}`,22,18)}ctx.restore()}
 
 export async function createMonthlyReportImage(input:MonthlyReportImageInput){
  await document.fonts?.ready;
@@ -29,10 +28,9 @@ export async function createMonthlyReportImage(input:MonthlyReportImageInput){
 
  // Brew calendar
  card(ctx,48,245,984,435,38);
- const weekdays=input.language==='en'?['S','M','T','W','T','F','S']:['日','一','二','三','四','五','六'],cellW=126,startX=99;
- ctx.textAlign='center';ctx.font=`400 21px ${ui}`;ctx.fillStyle='rgba(82,91,120,.42)';weekdays.forEach((day,index)=>ctx.fillText(day,startX+index*cellW,280));
- const firstDay=new Date(input.year,input.monthIndex,1).getDay();
- input.daily.forEach((day,index)=>{const cell=firstDay+day.day-1,col=cell%7,row=Math.floor(cell/7),x=startX+col*cellW,y=330+row*50;if(day.cups)drawCheckSquare(ctx,x,y+12,day.cups,index);ctx.fillStyle=day.cups?'rgba(255,255,255,.96)':'rgba(78,87,115,.68)';ctx.font=`500 ${day.cups?15:21}px ${ui}`;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(String(day.day),x,day.cups?y+2:y)});ctx.textAlign='left';ctx.textBaseline='top';
+ const weekdays=input.language==='en'?['S','M','T','W','T','F','S']:['日','一','二','三','四','五','六'],firstDay=new Date(input.year,input.monthIndex,1).getDay(),weeks=Math.ceil((firstDay+input.daily.length)/7),square=43,gap=10,calendarStep=square+gap,gridW=weeks*calendarStep-gap,startX=(1080-gridW)/2,startY=282,maxCups=Math.max(1,...input.daily.map(day=>day.cups));
+ ctx.font=`400 17px ${ui}`;ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillStyle='rgba(82,91,120,.38)';weekdays.forEach((day,row)=>ctx.fillText(day,startX-20,startY+row*calendarStep+square/2));
+ input.daily.forEach(day=>{const cell=firstDay+day.day-1,week=Math.floor(cell/7),row=cell%7,x=startX+week*calendarStep,y=startY+row*calendarStep,intensity=day.cups?(.3+.62*day.cups/maxCups):.08;ctx.fillStyle=`rgba(126,141,190,${intensity})`;roundRect(ctx,x,y,square,square,7);ctx.fill();ctx.fillStyle=day.cups>0?'rgba(255,255,255,.9)':'rgba(82,91,120,.48)';ctx.font='500 13px Arial,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(String(day.day),x+square/2,y+square/2)});ctx.textAlign='left';ctx.textBaseline='top';
 
  // Sticker collection
  card(ctx,48,704,984,568,38);
