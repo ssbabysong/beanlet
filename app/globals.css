@@ -540,7 +540,10 @@ html[lang=en] .bean-shelf .bag-roast-print{font-size:10px;letter-spacing:0}
 .menu-swipe [data-slot=tabs-content][data-state=active]{animation:menu-arrive .2s ease-out}
 @keyframes menu-arrive{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
 /* Print the remaining grams below the artwork, beside a small roast sticker. */
-.bean-shelf .coffee-bag-label{height:43%}
+.bean-shelf .coffee-bag-label{left:31%;top:33%;width:52%;height:46%;box-sizing:border-box;padding:3px;border:0;border-radius:0;clip-path:polygon(3% 10%,22% 7%,51% 5%,88% 0,92% 19%,96% 48%,100% 88%,82% 94%,51% 97%,14% 100%,11% 82%,7% 49%);transform:rotate(-1deg)}
+.bean-shelf .coffee-bag-label.has-picture{padding:3px;border:0;border-radius:0;clip-path:polygon(3% 10%,22% 7%,51% 5%,88% 0,92% 19%,96% 48%,100% 88%,82% 94%,51% 97%,14% 100%,11% 82%,7% 49%);transform:rotate(-1deg)}
+.bean-shelf .coffee-bag-label>.sticker{width:82%;height:82%;max-width:none}
+.bean-shelf .coffee-bag-label>.bean-thumb{width:82%;height:82%;object-fit:contain;border-radius:7px 5px 8px 6px;margin:0;padding:0}
 .bean-shelf .bag-meta-row{position:absolute;left:20%;right:14%;top:79%;display:flex;align-items:center;justify-content:space-between;gap:4px;min-height:15px;pointer-events:none}
 .bag-remaining{margin-left:auto;color:#6e7080;font-size:7px;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
 .bag-remaining small{font-size:6px;margin-left:1px;color:#85818c}
@@ -549,7 +552,10 @@ html[lang=en] .bag-roast-tag{font-size:7px}
 .bag-liquid{transform-box:view-box}
 .bag-liquid.is-swaying{animation:coffee-sway 2.4s ease-in-out both}
 @keyframes coffee-sway{0%,100%{transform:rotate(0deg)}20%{transform:rotate(2.2deg)}42%{transform:rotate(-1.8deg)}63%{transform:rotate(1deg)}82%{transform:rotate(-.4deg)}}
-@media(prefers-reduced-motion:reduce){.bag-liquid.is-swaying,.menu-swipe [data-slot=tabs-content][data-state=active]{animation:none}}
+@property --water-angle{syntax:'<angle>';inherits:false;initial-value:172.47deg}
+.bean-shelf .coffee-bag-label.is-swaying{animation:coffee-label-sway 2.4s ease-in-out both}
+@keyframes coffee-label-sway{0%,100%{--water-angle:172.47deg}20%{--water-angle:174.67deg}42%{--water-angle:170.67deg}63%{--water-angle:173.47deg}82%{--water-angle:172.07deg}}
+@media(prefers-reduced-motion:reduce){.bag-liquid.is-swaying,.bean-shelf .coffee-bag-label.is-swaying,.menu-swipe [data-slot=tabs-content][data-state=active]{animation:none}}
 
 /* Compact artwork alongside the bean name leaves room for useful details. */
 .bean-detail-heading{display:flex;align-items:center;gap:16px;margin-top:12px}
@@ -602,6 +608,7 @@ img,svg{-webkit-user-drag:none}
 .bean-shelf .bag-brand-tag::after{content:'';position:absolute;left:-7px;top:6px;width:11px;height:4px;border-top:1px solid #bcae95;border-radius:50%;transform:rotate(12deg)}
 .bean-shelf .bag-brand-tag>span{display:block;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:7px;line-height:1;text-align:center}
 .bean-shelf .coffee-bag-body{position:relative;pointer-events:none}
+.bean-shelf .bean-card:hover{transform:none}
 
 
 .pour-timer-entry{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:14px;margin:10px 0;border:1px dashed #c5c9df;border-radius:17px;background:#f1f0f9;color:#7c84b0;font-size:14px}
