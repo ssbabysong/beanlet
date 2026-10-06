@@ -15,6 +15,18 @@ export function stickerPlacement(id:string,index:number,count:number,portrait=fa
  return {x:Math.max(7,Math.min(93,x)),y:Math.max(8,Math.min(92,y)),size:base*(.86+unit(seed^0xc2b2ae35)*.32),rotation:-14+unit(seed^0x27d4eb2f)*28,z:index+1};
 }
 
+/** Stable portrait scatter that fills a Reel from the masthead to the bottom edge. */
+export function reelStickerPlacement(id:string,index:number,count:number):StickerPlacement{
+ const seed=hashValue(`${id}-${index}`);
+ if(count<=1)return {x:50,y:55,size:64,rotation:(unit(seed)-.5)*10,z:1};
+ const columns=count<=8?2:count<=18?3:4,rows=Math.ceil(count/columns),row=Math.floor(index/columns),column=index%columns;
+ const cellWidth=84/columns,cellHeight=76/rows;
+ const x=8+(column+.5)*cellWidth+(unit(seed^0x9e3779b9)-.5)*cellWidth*.34;
+ const y=17+(row+.5)*cellHeight+(unit(seed^0x85ebca6b)-.5)*cellHeight*.34;
+ const base=count<=5?47:count<=10?38:count<=20?31:25;
+ return {x:Math.max(7,Math.min(93,x)),y:Math.max(16,Math.min(95,y)),size:base*(.88+unit(seed^0xc2b2ae35)*.24),rotation:-12+unit(seed^0x27d4eb2f)*24,z:index+1};
+}
+
 /** Stable, row-based scatter for the monthly wall. Items vary in size and lift, but keep their own layout space. */
 export function wallStickerPlacement(id:string,index:number,count:number):WallStickerPlacement{
  const seed=hashValue(`${id}-${index}`);

@@ -1,6 +1,7 @@
 import {Eraser,Move,RotateCcw,Undo2} from 'lucide-react';
 import {useEffect,useRef,useState,type PointerEvent} from 'react';
 import {transformCrop,transformSticker,type CropPoint} from '@/lib/photo-gesture';
+import {alphaBounds} from '@/lib/image-bounds';
 import {Dialog,DialogContent,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 import {useI18n} from '@/lib/i18n';
 
@@ -23,6 +24,13 @@ export function PhotoEditor({source,onCancel,onSave,mode='photo'}:{source:File|s
     if(sticker&&eraseStrokes.length){ctx.globalCompositeOperation='destination-out';ctx.lineCap='round';ctx.lineJoin='round';for(const stroke of eraseStrokes){ctx.lineWidth=stroke.width;ctx.beginPath();const first=stroke.points[0];if(!first)continue;if(stroke.points.length===1){ctx.arc(first.x-size.w/2,first.y-size.h/2,stroke.width/2,0,Math.PI*2);ctx.fill()}else{ctx.moveTo(first.x-size.w/2,first.y-size.h/2);for(const p of stroke.points.slice(1))ctx.lineTo(p.x-size.w/2,p.y-size.h/2);ctx.stroke()}}}
     ctx.restore();
   }
+  function fittedSticker(source:HTMLCanvasElement,output:number){
+    const sourceContext=source.getContext('2d',{willReadFrequently:true});if(!sourceContext)return source;
+    const bounds=alphaBounds(sourceContext.getImageData(0,0,source.width,source.height).data,source.width,source.height);if(!bounds)return source;
+    const target=document.createElement('canvas'),padding=Math.round(output*.035),available=output-padding*2,fit=Math.min(available/bounds.width,available/bounds.height),width=bounds.width*fit,height=bounds.height*fit;
+    target.width=output;target.height=output;target.getContext('2d')!.drawImage(source,bounds.x,bounds.y,bounds.width,bounds.height,(output-width)/2,(output-height)/2,width,height);
+    return target;
+  }
   useEffect(()=>{if(preview.current&&size.w)draw(preview.current,768)},[crop,size,eraseStrokes,sticker]);
   function update(from:CropPoint,to:CropPoint,factor=1,turn=0){
     const next=sticker?transformSticker(view.current,from,to,factor,turn):transformCrop(view.current,{w:size.w*baseScale,h:size.h*baseScale},from,to,factor,turn);
@@ -44,9 +52,9 @@ export function PhotoEditor({source,onCancel,onSave,mode='photo'}:{source:File|s
     if(!img.current||!size.w)return;
     setBusy(true);setError('');
     try{
-      const canvas=document.createElement('canvas');draw(canvas,1024);
+      const canvas=document.createElement('canvas');draw(canvas,1024);const result=sticker?fittedSticker(canvas,1024):canvas;
       const type=sticker?'image/png':'image/jpeg';
-      const blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(Error()),type,.86));
+      const blob=await new Promise<Blob>((resolve,reject)=>result.toBlob(b=>b?resolve(b):reject(Error()),type,.86));
       onSave(new File([blob],sticker?'coffee-sticker.png':'bean-photo.jpg',{type}));
     }catch{setError(en?'Could not save this photo. Please try another.':'照片处理失败，请换一张试试。')}finally{setBusy(false)}
   }

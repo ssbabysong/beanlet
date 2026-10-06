@@ -19,6 +19,8 @@ const migrated=migrateStarters(edited);assert.equal(migrated.beans.length,2);ass
 const base={name:'测试豆',roaster:'Test',origin:'China',process:'水洗',roast:'浅烘焙',flavor:'桃子',status:'未开封',rating:0,repurchase:false,photo:'',roastDate:'',notes:''};
 const {id}=await request('POST',{kind:'bean',data:base,saveToCatalog:true});
 let state=await localApi('/api/journal');assert.equal(state.beans.length,1);assert.equal(state.catalog.length,41);assert.ok(state.beans[0].catalogId);
+await request('PUT',{kind:'bean',id,data:{...state.beans[0],status:'已喝完',finishedDate:'2026-10-06'}});
+state=await localApi('/api/journal');assert.equal(state.beans[0].finishedDate,'2026-10-06');
 await request('POST',{kind:'brew',data:{beanId:id,date:'2026-10-02',dose:15,water:225,temp:92,grind:'中细',time:'2:30',notes:'好喝',rating:4}});
 state=await localApi('/api/journal');const builtInIds=new Set(initial.catalog.map(b=>b.id)),backup={format:'beanlet',version:1,beans:state.beans,catalog:state.catalog.filter(b=>!builtInIds.has(b.id)),brews:state.brews};
 assert.equal(await importBackup(new File([JSON.stringify(backup)],'backup.json')),0);
