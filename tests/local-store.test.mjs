@@ -10,7 +10,7 @@ source=source.replace("'zod'",JSON.stringify(new URL('../node_modules/zod/index.
 const js=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
 const {localApi,importBackup,exportBackup,backupSchema,migrateStarters}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
 const request=(method,body)=>localApi('/api/journal',{method,body:JSON.stringify(body)});
-let initial=await localApi('/api/journal');assert.equal(initial.beans.length,0);assert.equal(initial.catalog.length,14);assert.equal((await localApi('/api/journal')).beans.length,0);
+let initial=await localApi('/api/journal');assert.equal(initial.beans.length,0);assert.equal(initial.catalog.length,24);assert.equal((await localApi('/api/journal')).beans.length,0);
 const starters=initial.catalog.map(b=>({...b,id:'starter-'+b.id,catalogId:b.id,recordType:'bean',status:'未开封',useOriginalArt:true}));
 const old={format:'beanlet',version:1,beans:starters,catalog:[],brews:[]};
 assert.equal(migrateStarters(old).beans.length,0);
@@ -18,9 +18,9 @@ const edited={...old,beans:starters.map((b,i)=>i===0?{...b,notes:'我的笔记'}
 const migrated=migrateStarters(edited);assert.equal(migrated.beans.length,2);assert.equal(migrated.beans[0].notes,'我的笔记');assert.equal(migrated.beans[1].id,starters[1].id);assert.equal(migrateStarters(migrated),migrated);
 const base={name:'测试豆',roaster:'Test',origin:'China',process:'水洗',roast:'浅烘焙',flavor:'桃子',status:'未开封',rating:0,repurchase:false,photo:'',roastDate:'',notes:''};
 const {id}=await request('POST',{kind:'bean',data:base,saveToCatalog:true});
-let state=await localApi('/api/journal');assert.equal(state.beans.length,1);assert.equal(state.catalog.length,15);assert.ok(state.beans[0].catalogId);
+let state=await localApi('/api/journal');assert.equal(state.beans.length,1);assert.equal(state.catalog.length,25);assert.ok(state.beans[0].catalogId);
 await request('POST',{kind:'brew',data:{beanId:id,date:'2026-10-02',dose:15,water:225,temp:92,grind:'中细',time:'2:30',notes:'好喝',rating:4}});
-state=await localApi('/api/journal');const backup={format:'beanlet',version:1,beans:state.beans,catalog:state.catalog.filter(b=>!b.id.startsWith('hydrangea-')),brews:state.brews};
+state=await localApi('/api/journal');const builtInIds=new Set(initial.catalog.map(b=>b.id)),backup={format:'beanlet',version:1,beans:state.beans,catalog:state.catalog.filter(b=>!builtInIds.has(b.id)),brews:state.brews};
 assert.equal(await importBackup(new File([JSON.stringify(backup)],'backup.json')),0);
 const photo='data:image/png;base64,aGVsbG8=';
 const imported={...backup,beans:[{...base,id:'photo-bean',photo}],catalog:[],brews:[]};
@@ -148,8 +148,8 @@ try{
  const payload=JSON.parse(await exportedBlob.text());
  const current=await localApi('/api/journal');
  assert.ok(payload.exportedAt);
- assert.deepEqual(payload.catalog.filter(b=>!payload.hiddenCatalog.includes(b.id)),JSON.parse(JSON.stringify(current.catalog.filter(b=>!b.id.startsWith('hydrangea-')))));
- assert.ok(!payload.catalog.some(b=>b.id.startsWith('hydrangea-')),'built-in catalog stays bundled in app');
+	 assert.deepEqual(payload.catalog.filter(b=>!payload.hiddenCatalog.includes(b.id)),JSON.parse(JSON.stringify(current.catalog.filter(b=>!builtInIds.has(b.id)))));
+	 assert.ok(!payload.catalog.some(b=>builtInIds.has(b.id)),'built-in catalog stays bundled in app');
  for(const key of ['beans','brews','tasted','favorites','hiddenCatalog'])assert.deepEqual(payload[key],JSON.parse(JSON.stringify(current[key])),key+' is preserved in export');
  assert.equal(payload.beans.find(b=>b.id==='photo-bean').photo,photo);
  assert.equal(payload.beans.find(b=>b.id===stockBag).stockAdjustment,-15);

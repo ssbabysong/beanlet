@@ -15,12 +15,26 @@ const products = [
  ['catimor-honey-chichang','高三林 · Gaosanlin','中国 · 云南孟连','厌氧蜜处理','瓦伦西亚橙、杏干、红茶','honey','Catimor'],
  ['finca-potosi-xo','Potosi · XO','哥伦比亚 · Valle del Cauca','XO 日晒','朗姆酒、菠萝、橡木','hazelnut','San Juan'],
 ];
-export const builtInCatalog=products.map(([handle,name,origin,process,flavor,icon,variety])=>({id:'hydrangea-'+handle,name,origin,process,flavor,icon,variety,roaster:'Hydrangea',roast:'浅烘焙',roastNote:'按品牌浅烘焙定位预填，可按豆袋调整',sourceUrl:'https://hydrangea.coffee/products/'+handle,sourceDate:'2026-10-02',photo:'',roastDate:'',status:'未开封',rating:0,repurchase:false,notes:'',recordType:'catalog',catalogId:''}));
+const catalogDefaults={photo:'',roastDate:'',status:'未开封',rating:0,repurchase:false,notes:'',recordType:'catalog',catalogId:''};
+const hydrangeaCatalog=products.map(([handle,name,origin,process,flavor,icon,variety])=>({id:'hydrangea-'+handle,name,origin,process,flavor,icon,variety,roaster:'Hydrangea',roast:'浅烘焙',roastNote:'按品牌浅烘焙定位预填，可按豆袋调整',sourceUrl:'https://hydrangea.coffee/products/'+handle,sourceDate:'2026-10-02',...catalogDefaults}));
+const americanProducts=[
+ {id:'onyx-monarch',name:'Monarch',roaster:'Onyx Coffee Lab',origin:'产地随季节调整',process:'季节性拼配',flavor:'黑巧克力、糖蜜、红酒、莓果',icon:'chocolate',variety:'Blend',roast:'深烘焙',sourceUrl:'https://onyxcoffeelab.com/products/monarch',en:{origin:'Seasonal origins',process:'Seasonal blend',flavor:'Dark chocolate, molasses, red wine, dried berries'}},
+ {id:'onyx-geometry',name:'Geometry',roaster:'Onyx Coffee Lab',origin:'产地随季节调整',process:'季节性拼配',flavor:'莓果、核果、伯爵茶、金银花',icon:'jasmine',variety:'Blend',roast:'浅烘焙',sourceUrl:'https://onyxcoffeelab.com/products/geometry',en:{origin:'Seasonal origins',process:'Seasonal blend',flavor:'Berries, stone fruit, Earl Grey, honeysuckle'}},
+ {id:'onyx-tropical-weather',name:'Tropical Weather',roaster:'Onyx Coffee Lab',origin:'埃塞俄比亚',process:'水洗与日晒拼配',flavor:'混合莓果、甜茶、蜂蜜、李子',icon:'berry',variety:'Blend',roast:'浅烘焙',sourceUrl:'https://onyxcoffeelab.com/products/tropical-weather',en:{origin:'Ethiopia',process:'Washed and natural blend',flavor:'Mixed berries, sweet tea, raw honey, plum'}},
+ {id:'black-white-the-natural',name:'The Natural',roaster:'Black & White Coffee Roasters',origin:'产地随季节调整',process:'日晒拼配',flavor:'明亮红色水果、浓郁果香',icon:'berry',variety:'Blend',roast:'中烘焙',sourceUrl:'https://www.blackwhiteroasters.com/products/the-natural',en:{origin:'Seasonal origins',process:'Natural blend',flavor:'Vibrant red fruit, bold fruit character'}},
+ {id:'black-white-the-classic',name:'The Classic',roaster:'Black & White Coffee Roasters',origin:'哥伦比亚与中美洲',process:'水洗拼配',flavor:'牛奶巧克力、甜焦糖',icon:'chocolate',variety:'Blend',roast:'中烘焙',sourceUrl:'https://www.blackwhiteroasters.com/products/the-classic',en:{origin:'Colombia and Central America',process:'Washed blend',flavor:'Milk chocolate, sweet caramel'}},
+ {id:'black-white-the-original',name:'The Original',roaster:'Black & White Coffee Roasters',origin:'埃塞俄比亚',process:'季节性拼配',flavor:'明亮柑橘、花香',icon:'citrus',variety:'Blend',roast:'浅烘焙',sourceUrl:'https://www.blackwhiteroasters.com/products/the-original',en:{origin:'Ethiopia',process:'Seasonal blend',flavor:'Bright citrus, floral'}},
+ {id:'heart-stereo',name:'Stereo Seasonal Blend',roaster:'Heart Coffee Roasters',origin:'危地马拉与埃塞俄比亚',process:'季节性拼配',flavor:'樱桃、甜奶油、软糖',icon:'berry',variety:'Blend',roast:'中浅烘焙',sourceUrl:'https://www.heartroasters.com/collections/beans/products/stereo-seasonal-blend',en:{origin:'Guatemala and Ethiopia',process:'Seasonal blend',flavor:'Cherry, sweet cream, fudge'}},
+ {id:'counter-culture-apollo',name:'Apollo',roaster:'Counter Culture Coffee',origin:'埃塞俄比亚',process:'水洗拼配',flavor:'柑橘、花香、丝滑',icon:'citrus',variety:'Blend',roast:'浅烘焙',sourceUrl:'https://counterculturecoffee.com/products/apollo',en:{origin:'Ethiopia',process:'Washed blend',flavor:'Citrus, floral, silky'}},
+ {id:'counter-culture-hologram',name:'Hologram',roaster:'Counter Culture Coffee',origin:'产地随季节调整',process:'季节性拼配',flavor:'水果、牛奶巧克力、糖浆感',icon:'chocolate',variety:'Blend',roast:'中烘焙',sourceUrl:'https://counterculturecoffee.com/products/hologram',en:{origin:'Seasonal origins',process:'Seasonal blend',flavor:'Fruity, milk chocolate, syrupy'}},
+ {id:'george-howell-dota',name:'Dota',roaster:'George Howell Coffee',origin:'哥斯达黎加 · Dota',process:'水洗',flavor:'黑巧克力、樱桃、橙子',icon:'chocolate',variety:'Blend',roast:'中烘焙',sourceUrl:'https://georgehowellcoffee.com/collections/coffee-coffee',en:{origin:'Costa Rica · Dota',process:'Washed',flavor:'Dark chocolate, cherry, orange'}},
+].map(product=>({...product,sourceDate:'2026-10-06',roastNote:'按品牌定位预填，可按豆袋调整',...catalogDefaults}));
+export const builtInCatalog=[...hydrangeaCatalog,...americanProducts.map(({en,...product})=>product)];
 
 export function originalArt(bean?:{id?:string;catalogId?:string;sourceUrl?:string;icon?:string;useOriginalArt?:boolean}){
  if(!bean)return '';
  const entry=builtInCatalog.find(c=>c.id===bean.id||c.id===bean.catalogId||c.sourceUrl===bean.sourceUrl);
- return entry?'./hydrangea-art/'+entry.id.slice('hydrangea-'.length)+'.webp':'';
+ return entry?.id.startsWith('hydrangea-')?'./hydrangea-art/'+entry.id.slice('hydrangea-'.length)+'.webp':'';
 }
 export function displayedArt(bean?:{id?:string;catalogId?:string;sourceUrl?:string;icon?:string;useOriginalArt?:boolean}){
  if(!bean||bean.useOriginalArt===false)return '';
@@ -68,10 +82,10 @@ const englishDetails=[
  ['Potosi · XO','Colombia · Valle del Cauca','XO natural','Rum, pineapple, oak'],
 ];
 // Bundled bilingual product text: works offline and switches without translation requests.
-export const builtInLocales=Object.fromEntries(builtInCatalog.map((bean,i)=>[bean.id,{
- zh:{name:englishDetails[i][0],origin:englishDetails[i][1],process:englishDetails[i][2],flavor:englishDetails[i][3]},
- en:{name:englishDetails[i][0],origin:englishDetails[i][1],process:englishDetails[i][2],flavor:englishDetails[i][3]},
-}]));
+export const builtInLocales=Object.fromEntries([
+ ...hydrangeaCatalog.map((bean,i)=>[bean.id,{zh:{name:englishDetails[i][0],origin:englishDetails[i][1],process:englishDetails[i][2],flavor:englishDetails[i][3]},en:{name:englishDetails[i][0],origin:englishDetails[i][1],process:englishDetails[i][2],flavor:englishDetails[i][3]}}]),
+ ...americanProducts.map(bean=>[bean.id,{zh:{name:bean.name,origin:bean.origin,process:bean.process,flavor:bean.flavor},en:{name:bean.name,...bean.en}}]),
+]);
 type NamedBean={roaster?:string;nameEn?:string;id?:string;catalogId?:string;sourceUrl?:string;name?:string;origin?:string;process?:string;flavor?:string};
 function localizedBean(b?:NamedBean){
  const i=builtInCatalog.findIndex(c=>c.id===b?.id||c.id===b?.catalogId||c.sourceUrl===b?.sourceUrl);
@@ -81,7 +95,7 @@ function localizedBean(b?:NamedBean){
 }
 
 export function usesOriginalBeanName(b?:NamedBean){
- return !!b && (/^hydrangea$/i.test(b.roaster?.trim()||'') || builtInCatalog.some(c=>c.id===b.id||c.id===b.catalogId||c.sourceUrl===b.sourceUrl));
+ return !!b && (/^hydrangea$/i.test(b.roaster?.trim()||'') || hydrangeaCatalog.some(c=>c.id===b.id||c.id===b.catalogId||c.sourceUrl===b.sourceUrl));
 }
 export function bilingualBean(b?:NamedBean){
  const names=localizedBean(b);
