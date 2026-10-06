@@ -1,6 +1,6 @@
 import {useRef,type PointerEvent,type MouseEvent,type DragEvent} from 'react';
 import {swipeDirection,type SwipeDirection} from '@/lib/swipe-navigation';
-export function useSwipeNavigation(onSwipe:(direction:SwipeDirection)=>void,enabled=true){
+export function useSwipeNavigation(onSwipe:(direction:SwipeDirection)=>void,enabled=true,allowInteractive=false){
  const start=useRef<{x:number;y:number;axis?:'x'|'y'}|null>(null),moved=useRef(false);
  return {
   onDragStart(e:DragEvent<HTMLElement>){if(enabled)e.preventDefault()},
@@ -8,7 +8,7 @@ export function useSwipeNavigation(onSwipe:(direction:SwipeDirection)=>void,enab
    start.current=null;moved.current=false;
    if(!enabled||e.button!==0||!e.isPrimary)return;
    const target=e.target as HTMLElement;
-   if(target.closest('button,a,input,textarea,select,[role=button],[role=slider],[role=combobox],[role=listbox],.swipe-row,.main-tabs'))return;
+   if(!allowInteractive&&target.closest('button,a,input,textarea,select,[role=button],[role=slider],[role=combobox],[role=listbox],.swipe-row,.main-tabs'))return;
    // Portaled dialogs must never drive the page underneath them.
    if(target.closest('[role=dialog]')!==e.currentTarget.closest('[role=dialog]'))return;
    start.current={x:e.clientX,y:e.clientY};

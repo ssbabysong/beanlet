@@ -10,7 +10,7 @@ import {StockSlider} from '@/components/stock-slider';
 import {beanStock} from '@/lib/bean-stock';
 import {randomBeanName} from '@/lib/bean-names';
 import {localApi as api,exportBackup,importBackup} from '@/lib/local-store';
-import { ArrowLeft,Coffee,Plus,CalendarDays,BarChart3,Star,Camera,ChevronDown,ChevronLeft,ChevronRight,Heart,Pencil,Trash2,Droplets,Timer,ArrowUpRight,Share2,X } from 'lucide-react';
+import { ArrowLeft,Coffee,Plus,BarChart3,Star,Camera,ChevronDown,ChevronLeft,ChevronRight,Heart,Pencil,Trash2,Droplets,Timer,ArrowUpRight,Share2,X } from 'lucide-react';
 import { Dialog,DialogContent,DialogTitle,DialogDescription } from '@/components/ui/dialog';
 import { Sheet,SheetContent,SheetTitle,SheetDescription } from '@/components/ui/sheet';
 import { Tabs,TabsList,TabsTrigger,TabsContent } from '@/components/ui/tabs';
@@ -73,7 +73,6 @@ function Journal(){
  const [editing,setEditing]=useState<string|null>(null),[beanOpen,setBeanOpen]=useState(false),[draft,setDraft]=useState<any>(fresh),[file,setFile]=useState<File|null>(null),[preview,setPreview]=useState(''),[detail,setDetail]=useState<string|null>(null),[busy,setBusy]=useState(false),[formError,setFormError]=useState('');
  const [brewView,setBrewView]=useState('calendar'),[statsPeriod,setStatsPeriod]=useState<'month'|'year'>('month'),[calendarDay,setCalendarDay]=useState(()=>new Date()),[calendarMonth,setCalendarMonth]=useState(()=>new Date()),[sharingMonth,setSharingMonth]=useState(false),[monthReport,setMonthReport]=useState<{blob:Blob;url:string;name:string;text:string;title:string}|null>(null),[stickerWallMoving,setStickerWallMoving]=useState(false);
  const stickerStageRef=useRef<HTMLButtonElement>(null);
- const statsMonthPointerAt=useRef(0);
  const [brewActions,setBrewActions]=useState<Brew|null>(null);
 
  const [editingBrew,setEditingBrew]=useState<string|null>(null);
@@ -117,9 +116,7 @@ function Journal(){
  const activeKindData=(activeBrews.length?[{name:t('手冲'),value:activePourOvers,color:'#9ba8ce'},{name:t('奶咖'),value:activeMilks,color:'#c8b4d7'}]:[{name:t('暂无记录'),value:1,color:'#e7e8f0'}]).filter(item=>item.value>0);
  const photoStickerBrews=activeBrews.filter(brew=>brew.photo).slice().sort((a,b)=>b.date.localeCompare(a.date)),monthLabel=new Intl.DateTimeFormat(language==='en'?'en-US':'zh-CN',{year:'numeric',month:'long'}).format(calendarMonth),statsLabel=statsPeriod==='year'?String(calendarMonth.getFullYear()):monthLabel;
  const enableStickerMotion=useStickerPilePhysics(stickerStageRef,`${statsPeriod}-${calendarMonth.getFullYear()}-${calendarMonth.getMonth()}-${photoStickerBrews.length}`,tab==='brews'&&brewView==='stats');
- function shiftStatsMonth(offset:number){setCalendarMonth(month=>statsPeriod==='year'?new Date(month.getFullYear()+offset,month.getMonth(),1):new Date(month.getFullYear(),month.getMonth()+offset,1))}
- function shiftStatsMonthPointer(event:any,offset:number){if(event.pointerType==='mouse')return;event.preventDefault();event.stopPropagation();statsMonthPointerAt.current=Date.now();shiftStatsMonth(offset)}
- function shiftStatsMonthClick(offset:number){if(Date.now()-statsMonthPointerAt.current<600)return;shiftStatsMonth(offset)}
+ function shiftCalendarMonth(offset:number){setCalendarMonth(current=>{const next=new Date(current.getFullYear(),current.getMonth()+offset,1),now=new Date();setCalendarDay(next.getFullYear()===now.getFullYear()&&next.getMonth()===now.getMonth()?now:next);return next});navigationFeedback()}
  useEffect(()=>{if(tab!=='brews'||brewView!=='stats'||!photoStickerBrews.length)return;setStickerWallMoving(false);const start=window.setTimeout(()=>setStickerWallMoving(true),40),stop=window.setTimeout(()=>setStickerWallMoving(false),1500);return()=>{window.clearTimeout(start);window.clearTimeout(stop)}},[tab,brewView,calendarMonth,statsPeriod]);
  function reportBags(periodBrews:Brew[]){const beanIds=new Set(periodBrews.map(brew=>brew.beanId)),groups=[...beans.filter(bean=>beanIds.has(bean.id)).reduce((all,bean)=>{const key=coffeeIdentity(bean),group=all.get(key)||{beans:[],drunk:0};group.beans.push(bean);group.drunk+=periodBrews.filter(brew=>brew.beanId===bean.id).reduce((sum,brew)=>sum+(brew.dose||15),0);all.set(key,group);return all},new Map<string,{beans:Bean[];drunk:number}>()).values()].sort((a,b)=>b.drunk-a.drunk),bags=groups.flatMap(group=>group.beans.map(bean=>{const stock=beanStock(bean,brews),beanBrews=periodBrews.filter(brew=>brew.beanId===bean.id),periodDose=beanBrews.reduce((sum,brew)=>sum+(brew.dose||15),0),consumed=stock?1-stock.ratio:bean.status==='已喝完'?1:Math.min(.9,periodDose/250),palette=paletteFor(bean),icon=bean.icon==='cherry'||bean.icon==='cookie'?'brownie':bean.icon||'bag',sprite=['bag','cup','dripper','flower'].includes(icon)?icon:undefined,flavorFile=icon==='brownie'?'brownie-light':icon,art=bean.photo||displayedArt(bean)||(sprite?'./coffee-stickers.png':`./flavor-icons/${flavorFile}.png`);return{id:bean.id,name:label(bean),fill:palette.fill,line:palette.line,side:palette.side,consumed,drunk:periodDose,art,sprite}}));return bags}
  async function openMonthlyReport(){if(sharingMonth)return;const top=monthBeanCounts[0],topBean=top?{name:label(top.bean),count:top.count}:undefined,text=monthlyReportText({language,month:monthLabel,cups:monthBrews.length,pourOvers:monthPourOvers,milks:monthMilks,beanCount:monthBeanCounts.length,topBean}),drunkBags=reportBags(monthBrews);setSharingMonth(true);try{const blob=await createMonthlyReportImage({language,month:monthLabel,year:calendarMonth.getFullYear(),monthIndex:calendarMonth.getMonth(),cups:monthBrews.length,pourOvers:monthPourOvers,milks:monthMilks,beanCount:monthBeanCounts.length,daily:monthStats.daily,photos:photoStickerBrews.map(brew=>({id:brew.id,src:brew.photo!,date:brew.date,cutout:brew.photoCutout})),drunkBags}),name=`beanlet-${calendarMonth.getFullYear()}-${String(calendarMonth.getMonth()+1).padStart(2,'0')}.png`;setMonthReport({blob,url:URL.createObjectURL(blob),name,text,title:`Beanlet · ${monthLabel}`})}catch{toast.error(t('分享失败，请再试一次'))}finally{setSharingMonth(false)}}
@@ -129,8 +126,9 @@ function Journal(){
  function beanCard(b:Bean,group?:Bean[]){const stock=beanStock(b,brews),fade=stock?1-stock.ratio:0,coverFade=((14+fade*184)-66)/92;return <button className="bean-card" key={b.id} aria-label={label(b)+(group?` · ${group.length} ${t('包')}`:'')} onClick={()=>{setReturnToTaste(null);if(group){setTasteDetail(coffeeIdentity(b))}else setDetail(b.id)}}><div className='coffee-bag' style={{'--bag-fill':paletteFor(b).fill,'--bag-line':paletteFor(b).line,'--bag-side':paletteFor(b).side} as CSSProperties}>{group&&group.length>1&&<span className="finished-count"><span className="finished-times">×</span>{group.length}</span>}{b.roaster&&<span className="bag-brand-tag" title={b.roaster}><span>{b.roaster}</span></span>}<BagPaper ratio={stock?.ratio} sway={beanShelfWaving}/><span style={stock?{'--water-stop':`${coverFade*100}%`,maskImage:'linear-gradient(var(--water-angle,172.47deg),rgba(0,0,0,.18) var(--water-stop),#000 var(--water-stop))'} as CSSProperties:undefined} className={'coffee-bag-label label-shape-'+stickerShape(b.id)+(b.photo||displayedArt(b)?' has-picture':'')+(beanShelfWaving?' is-swaying':'')}><BeanVisual bean={b}/></span>{b.roastDate&&(!group||group.length===1)&&<span className="bag-date-tag" title={t('烘焙于')+' '+b.roastDate} aria-label={t('烘焙于')+' '+b.roastDate}><time dateTime={b.roastDate}>{b.roastDate.replaceAll('-','.')}</time></span>}<span className="bag-meta-row">{stock&&!group&&<span className="bag-remaining" aria-label={language==='en'?`${stock.remaining}g remaining`:`剩余 ${stock.remaining}g`}>{stock.remaining}<small>g</small></span>}</span>{isFavorite(b)&&<span className="bag-heart" aria-label={t("已收藏")}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.2 20.7C10.5 19.4 4.1 15.5 3.7 9.9 3.5 7.1 5.2 5.1 7.9 5c1.7-.1 3.3.8 4.2 2.2.8-1.6 2.3-2.7 4.2-2.8 2.7-.1 4.5 1.7 4.5 4.4.1 5.8-6.9 10.7-8.6 11.9Z"/></svg></span>}</div><div className="bean-info"><h3>{label(b)}</h3>{info(b,'flavor')&&<p className="shelf-name-secondary">{info(b,'flavor')}</p>}</div></button>}
 
  function brewCard(b:Brew,hideDate=false,inMemory=false){const hasDetails=!!(b.dose||b.grind||b.time||b.notes||b.rating||b.photo||(b.kind==='milk'?(b.yield||b.milkAmount||(b.milkType&&b.milkType!=='未记录')||(b.serving&&b.serving!=='未记录')):(b.water||b.temp)));return <PressableRecord className={'brew-card'+(hasDetails?'':' brew-card-compact')+(inMemory?' memory-coffee-record':'')+(b.photo?' has-brew-photo':'')} key={b.id} label={label(beans.find(x=>x.id===b.beanId))+' · '+b.date+' · '+t('点击编辑记录')} onClick={()=>editBrew(b)} onActions={()=>setBrewActions(b)}>{!inMemory&&<span className="brew-bean" style={{backgroundColor:paletteFor(beans.find(x=>x.id===b.beanId)||{id:b.beanId}).fill}} aria-hidden="true"><BeanVisual bean={beans.find(x=>x.id===b.beanId)}/></span>}{b.photo&&<span className={'brew-photo-sticker'+(b.photoCutout?' is-cutout':'')} aria-label={t('这杯咖啡的照片')}><img src={b.photo} alt=""/></span>}<div className="brew-body"><div className="row"><h3>{inMemory?<time dateTime={b.date}>{new Intl.DateTimeFormat(language==='en'?'en-US':'zh-CN',{year:'numeric',month:'short',day:'numeric'}).format(new Date(b.date+'T12:00:00'))}</time>:label(beans.find(x=>x.id===b.beanId))}</h3></div>{!hideDate&&!inMemory&&<span className="meta brew-record-date">{b.date}</span>}<div className="parameters">{b.dose!=null&&<span>{b.dose} {t('g 粉')}</span>}{b.kind==='milk'?<>{b.yield!=null&&<span>{t('出液')} {b.yield} g</span>}{b.milkAmount!=null&&<span>{t('奶量')} {b.milkAmount} ml</span>}{b.milkType&&b.milkType!=='未记录'&&<span>{t(b.milkType)}</span>}{b.serving&&b.serving!=='未记录'&&<span>{t(b.serving)}</span>}</>:<>{b.water!=null&&<span>{b.water} {t('ml 水')}</span>}{b.temp!=null&&<span>{b.temp} °C</span>}{!!b.dose&&!!b.water&&<span>1 : {(b.water/b.dose).toFixed(1)}</span>}</>}</div>{(b.grind||b.time)&&<p className="meta brew-method">{[b.grind&&t(`研磨 ${b.grind}`),b.time&&t(`用时 ${b.time}`)].filter(Boolean).join(' · ')}</p>}{b.notes&&<p className="notes">{b.notes}</p>}{b.rating>0&&<Rating value={b.rating}/>}</div></PressableRecord>}
- function selectMenu(value:string){setTab(value);if(value==='catalog'){setAtlasView(tasted.length?'tasted':'discover');setCatalogQuery('');setFilters({...emptyFilters})}requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'})))}
- const mainSwipe=useSwipeNavigation(direction=>{const tabs=tab==='brews'?['calendar','stats']:tab==='catalog'?(tasted.length?['tasted','discover']:['discover','tasted']):[];const current=tab==='brews'?brewView:atlasView,next=adjacentTab(current,direction,tabs);if(!next)return;if(tab==='brews')setBrewView(next);else{setAtlasView(next);setCatalogQuery('');setFilters({...emptyFilters})}navigationFeedback()},(tab==='brews'||tab==='catalog')&&!beanOpen&&!brewOpen&&!settingsOpen&&!pickerOpen&&!detail&&!tasteDetail&&!brewActions&&!deleteId);
+ function selectMenu(value:string){setTab(value);if(value==='brews')setBrewView('calendar');if(value==='catalog'){setAtlasView(tasted.length?'tasted':'discover');setCatalogQuery('');setFilters({...emptyFilters})}requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'})))}
+ const calendarSwipe=useSwipeNavigation(direction=>shiftCalendarMonth(direction==='next'?1:-1),tab==='brews'&&brewView==='calendar'&&!beanOpen&&!brewOpen&&!settingsOpen&&!pickerOpen&&!detail&&!tasteDetail&&!brewActions&&!deleteId,true);
+ const mainSwipe=useSwipeNavigation(direction=>{if(tab==='brews'){if(brewView==='stats'&&direction==='previous'){setBrewView('calendar');navigationFeedback()}return}const tabs=tasted.length?['tasted','discover']:['discover','tasted'],next=adjacentTab(atlasView,direction,tabs);if(!next)return;setAtlasView(next);setCatalogQuery('');setFilters({...emptyFilters});navigationFeedback()},((tab==='brews'&&brewView==='stats')||tab==='catalog')&&!beanOpen&&!brewOpen&&!settingsOpen&&!pickerOpen&&!detail&&!tasteDetail&&!brewActions&&!deleteId);
  return (
    <>
      <Toaster
@@ -186,14 +184,14 @@ function Journal(){
        )}
      </header>
      <main className="menu-swipe" {...mainSwipe}>
-       <section className="heading">
+       <section className={tab === "brews" && brewView === "stats" ? "heading heading-hidden" : "heading"}>
          <div>
            <h1>
              {tab === "beans"
                ? t("我的豆仓")
                : tab === "catalog"
                  ? t("豆子图鉴")
-                 : t("咖啡记录")}
+                 : t(brewView === "stats" ? "回顾" : "咖啡记录")}
            </h1>
            {tab === "beans" && (
              <p className="subtitle">
@@ -203,7 +201,7 @@ function Journal(){
              </p>
            )}
          </div>
-         {(tab !== "catalog" || atlasView === "discover") && (
+         {(tab !== "catalog" || atlasView === "discover") && !(tab === "brews" && brewView === "stats") && (
            <button
              className="add-button"
              aria-label={t(
@@ -227,26 +225,7 @@ function Journal(){
          )}
        </section>
        <Tabs value={tab} onValueChange={selectMenu} className="collection">
-         <div
-           className={tab !== "brews" ? "toolbar toolbar-hidden" : "toolbar"}
-         >
-           {tab === "beans" ? null : tab === "catalog" ? null : (
-             <div
-               className="view-picker"
-               role="group"
-               aria-label={t("记录视图")}
-             >
-               {[
-                 { id: "calendar", name: t("日历"), icon: CalendarDays },
-                 { id: "stats", name: t("当月统计"), icon: BarChart3 },
-               ].map((v) => (
-                 <button type="button" className="view-picker-button" key={v.id} aria-label={v.name} aria-pressed={brewView===v.id} onClick={()=>setBrewView(v.id)}>
-                   <v.icon size={18} />
-                 </button>
-               ))}
-             </div>
-           )}
-         </div>
+         <div className="toolbar toolbar-hidden" />
          <span className="bottom-menu-backdrop" aria-hidden="true" />
          <TabsList className="main-tabs">
            <span
@@ -526,7 +505,21 @@ function Journal(){
              <TabsContent value="brews">
                {brewView === "calendar" ? (
                  <>
-                   <div className="calendar-panel">
+                   <button
+                     type="button"
+                     className="calendar-review-link"
+                     onClick={() => {
+                       setStatsPeriod('month');
+                       setBrewView('stats');
+                       requestAnimationFrame(() => window.scrollTo({top:0,left:0,behavior:'auto'}));
+                     }}
+                     aria-label={t("查看本月回顾")}
+                   >
+                     <BarChart3 size={15}/>
+                     <span>{new Intl.DateTimeFormat(language === "en" ? "en-US" : "zh-CN", {month:"long"}).format(calendarMonth)} · {monthBrews.length} {t("杯")}</span>
+                     <ChevronRight size={15}/>
+                   </button>
+                   <div className="calendar-panel" {...calendarSwipe}>
                      <Calendar
                        className="brew-calendar"
                        mode="single"
@@ -694,15 +687,16 @@ function Journal(){
                  </>
                ) : (
                  <section className="month-stats">
+                   <div className="review-page-nav">
+                     <button type="button" onClick={()=>setBrewView('calendar')} aria-label={t("返回日历")}>
+                       <ArrowLeft size={19}/><span>{t("日历")}</span>
+                     </button>
+                   </div>
                    <div className="stats-period-switch" role="group" aria-label={t("统计周期")}>
                      <button type="button" aria-pressed={statsPeriod==='month'} onClick={()=>setStatsPeriod('month')}>{t("月")}</button>
                      <button type="button" aria-pressed={statsPeriod==='year'} onClick={()=>setStatsPeriod('year')}>{t("年")}</button>
                    </div>
-                   <header className="month-stats-heading">
-                     <button type="button" className="icon-button" aria-label={t(statsPeriod==='year'?"上一年":"上个月")} onPointerUp={event=>shiftStatsMonthPointer(event,-1)} onClick={()=>shiftStatsMonthClick(-1)}><ChevronLeft size={19}/></button>
-                     <h2>{statsLabel}</h2>
-                     <button type="button" className="icon-button" aria-label={t(statsPeriod==='year'?"下一年":"下个月")} onPointerUp={event=>shiftStatsMonthPointer(event,1)} onClick={()=>shiftStatsMonthClick(1)}><ChevronRight size={19}/></button>
-                   </header>
+                   <h2 className="review-period-label">{statsLabel}</h2>
                    {photoStickerBrews.length>0&&<section className="month-sticker-wall" aria-label={t("所有咖啡照片贴纸")}>
                      <button ref={stickerStageRef} type="button" className={`month-sticker-stage${stickerWallMoving?' is-moving':''}`} style={{'--pile-height':`${Math.min(330,160+Math.max(0,Math.ceil(photoStickerBrews.length/6)-1)*28)}px`} as CSSProperties} aria-label={t("晃动咖啡贴纸")} onPointerDown={enableStickerMotion} onClick={()=>{setStickerWallMoving(false);requestAnimationFrame(()=>{setStickerWallMoving(true);navigationFeedback();setTimeout(()=>setStickerWallMoving(false),1450)})}}>
                        <span className="month-sticker-collage">{photoStickerBrews.map((brew,index)=>{const place=wallStickerPlacement(brew.id,index,photoStickerBrews.length),size=place.size*1.2;return <figure className={brew.photoCutout?'is-cutout':''} key={brew.id} style={{'--sticker-size':`${size}%`,'--sticker-overlap':`${-size*.05}%`,'--sticker-lift':`${place.lift}px`,'--sticker-rotation':`${place.rotation}deg`,'--sticker-delay':`${Math.min(index,12)*35}ms`} as CSSProperties}><img src={brew.photo} alt={label(beans.find(bean=>bean.id===brew.beanId))}/></figure>})}</span>
