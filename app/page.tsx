@@ -40,6 +40,7 @@ import {createMonthlyReportImage} from '@/lib/monthly-report-image';
 import {createAnnualReportImage} from '@/lib/annual-report-image';
 import {wallStickerPlacement} from '@/lib/sticker-layout';
 import {CoffeeReel} from '@/components/coffee-reel';
+import {useStickerPilePhysics} from '@/components/use-sticker-pile-physics';
 import {ResponsiveContainer,BarChart,Bar,XAxis,YAxis,Tooltip,PieChart,Pie,Cell} from 'recharts';
 type Bean={weight?:number;stockAdjustment?:number;nameEn?:string;useOriginalArt?:boolean;recordType?:string;catalogId?:string;sourceUrl?:string;sourceDate?:string;variety?:string;roastNote?:string;icon?:string;id:string;name:string;roaster:string;origin:string;process:string;roast:string;flavor:string;status:string;rating:number;repurchase:boolean;photo:string;roastDate:string;notes:string};
 type Brew=BrewRecord;
@@ -71,6 +72,7 @@ function Journal(){
  const [photoSource,setPhotoSource]=useState<File|string|null>(null);
  const [editing,setEditing]=useState<string|null>(null),[beanOpen,setBeanOpen]=useState(false),[draft,setDraft]=useState<any>(fresh),[file,setFile]=useState<File|null>(null),[preview,setPreview]=useState(''),[detail,setDetail]=useState<string|null>(null),[busy,setBusy]=useState(false),[formError,setFormError]=useState('');
  const [brewView,setBrewView]=useState('calendar'),[statsPeriod,setStatsPeriod]=useState<'month'|'year'>('month'),[calendarDay,setCalendarDay]=useState(()=>new Date()),[calendarMonth,setCalendarMonth]=useState(()=>new Date()),[sharingMonth,setSharingMonth]=useState(false),[monthReport,setMonthReport]=useState<{blob:Blob;url:string;name:string;text:string;title:string}|null>(null),[stickerWallMoving,setStickerWallMoving]=useState(false);
+ const stickerStageRef=useRef<HTMLButtonElement>(null);
  const statsMonthPointerAt=useRef(0);
  const [brewActions,setBrewActions]=useState<Brew|null>(null);
 
@@ -114,6 +116,7 @@ function Journal(){
  const activeBeanIds=new Set(activeBrews.map(brew=>brew.beanId)),activeBagRanking=[...beans.filter(bean=>activeBeanIds.has(bean.id)).reduce((groups,bean)=>{const key=coffeeIdentity(bean),group=groups.get(key)||{key,bean,bags:[] as Bean[],drunk:0};group.bags.push(bean);group.drunk+=activeBrews.filter(brew=>brew.beanId===bean.id).reduce((sum,brew)=>sum+(brew.dose||15),0);groups.set(key,group);return groups},new Map<string,{key:string;bean:Bean;bags:Bean[];drunk:number}>()).values()].sort((a,b)=>b.drunk-a.drunk||b.bags.length-a.bags.length||label(a.bean).localeCompare(label(b.bean))).slice(0,4);
  const activeKindData=(activeBrews.length?[{name:t('手冲'),value:activePourOvers,color:'#9ba8ce'},{name:t('奶咖'),value:activeMilks,color:'#c8b4d7'}]:[{name:t('暂无记录'),value:1,color:'#e7e8f0'}]).filter(item=>item.value>0);
  const photoStickerBrews=activeBrews.filter(brew=>brew.photo).slice().sort((a,b)=>b.date.localeCompare(a.date)),monthLabel=new Intl.DateTimeFormat(language==='en'?'en-US':'zh-CN',{year:'numeric',month:'long'}).format(calendarMonth),statsLabel=statsPeriod==='year'?String(calendarMonth.getFullYear()):monthLabel;
+ const enableStickerMotion=useStickerPilePhysics(stickerStageRef,`${statsPeriod}-${calendarMonth.getFullYear()}-${calendarMonth.getMonth()}-${photoStickerBrews.length}`,tab==='brews'&&brewView==='stats');
  function shiftStatsMonth(offset:number){setCalendarMonth(month=>statsPeriod==='year'?new Date(month.getFullYear()+offset,month.getMonth(),1):new Date(month.getFullYear(),month.getMonth()+offset,1))}
  function shiftStatsMonthPointer(event:any,offset:number){if(event.pointerType==='mouse')return;event.preventDefault();event.stopPropagation();statsMonthPointerAt.current=Date.now();shiftStatsMonth(offset)}
  function shiftStatsMonthClick(offset:number){if(Date.now()-statsMonthPointerAt.current<600)return;shiftStatsMonth(offset)}
@@ -701,7 +704,7 @@ function Journal(){
                      <button type="button" className="icon-button" aria-label={t(statsPeriod==='year'?"下一年":"下个月")} onPointerUp={event=>shiftStatsMonthPointer(event,1)} onClick={()=>shiftStatsMonthClick(1)}><ChevronRight size={19}/></button>
                    </header>
                    {photoStickerBrews.length>0&&<section className="month-sticker-wall" aria-label={t("所有咖啡照片贴纸")}>
-                     <button type="button" className={`month-sticker-stage${stickerWallMoving?' is-moving':''}`} aria-label={t("晃动咖啡贴纸")} onClick={()=>{setStickerWallMoving(false);requestAnimationFrame(()=>{setStickerWallMoving(true);navigationFeedback();setTimeout(()=>setStickerWallMoving(false),1450)})}}>
+                     <button ref={stickerStageRef} type="button" className={`month-sticker-stage${stickerWallMoving?' is-moving':''}`} aria-label={t("晃动咖啡贴纸")} onPointerDown={enableStickerMotion} onClick={()=>{setStickerWallMoving(false);requestAnimationFrame(()=>{setStickerWallMoving(true);navigationFeedback();setTimeout(()=>setStickerWallMoving(false),1450)})}}>
                        <span className="month-sticker-collage">{photoStickerBrews.map((brew,index)=>{const place=wallStickerPlacement(brew.id,index,photoStickerBrews.length),size=place.size*1.2;return <figure className={brew.photoCutout?'is-cutout':''} key={brew.id} style={{'--sticker-size':`${size}%`,'--sticker-overlap':`${-size*.05}%`,'--sticker-lift':`${place.lift}px`,'--sticker-rotation':`${place.rotation}deg`,'--sticker-delay':`${Math.min(index,12)*35}ms`} as CSSProperties}><img src={brew.photo} alt={label(beans.find(bean=>bean.id===brew.beanId))}/></figure>})}</span>
                      </button>
                    </section>}

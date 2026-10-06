@@ -28,6 +28,8 @@
 	<string>拍摄咖啡豆包装，作为你的豆子插画。</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>选择咖啡豆包装照片。</string>
+	<key>NSMotionUsageDescription</key>
+	<string>轻轻晃动手机，让咖啡贴纸自然碰撞和堆叠。</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
