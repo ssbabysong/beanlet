@@ -1,6 +1,6 @@
 "use client";
 import { useEffect,useState,useRef,FormEvent,type CSSProperties } from 'react';
-import {coffeeIdentity,stickerShape,groupFinished,type Taste} from '@/lib/tasted';
+import {coffeeIdentity,stickerShape,type Taste} from '@/lib/tasted';
 import {beanPalette,calendarColors} from '@/lib/bean-appearance';
 import {brewDraftFor,brewPayload,type BrewRecord,type BrewKind} from '@/lib/brew-types';
 import {RoasterInput} from '@/components/roaster-input';
@@ -102,7 +102,7 @@ function Journal(){
  const filterDefinitions:[keyof CatalogFilters,string,(b:Bean)=>string][]=[['brand','品牌',b=>b.roaster||'未记录'],['roast','烘焙度',b=>b.roast||'未记录'],['origin','产地',b=>countryOf(b.origin)],['process','处理法',b=>processOf(b.process)]];
  function filterControls(){return <div className="catalog-filter-panel"><div className="catalog-filters">{filterDefinitions.map(([key,title,get])=><Choice key={key} label={t(title)} value={filters[key]} options={['全部',...Array.from(new Set(catalog.map(get))).filter(x=>x!=='全部')]} onChange={value=>setFilters(f=>({...f,[key]:value}))}/>)}</div>{(Object.values(filters).some(v=>v!=='全部')||catalogQuery)&&<button className="clear-filters" onClick={()=>{setFilters({...emptyFilters});setCatalogQuery('')}}>{t('清除筛选')}</button>}</div>}
 
- const selected=beans.find(b=>b.id===detail),finished=groupFinished(beans),shown=beans.filter(b=>b.status!=='已喝完');const d=(key:string,value:unknown)=>setDraft((p:any)=>({...p,[key]:value}));const bd=(key:string,value:unknown)=>setBrewDraft((p:any)=>({...p,[key]:value}));
+ const selected=beans.find(b=>b.id===detail),shown=beans.filter(b=>b.status!=='已喝完');const d=(key:string,value:unknown)=>setDraft((p:any)=>({...p,[key]:value}));const bd=(key:string,value:unknown)=>setBrewDraft((p:any)=>({...p,[key]:value}));
  const monthStats=monthlyBrewStats(brews,calendarMonth.getFullYear(),calendarMonth.getMonth()+1),monthBrews=monthStats.records,monthPourOvers=monthStats.pourOvers,monthMilks=monthStats.milks,monthBeanCounts=monthStats.beans.map(({beanId,count})=>({bean:beans.find(b=>b.id===beanId),count})).filter((row):row is {bean:Bean;count:number}=>!!row.bean),monthMaxBeanCount=Math.max(1,...monthBeanCounts.map(row=>row.count));
  const monthDailyMax=Math.max(1,...monthStats.daily.map(day=>day.cups)),monthDailyTicks=Array.from(new Set([0,Math.ceil(monthDailyMax/2),monthDailyMax]));
  const monthKindData=(monthBrews.length?[{name:t('手冲'),value:monthPourOvers,color:'#9ba8ce'},{name:t('奶咖'),value:monthMilks,color:'#c8b4d7'}]:[{name:t('暂无记录'),value:1,color:'#e7e8f0'}]).filter(item=>item.value>0);
@@ -115,7 +115,6 @@ function Journal(){
  async function shareMonthlyReport(){if(!monthReport)return;try{if((globalThis as any).Capacitor?.isNativePlatform?.()){const {shareNativeImage}=await import('@/lib/native-video');await shareNativeImage(monthReport.blob,monthReport.name,`Beanlet · ${monthLabel}`)}else{const file=new File([monthReport.blob],monthReport.name,{type:'image/png'}),shareData={title:`Beanlet · ${monthLabel}`,text:monthReport.text,files:[file]};if(navigator.share&&navigator.canShare?.(shareData))await navigator.share(shareData);else{const link=document.createElement('a');link.href=monthReport.url;link.download=monthReport.name;link.click();toast.success(t('月报图片已保存'))}}}catch(error){if((error as Error).name!=='AbortError')toast.error(t('分享失败，请再试一次'))}}
  async function toggleFinished(b:Bean){if(busy)return;setBusy(true);try{await api('/api/journal',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'bean',id:b.id,data:{...b,status:b.status==='已喝完'?'正在喝':'已喝完'}})});await refresh();toast.success(t(b.status==='已喝完'?'放回豆架了':'收进喝完的豆子了'))}catch(e){toast.error(t((e as Error).message))}finally{setBusy(false)}}
  function beanCard(b:Bean,group?:Bean[]){const stock=beanStock(b,brews),fade=stock?1-stock.ratio:0;return <button className="bean-card" key={b.id} aria-label={label(b)+(group?` · ${group.length} ${t('包')}`:'')} onClick={()=>{setReturnToTaste(null);if(group){setTasteDetail(coffeeIdentity(b))}else setDetail(b.id)}}><div className='coffee-bag' style={{'--bag-fill':beanPalette(b).fill,'--bag-line':beanPalette(b).line,'--bag-side':beanPalette(b).side} as CSSProperties}>{group&&group.length>1&&<span className="finished-count"><span className="finished-times">×</span>{group.length}</span>}{b.roaster&&<span className="bag-brand-tag" title={b.roaster}><span>{b.roaster}</span></span>}<BagPaper ratio={stock?.ratio}/><span style={stock?{maskImage:`linear-gradient(to bottom,rgba(0,0,0,.18) ${fade*100}%,#000 ${fade*100}%)`}:undefined} className={'coffee-bag-label'+(b.photo||displayedArt(b)?' has-picture':'')}><BeanVisual bean={b}/></span>{b.roastDate&&(!group||group.length===1)&&<span className="bag-date-tag" title={t('烘焙于')+' '+b.roastDate} aria-label={t('烘焙于')+' '+b.roastDate}><time dateTime={b.roastDate}>{b.roastDate.replaceAll('-','.')}</time></span>}<span className="bag-meta-row">{stock&&!group&&<span className="bag-remaining" aria-label={language==='en'?`${stock.remaining}g remaining`:`剩余 ${stock.remaining}g`}>{stock.remaining}<small>g</small></span>}</span>{isFavorite(b)&&<span className="bag-heart" aria-label={t("已收藏")}><Heart size={16} fill="currentColor"/></span>}</div><div className="bean-info"><h3>{label(b)}</h3>{info(b,'flavor')&&<p className="shelf-name-secondary">{info(b,'flavor')}</p>}</div></button>}
- function finishedCard(group:Bean[]){const b=group[0],dates=group.map(item=>item.roastDate).filter(Boolean).sort().reverse(),date=dates[0];return <button className="finished-memory" key={coffeeIdentity(b)} aria-label={label(b)+` · ${group.length} ${t('包')}`} onClick={()=>{setReturnToTaste(null);setTasteDetail(coffeeIdentity(b))}} style={{'--memory-fill':beanPalette(b).fill,'--memory-line':beanPalette(b).line} as CSSProperties}><span className="finished-memory-art"><BeanVisual bean={b}/>{group.length>1&&<span className="finished-memory-count"><b>×</b>{group.length}</span>}</span><span className="finished-memory-copy"><strong>{label(b)}</strong>{b.roaster&&<small>{b.roaster}</small>}{date&&<time dateTime={date}>{date.replaceAll('-','.')}</time>}</span></button>}
 
  function brewCard(b:Brew,hideDate=false,inMemory=false){const hasDetails=!!(b.dose||b.grind||b.time||b.notes||b.rating||b.photo||(b.kind==='milk'?(b.yield||b.milkAmount||(b.milkType&&b.milkType!=='未记录')||(b.serving&&b.serving!=='未记录')):(b.water||b.temp)));return <PressableRecord className={'brew-card'+(hasDetails?'':' brew-card-compact')+(inMemory?' memory-coffee-record':'')+(b.photo?' has-brew-photo':'')} key={b.id} label={label(beans.find(x=>x.id===b.beanId))+' · '+b.date+' · '+t('点击编辑记录')} onClick={()=>editBrew(b)} onActions={()=>setBrewActions(b)}>{!inMemory&&<span className="brew-bean" style={{backgroundColor:beanPalette(beans.find(x=>x.id===b.beanId)||{id:b.beanId}).fill}} aria-hidden="true"><BeanVisual bean={beans.find(x=>x.id===b.beanId)}/></span>}{b.photo&&<span className={'brew-photo-sticker'+(b.photoCutout?' is-cutout':'')} aria-label={t('这杯咖啡的照片')}><img src={b.photo} alt=""/></span>}<div className="brew-body"><div className="row"><h3>{inMemory?<time dateTime={b.date}>{new Intl.DateTimeFormat(language==='en'?'en-US':'zh-CN',{year:'numeric',month:'short',day:'numeric'}).format(new Date(b.date+'T12:00:00'))}</time>:label(beans.find(x=>x.id===b.beanId))}</h3></div>{!hideDate&&!inMemory&&<span className="meta brew-record-date">{b.date}</span>}<div className="parameters">{b.dose!=null&&<span>{b.dose} {t('g 粉')}</span>}{b.kind==='milk'?<>{b.yield!=null&&<span>{t('出液')} {b.yield} g</span>}{b.milkAmount!=null&&<span>{t('奶量')} {b.milkAmount} ml</span>}{b.milkType&&b.milkType!=='未记录'&&<span>{t(b.milkType)}</span>}{b.serving&&b.serving!=='未记录'&&<span>{t(b.serving)}</span>}</>:<>{b.water!=null&&<span>{b.water} {t('ml 水')}</span>}{b.temp!=null&&<span>{b.temp} °C</span>}{!!b.dose&&!!b.water&&<span>1 : {(b.water/b.dose).toFixed(1)}</span>}</>}</div>{(b.grind||b.time)&&<p className="meta brew-method">{[b.grind&&t(`研磨 ${b.grind}`),b.time&&t(`用时 ${b.time}`)].filter(Boolean).join(' · ')}</p>}{b.notes&&<p className="notes">{b.notes}</p>}{b.rating>0&&<Rating value={b.rating}/>}</div></PressableRecord>}
  function selectMenu(value:string){setTab(value);if(value==='catalog'){setAtlasView(tasted.length?'tasted':'discover');setCatalogQuery('');setFilters({...emptyFilters})}requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'})))}
@@ -308,24 +307,6 @@ function Journal(){
                      {t("加一包")}
                    </button>
                  </Empty>
-               )}
-               {finished.length > 0 && (
-                 <Collapsible className="finished-group">
-                   <CollapsibleTrigger className="finished-trigger">
-                     <Sticker icon="cup" />
-                     <span>
-                       {t("喝完的 ·")}
-                       {finished.length}
-                       {t("款")}
-                     </span>
-                     <ChevronDown size={17} />
-                   </CollapsibleTrigger>
-                   <CollapsibleContent>
-                     <div className="finished-memories">
-                       {finished.map((group) => finishedCard(group))}
-                     </div>
-                   </CollapsibleContent>
-                 </Collapsible>
                )}
              </TabsContent>
              <TabsContent value="catalog">

@@ -604,23 +604,6 @@ img,svg{-webkit-user-drag:none}
 .bean-shelf .bag-brand-tag>span{display:block;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:7px;line-height:1;text-align:center}
 .bean-shelf .coffee-bag-body{position:relative;pointer-events:none}
 
-/* Finished coffees become small keepsakes instead of another row of bags. */
-.finished-memories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 11px;padding:2px 3px 12px}
-.finished-memory{position:relative;display:flex;align-items:center;gap:10px;min-width:0;min-height:82px;padding:10px 10px 10px 8px;text-align:left;background:color-mix(in srgb,var(--memory-fill) 42%,#fff 58%);border:1px solid color-mix(in srgb,var(--memory-line) 20%,transparent);border-radius:24px 18px 22px 16px / 18px 24px 17px 23px;box-shadow:0 5px 14px #68718a0a;transform:rotate(-.7deg);overflow:visible}
-.finished-memory:nth-child(even){transform:rotate(.8deg);border-radius:17px 25px 18px 23px / 23px 17px 25px 18px}
-.finished-memory:nth-child(3n){transform:rotate(-1.2deg);border-radius:25px 17px 24px 19px / 18px 25px 17px 24px}
-.finished-memory:active{transform:scale(.98)}
-.finished-memory-art{position:relative;display:grid;place-items:center;width:61px;height:61px;flex:0 0 61px;background:#fff9;border-radius:43% 57% 48% 52% / 55% 42% 58% 45%;transform:rotate(-5deg);overflow:visible}
-.finished-memory:nth-child(even) .finished-memory-art{transform:rotate(5deg);border-radius:57% 43% 55% 45% / 44% 58% 42% 56%}
-.finished-memory-art>.sticker{width:54px;height:54px;max-width:none}
-.finished-memory-art>.bean-thumb,.finished-memory-art>.original-art{width:56px!important;height:56px!important;object-fit:cover;border-radius:44% 56% 50% 50% / 56% 43% 57% 44%!important}
-.finished-memory-count{position:absolute;right:-8px;top:-7px;display:flex;align-items:baseline;justify-content:center;min-width:28px;height:25px;padding:0 6px;background:#faf7ef;color:#73788a;border:1px solid #dcd7ca;border-radius:50% 46% 53% 44%;font-size:11px;line-height:24px;box-shadow:1px 2px 4px #6a637018;transform:rotate(8deg)}
-.finished-memory-count b{font-size:16px;font-weight:400;line-height:1;margin-right:1px}
-.finished-memory-copy{display:flex;flex-direction:column;min-width:0;line-height:1.35}
-.finished-memory-copy strong{display:block;max-width:100%;font-size:13px;font-weight:600;color:#66718e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.finished-memory-copy small{display:block;max-width:100%;margin-top:3px;color:#9299aa;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.finished-memory-copy time{margin-top:5px;color:#a2a7b3;font-size:9px;letter-spacing:.02em}
-@media(max-width:380px){.finished-memories{gap:11px 8px}.finished-memory{gap:7px;padding:8px 7px;min-height:74px}.finished-memory-art{width:54px;height:54px;flex-basis:54px}.finished-memory-art>.sticker{width:48px;height:48px}.finished-memory-art>.bean-thumb,.finished-memory-art>.original-art{width:50px!important;height:50px!important}.finished-memory-copy strong{font-size:12px}}
 
 .pour-timer-entry{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:14px;margin:10px 0;border:1px dashed #c5c9df;border-radius:17px;background:#f1f0f9;color:#7c84b0;font-size:14px}
 .pour-timer-dialog{display:flex!important;flex-direction:column;gap:12px!important;width:calc(100% - 24px)!important;max-width:440px!important;max-height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 32px);padding:20px!important;background:#f8f8fd!important;border-radius:28px!important;overflow:hidden}
