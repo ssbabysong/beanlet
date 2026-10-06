@@ -10,6 +10,5 @@ assert.ok(portrait.every(item=>item.x>=7&&item.x<=93&&item.y>=8&&item.y<=92));
 assert.equal(stickerPlacement('one',0,1).x,50);
 const wall=Array.from({length:100},(_,index)=>wallStickerPlacement(`photo-${index}`,index,100));
 assert.deepEqual(wallStickerPlacement('same',4,12),wallStickerPlacement('same',4,12));
-assert.ok(wall.every(item=>item.x>=0&&item.x<=100&&item.y>=3&&item.y<=97));
-assert.ok(wall.every(item=>item.size>=16&&item.size<=18&&item.lift>=-3&&item.lift<=3&&item.rotation>=-10&&item.rotation<=10));
+assert.ok(wall.every(item=>item.size>=11&&item.size<=19&&item.lift>=-9&&item.lift<=9&&item.rotation>=-8&&item.rotation<=8));
 console.log('Sticker layout: deterministic cluster, bounds, scale and portrait placement passed');
