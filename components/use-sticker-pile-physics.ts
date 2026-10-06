@@ -1,6 +1,6 @@
 import {type RefObject,useCallback,useEffect,useRef} from 'react';
 
-type Body={el:HTMLElement;x:number;y:number;vx:number;vy:number;r:number;angle:number;spin:number};
+type Body={el:HTMLElement;x:number;y:number;vx:number;vy:number;r:number};
 
 function clamp(value:number,min:number,max:number){return Math.max(min,Math.min(max,value))}
 function hash(value:string){let result=2166136261;for(const char of value){result^=char.charCodeAt(0);result=Math.imul(result,16777619)}return result>>>0}
@@ -20,12 +20,12 @@ export function useStickerPilePhysics(stageRef:RefObject<HTMLElement|null>,reset
   const width=stage.clientWidth,height=stage.clientHeight;
   for(const body of list){
    body.vx=(body.vx+gravity.current.x*dt)*.985;body.vy=(body.vy+gravity.current.y*dt)*.985;
-   body.x+=body.vx*dt;body.y+=body.vy*dt;body.angle+=body.spin*dt;body.spin*=.982;
+   body.x+=body.vx*dt;body.y+=body.vy*dt;
    const left=body.r*.72,right=width-body.r*.72,top=body.r*.7,bottom=height-body.r*.7;
-   if(body.x<left){body.x=left;body.vx=Math.abs(body.vx)*.48;body.spin-=.08}
-   if(body.x>right){body.x=right;body.vx=-Math.abs(body.vx)*.48;body.spin+=.08}
+   if(body.x<left){body.x=left;body.vx=Math.abs(body.vx)*.48}
+   if(body.x>right){body.x=right;body.vx=-Math.abs(body.vx)*.48}
    if(body.y<top){body.y=top;body.vy=Math.abs(body.vy)*.45}
-   if(body.y>bottom){body.y=bottom;body.vy=-Math.abs(body.vy)*.38;body.spin+=body.vx*.015}
+   if(body.y>bottom){body.y=bottom;body.vy=-Math.abs(body.vy)*.38}
   }
   // Soft circular collisions allow a little overlap, so the result feels like a loose pile.
   for(let i=0;i<list.length;i++)for(let j=i+1;j<list.length;j++){
@@ -35,14 +35,13 @@ export function useStickerPilePhysics(stageRef:RefObject<HTMLElement|null>,reset
    a.x-=nx*push;a.y-=ny*push;b.x+=nx*push;b.y+=ny*push;
    const relative=(b.vx-a.vx)*nx+(b.vy-a.vy)*ny;
    if(relative<0){const impulse=-relative*.55;a.vx-=impulse*nx;a.vy-=impulse*ny;b.vx+=impulse*nx;b.vy+=impulse*ny}
-   a.spin-=ny*.025;b.spin+=ny*.025;
   }
   for(const body of list){
    body.el.style.setProperty('--motion-x',`${body.x-body.el.offsetLeft-body.el.offsetWidth/2}px`);
    body.el.style.setProperty('--motion-y',`${body.y-body.el.offsetTop-body.el.offsetHeight/2}px`);
-   body.el.style.setProperty('--motion-turn',`${body.angle}deg`);
+   body.el.style.setProperty('--motion-turn',`${clamp(body.vx*.7+gravity.current.x*12,-3.5,3.5)}deg`);
   }
-  const energy=list.reduce((sum,body)=>sum+Math.abs(body.vx)+Math.abs(body.vy)+Math.abs(body.spin)*3,0);
+  const energy=list.reduce((sum,body)=>sum+Math.abs(body.vx)+Math.abs(body.vy),0);
   quiet.current=energy<Math.max(.18,list.length*.07)?quiet.current+1:0;
   if(quiet.current>32){frame.current=0;return}
   frame.current=requestAnimationFrame(tick);
@@ -71,9 +70,9 @@ export function useStickerPilePhysics(stageRef:RefObject<HTMLElement|null>,reset
    if(!elements.length||!width||!height)return;
    bodies.current=elements.map((el,index)=>{
     const seed=hash(`${resetKey}-${index}`),spread=Math.min(1,.58+elements.length/24);
-    const x=width*(.5+(random(seed^0x9e3779b9)-.5)*.72*spread),y=height*(.58+(random(seed^0x85ebca6b)-.5)*.46*spread),angle=-14+random(seed^0xc2b2ae35)*28;
-    el.style.setProperty('--motion-x',`${x-el.offsetLeft-el.offsetWidth/2}px`);el.style.setProperty('--motion-y',`${y-el.offsetTop-el.offsetHeight/2}px`);el.style.setProperty('--motion-turn',`${angle}deg`);
-    return {el,x,y,vx:(random(seed^0x27d4eb2f)-.5)*.3,vy:0,r:Math.min(el.offsetWidth,el.offsetHeight)/2,angle,spin:(random(seed^0x165667b1)-.5)*.08};
+    const x=width*(.5+(random(seed^0x9e3779b9)-.5)*.72*spread),y=height*(.58+(random(seed^0x85ebca6b)-.5)*.46*spread);
+    el.style.setProperty('--motion-x',`${x-el.offsetLeft-el.offsetWidth/2}px`);el.style.setProperty('--motion-y',`${y-el.offsetTop-el.offsetHeight/2}px`);el.style.setProperty('--motion-turn','0deg');
+    return {el,x,y,vx:0,vy:0,r:Math.min(el.offsetWidth,el.offsetHeight)/2};
    });
    wake();
   };
