@@ -1,19 +1,21 @@
-import {useRef,useState,type ReactNode} from 'react';
-import {Pencil,Trash2} from 'lucide-react';
+import {useEffect,useId,useRef,useState,type CSSProperties,type ReactNode} from 'react';
+import {Trash2} from 'lucide-react';
 import {navigationFeedback} from '@/lib/haptic-feedback';
 
-type SwipeActionsProps={children:ReactNode;editLabel:string;deleteLabel:string;onEdit:()=>void;onDelete:()=>void;className?:string};
+export type SwipeAction={label:string;icon:ReactNode;onAction:()=>void;tone?:'plain'|'add'|'link'|'delete'};
+type SwipeActionsProps={children:ReactNode;deleteLabel:string;onDelete:()=>void;leadingActions?:SwipeAction[];className?:string};
+const openEvent='beanlet-swipe-actions-open';
 
-export function SwipeActions({children,editLabel,deleteLabel,onEdit,onDelete,className=''}:SwipeActionsProps){
- const actionWidth=132,[offset,setOffset]=useState(0),[dragging,setDragging]=useState(false),offsetRef=useRef(0),openRef=useRef(false),gesture=useRef<{x:number;y:number;offset:number;axis?:'x'|'y'}|null>(null),moved=useRef(false);
+export function SwipeActions({children,deleteLabel,onDelete,leadingActions=[],className=''}:SwipeActionsProps){
+ const rowId=useId(),actions:SwipeAction[]=[...leadingActions,{label:deleteLabel,icon:<Trash2 size={16}/>,onAction:onDelete,tone:'delete'}],actionWidth=Math.min(280,actions.length*56),[offset,setOffset]=useState(0),[dragging,setDragging]=useState(false),offsetRef=useRef(0),openRef=useRef(false),gesture=useRef<{x:number;y:number;offset:number;axis?:'x'|'y'}|null>(null),moved=useRef(false);
  function move(next:number){offsetRef.current=next;setOffset(next)}
  function close(){openRef.current=false;move(0)}
- function reveal(feedback=true){if(feedback&&!openRef.current)navigationFeedback();openRef.current=true;move(-actionWidth)}
+ function reveal(feedback=true){if(feedback&&!openRef.current)navigationFeedback();document.dispatchEvent(new CustomEvent(openEvent,{detail:rowId}));openRef.current=true;move(-actionWidth)}
  function action(run:()=>void){close();run()}
- return <div className={`swipe-row swipe-actions-row ${className}`.trim()}>
+ useEffect(()=>{const closeOther=(event:Event)=>{if((event as CustomEvent<string>).detail===rowId)return;openRef.current=false;offsetRef.current=0;setOffset(0)};document.addEventListener(openEvent,closeOther);return()=>document.removeEventListener(openEvent,closeOther)},[rowId]);
+ return <div className={`swipe-row swipe-actions-row ${className}`.trim()} style={{'--swipe-action-width':`${actionWidth}px`,'--swipe-action-count':actions.length} as CSSProperties}>
   <div className="swipe-actions" aria-hidden={offset===0} style={{opacity:Math.min(1,Math.abs(offset)/36)}}>
-   <button className="swipe-edit" type="button" tabIndex={offset===0?-1:0} aria-label={editLabel} onFocus={()=>reveal(false)} onClick={()=>action(onEdit)}><Pencil size={17}/><span>{editLabel}</span></button>
-   <button className="swipe-delete" type="button" tabIndex={offset===0?-1:0} aria-label={deleteLabel} onFocus={()=>reveal(false)} onClick={()=>action(onDelete)}><Trash2 size={17}/><span>{deleteLabel}</span></button>
+   {actions.map((item,index)=><button className={`swipe-action swipe-${item.tone||'plain'}`} type="button" key={`${item.label}-${index}`} tabIndex={offset===0?-1:0} aria-label={item.label} onFocus={()=>reveal(false)} onClick={()=>action(item.onAction)}>{item.icon}<span>{item.label}</span></button>)}
   </div>
   <div className="swipe-content" style={{transform:`translateX(${offset}px)`,transition:dragging?'none':undefined}}
    onPointerDown={e=>{if(e.button!==0)return;moved.current=false;gesture.current={x:e.clientX,y:e.clientY,offset:offsetRef.current}}}

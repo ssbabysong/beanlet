@@ -58,7 +58,8 @@ export function PhotoEditor({source,onCancel,onSave,mode='photo'}:{source:File|s
       onSave(new File([blob],sticker?'coffee-sticker.png':'bean-photo.jpg',{type}));
     }catch{setError(en?'Could not save this photo. Please try another.':'照片处理失败，请换一张试试。')}finally{setBusy(false)}
   }
-  return <Dialog open={!!source} onOpenChange={v=>{if(!v&&!busy)onCancel()}}><DialogContent className={`editor photo-editor${sticker?' sticker-editor':''}`} showCloseButton={false}>
+  const unchanged=crop.zoom===1&&crop.angle===0&&crop.cx===.5&&crop.cy===.5&&!eraseStrokes.length;
+  return <Dialog open={!!source} onOpenChange={v=>{if(!v&&!busy)onCancel()}}><DialogContent className={`editor photo-editor${sticker?' sticker-editor':''}`} showCloseButton={false} onSwipeDown={!busy&&unchanged?onCancel:undefined}>
     <DialogTitle>{sticker?(en?'Adjust coffee sticker':'调整咖啡贴纸'):(en?'Adjust photo':'调整照片')}</DialogTitle><DialogDescription>{erasing?(en?'Brush over anything you want to remove.':'用手指涂过想要抹掉的部分'):(en?'Drag to move; pinch and twist to zoom and rotate.':'单指移动，双指缩放和旋转')}</DialogDescription>
     <div ref={frame} className="photo-crop-frame" tabIndex={0} aria-label={en?'Photo crop; plus/minus to zoom, arrow keys to rotate':'照片裁剪，加减键缩放，左右键旋转'}
       data-mode={erasing?'erase':'move'}

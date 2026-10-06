@@ -54,18 +54,45 @@ function DialogContent({
   children,
   showCloseButton = true,
   onSwipeBack,
+  onSwipeDown,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   onSwipeBack?: () => void
+  onSwipeDown?: () => void
   showCloseButton?: boolean
 }) {
   const swipe=useSwipeNavigation(direction=>{if(direction==='previous')onSwipeBack?.()},!!onSwipeBack)
+  const down=React.useRef<{x:number;y:number;active:boolean;moved:boolean}|null>(null)
+  function downStart(event:React.PointerEvent<HTMLElement>){
+    down.current=null
+    if(!onSwipeDown||event.button!==0||!event.isPrimary)return
+    const target=event.target as HTMLElement,rect=event.currentTarget.getBoundingClientRect()
+    if(event.clientY>rect.top+104||target.closest('button,a,input,textarea,select,[role=button],[role=slider],[role=combobox]'))return
+    down.current={x:event.clientX,y:event.clientY,active:false,moved:false}
+  }
+  function downMove(event:React.PointerEvent<HTMLElement>){
+    const start=down.current;if(!start)return
+    const dx=event.clientX-start.x,dy=event.clientY-start.y
+    if(!start.active&&dy>12&&Math.abs(dy)>Math.abs(dx)*1.25){start.active=true;event.currentTarget.setPointerCapture(event.pointerId)}
+    if(start.active&&dy>18)start.moved=true
+  }
+  function downEnd(event:React.PointerEvent<HTMLElement>){
+    const start=down.current;down.current=null
+    if(!start?.active)return
+    if(event.currentTarget.hasPointerCapture(event.pointerId))event.currentTarget.releasePointerCapture(event.pointerId)
+    if(event.clientY-start.y>72&&Math.abs(event.clientX-start.x)<Math.abs(event.clientY-start.y))onSwipeDown?.()
+  }
   return (
     <DialogPortal data-slot="dialog-portal">
       <DialogOverlay />
       <DialogPrimitive.Content
         data-slot="dialog-content"
-        {...swipe}
+        onDragStart={swipe.onDragStart}
+        onPointerDown={event=>{swipe.onPointerDown(event);downStart(event)}}
+        onPointerMove={event=>{swipe.onPointerMove(event);downMove(event)}}
+        onPointerUp={event=>{swipe.onPointerUp(event);downEnd(event)}}
+        onPointerCancel={event=>{swipe.onPointerCancel();down.current=null}}
+        onClickCapture={event=>{swipe.onClickCapture(event);if(down.current?.moved){event.preventDefault();event.stopPropagation();down.current.moved=false}}}
         className={cn(
           "fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border bg-background p-6 shadow-lg duration-200 outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg",
           className
