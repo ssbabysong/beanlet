@@ -235,10 +235,9 @@ function Journal(){
                  { id: "calendar", name: t("日历"), icon: CalendarDays },
                  { id: "stats", name: t("当月统计"), icon: BarChart3 },
                ].map((v) => (
-                 <label key={v.id}>
-                   <RadioGroupItem value={v.id} aria-label={t(v.name)} />
+                 <RadioGroupItem className="view-picker-item" key={v.id} value={v.id} aria-label={t(v.name)}>
                    <v.icon size={18} />
-                 </label>
+                 </RadioGroupItem>
                ))}
              </RadioGroup>
            )}
@@ -734,17 +733,17 @@ function Journal(){
                        </div>
                      </section>
                    </div>
-                   <div className="month-share-actions">
-                     <button type="button" className="month-share-button" disabled={!activeBrews.length||sharingMonth} onClick={statsPeriod==='year'?openAnnualReport:openMonthlyReport}><Share2 size={18}/><span>{sharingMonth?t("正在生成…"):t(statsPeriod==='year'?"分享年报":"分享月报")}</span></button>
-                     <CoffeeReel fullButton photos={photoStickerBrews.map(brew=>({id:brew.id,src:brew.photo!,cutout:brew.photoCutout}))} month={statsPeriod==='year'?String(calendarMonth.getFullYear()):`${calendarMonth.getFullYear()}.${String(calendarMonth.getMonth()+1).padStart(2,'0')}`}/>
-                   </div>
                    <div className="month-bean-table">
                      <h3>{t(statsPeriod==='year'?"本年常喝":"本月常喝")}</h3>
                      {activeBagRanking.length?activeBagRanking.map(({key,bean,bags},index)=><div className="stats-bag-row" key={key}>
                        <span className="stats-bag-rank">{String(index+1).padStart(2,'0')}</span>
-                       <span className="stats-bag-name">{label(bean)}</span>
+                       <button type="button" className="stats-bag-name" onClick={()=>{setReturnToTaste(null);setDetail(bean.id)}} aria-label={`${t("查看豆袋")} · ${label(bean)}`}>{label(bean)}</button>
                        <span className="stats-bag-list">{bags.slice(0,10).map(bag=>{const palette=beanPalette(bag);return <span className="stats-mini-bag" key={bag.id} style={{'--bag-fill':palette.fill,'--bag-line':palette.line,'--bag-side':palette.side} as CSSProperties}><BagPaper ratio={beanStock(bag,brews)?.ratio}/><span className="stats-mini-label"><BeanVisual bean={bag}/></span></span>})}{bags.length>10&&<span className="stats-bag-more">… ×{bags.length}</span>}</span>
                      </div>):<div className="month-stats-empty"><Sticker icon="cup"/><span>{t(statsPeriod==='year'?"这一年还没有咖啡记录":"这个月还没有咖啡记录")}</span></div>}
+                   </div>
+                   <div className="month-share-actions">
+                     <button type="button" className="month-share-button" disabled={!activeBrews.length||sharingMonth} onClick={statsPeriod==='year'?openAnnualReport:openMonthlyReport}><Share2 size={18}/><span>{sharingMonth?t("正在生成…"):t(statsPeriod==='year'?"分享年报":"分享月报")}</span></button>
+                     <CoffeeReel fullButton photos={photoStickerBrews.map(brew=>({id:brew.id,src:brew.photo!,cutout:brew.photoCutout}))} month={statsPeriod==='year'?String(calendarMonth.getFullYear()):`${calendarMonth.getFullYear()}.${String(calendarMonth.getMonth()+1).padStart(2,'0')}`}/>
                    </div>
                  </section>
                )}
