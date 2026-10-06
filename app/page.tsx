@@ -336,11 +336,6 @@ function Journal(){
                        }}
                      >
                        {t(title)}
-                       {value === "tasted" && tasted.length > 0 && (
-                         <span className="atlas-count" aria-label={`${t("我的图鉴")} ${tasted.length}`}>
-                           {tasted.length}
-                         </span>
-                       )}
                      </button>
                    ))}
                  </div>
@@ -443,7 +438,7 @@ function Journal(){
                    <>
                      {tastedShown.length ? (
                        <div className="tasted-wall">
-                         {tastedShown.map((x) => (
+                         {tastedShown.map((x) => {const bagCount=beans.filter(bean=>coffeeIdentity(bean)===x.id).length;return (
                            <button
                              className="taste-sticker"
                              key={x.id}
@@ -464,6 +459,14 @@ function Journal(){
                                >
                                  ✓
                                </span>
+                               {bagCount > 0 && (
+                                 <span
+                                   className="taste-bag-count"
+                                   aria-label={language === "en" ? `${bagCount} bags` : `喝过 ${bagCount} 包`}
+                                 >
+                                   <b>×</b>{bagCount}
+                                 </span>
+                               )}
                              </div>
                              <span className="taste-name" title={label(x.bean)}>
                                {label(x.bean)}
@@ -482,7 +485,7 @@ function Journal(){
                                />
                              )}
                            </button>
-                         ))}
+                         )})}
                        </div>
                      ) : (
                        <div className="taste-empty">
