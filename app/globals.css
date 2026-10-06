@@ -541,10 +541,12 @@ html[lang=en] .bean-shelf .bag-roast-print{font-size:10px;letter-spacing:0}
 .menu-swipe [data-slot=tabs-content][data-state=active]{animation:menu-arrive .2s ease-out}
 @keyframes menu-arrive{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
 /* Print the remaining grams below the artwork, beside a small roast sticker. */
-.bean-shelf .coffee-bag-label{left:31%;top:33%;width:52%;height:46%;box-sizing:border-box;padding:3px;border:0;border-radius:0;clip-path:polygon(3% 10%,22% 7%,51% 5%,88% 0,92% 19%,96% 48%,100% 88%,82% 94%,51% 97%,14% 100%,11% 82%,7% 49%);transform:rotate(-1deg)}
-.bean-shelf .coffee-bag-label.has-picture{padding:3px;border:0;border-radius:0;clip-path:polygon(3% 10%,22% 7%,51% 5%,88% 0,92% 19%,96% 48%,100% 88%,82% 94%,51% 97%,14% 100%,11% 82%,7% 49%);transform:rotate(-1deg)}
-.bean-shelf .coffee-bag-label>.sticker{width:82%;height:82%;max-width:none}
-.bean-shelf .coffee-bag-label>.bean-thumb{width:94%;height:94%;object-fit:contain;border-radius:0;clip-path:polygon(3% 10%,22% 7%,51% 5%,88% 0,92% 19%,96% 48%,100% 88%,82% 94%,51% 97%,14% 100%,11% 82%,7% 49%);margin:0;padding:0}
+.bean-shelf .coffee-bag-label{left:32%;top:34%;width:50%;height:44%;box-sizing:border-box;padding:0;border:0;background:transparent;border-radius:0;clip-path:none;overflow:visible;transform:rotate(-2deg)}
+.bean-shelf .coffee-bag-label.has-picture{left:33%;top:35%;width:47%;height:42%;padding:5px;background:#fff;border:1px solid #fff;border-radius:48% 52% 43% 57% / 57% 42% 58% 43%;clip-path:none;overflow:hidden;transform:rotate(-5deg);box-shadow:0 1px 0 #d9d0ca,0 4px 6px #665b5224}
+.sticker{filter:saturate(.9) contrast(.94)}
+.bean-shelf .coffee-bag-label>.sticker{width:96%;height:96%;max-width:none;filter:saturate(.82) contrast(.9) brightness(1.05) drop-shadow(1.7px 0 #fff) drop-shadow(-1.7px 0 #fff) drop-shadow(0 1.7px #fff) drop-shadow(0 -1.7px #fff) drop-shadow(.9px .9px #fff) drop-shadow(-.9px -.9px #fff) drop-shadow(0 2.5px 2px #665b521c)}
+.bean-shelf .coffee-bag-label>.bean-thumb{width:91%;height:91%;object-fit:contain;border-radius:43% 51% 45% 55% / 54% 44% 56% 46%;clip-path:none;margin:0;padding:0;filter:drop-shadow(0 1px 1px #665b5218)}
+.bean-shelf .coffee-bag-label>.bean-thumb:not(.original-art){mix-blend-mode:multiply}
 .bean-shelf .bag-meta-row{position:absolute;left:20%;right:14%;top:79%;display:flex;align-items:center;justify-content:space-between;gap:4px;min-height:15px;pointer-events:none}
 .bag-remaining{margin-left:auto;color:#6e7080;font-size:7px;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
 .bag-remaining small{font-size:6px;margin-left:1px;color:#85818c}
