@@ -2,11 +2,10 @@ import {stickerPlacement} from './sticker-layout';
 
 type ReportPhoto={id:string;src:string;date?:string;cutout?:boolean};
 type ReportDay={day:number;cups:number};
-type ReportBean={name:string;count:number};
 export type DrunkBag={id:string;name:string;fill:string;line:string;side:string;consumed:number;art:string;sprite?:string};
 type MonthlyReportImageInput={
  language:'zh'|'en';month:string;year:number;monthIndex:number;cups:number;pourOvers:number;milks:number;
- beanCount:number;daily:ReportDay[];beanRanking:ReportBean[];photos:ReportPhoto[];drunkBags:DrunkBag[];
+ beanCount:number;daily:ReportDay[];photos:ReportPhoto[];drunkBags:DrunkBag[];
 };
 
 function loadImage(src:string){return new Promise<HTMLImageElement>((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=()=>reject(Error('image'));image.src=src})}
@@ -22,7 +21,7 @@ export function drawDrunkBag(ctx:CanvasRenderingContext2D,bag:DrunkBag,image:HTM
 
 export async function createMonthlyReportImage(input:MonthlyReportImageInput){
  await document.fonts?.ready;
- const hasDrunkBags=input.drunkBags.length>0,reportHeight=2180;
+ const reportHeight=2040;
  const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=reportHeight;
  const ctx=canvas.getContext('2d');if(!ctx)throw Error('canvas');
  const gradient=ctx.createLinearGradient(0,0,1080,reportHeight);gradient.addColorStop(0,'#f8f5f0');gradient.addColorStop(.55,'#f1edf0');gradient.addColorStop(1,'#e7e8f1');ctx.fillStyle=gradient;ctx.fillRect(0,0,1080,reportHeight);
@@ -51,7 +50,8 @@ export async function createMonthlyReportImage(input:MonthlyReportImageInput){
  const total=Math.max(1,input.pourOvers+input.milks),pourAngle=Math.PI*2*input.pourOvers/total,cx=163,cy=1438;ctx.lineWidth=25;ctx.strokeStyle='rgba(203,183,214,.70)';ctx.beginPath();ctx.arc(cx,cy,58,-Math.PI/2,Math.PI*1.5);ctx.stroke();if(input.pourOvers){ctx.strokeStyle='rgba(139,153,198,.88)';ctx.beginPath();ctx.arc(cx,cy,58,-Math.PI/2,-Math.PI/2+pourAngle);ctx.stroke()}ctx.textAlign='center';ctx.fillStyle='#56617f';ctx.font=`600 34px ${ui}`;ctx.fillText(String(input.cups),cx,1415);ctx.font=`400 18px ${ui}`;ctx.fillStyle='rgba(82,91,120,.58)';ctx.fillText(input.language==='en'?'cups':'杯',cx,1453);ctx.font=`400 17px ${ui}`;ctx.fillStyle='#7783a9';ctx.fillText(`${input.language==='en'?'Pour':'手冲'} ${input.pourOvers}`,cx,1512);ctx.fillStyle='#a28eae';ctx.fillText(`${input.language==='en'?'Milk':'奶咖'} ${input.milks}`,cx,1540);ctx.textAlign='left';
  const graph={x:340,y:1386,w:648,h:137},barMax=Math.max(1,...input.daily.map(day=>day.cups)),step=graph.w/input.daily.length,barWidth=Math.max(7,step*.58);ctx.strokeStyle='rgba(90,99,127,.12)';ctx.lineWidth=2;for(let i=0;i<3;i++){const y=graph.y+i*graph.h/2;ctx.beginPath();ctx.moveTo(graph.x,y);ctx.lineTo(graph.x+graph.w,y);ctx.stroke()}input.daily.forEach((day,index)=>{if(!day.cups)return;const height=Math.max(8,day.cups/barMax*graph.h),x=graph.x+index*step+(step-barWidth)/2,y=graph.y+graph.h-height;ctx.fillStyle=index%2?'rgba(157,170,207,.72)':'rgba(133,149,198,.82)';roundRect(ctx,x,y,barWidth,height,barWidth/2);ctx.fill()});ctx.fillStyle='rgba(82,91,120,.45)';ctx.font=`400 17px ${ui}`;ctx.fillText('1',graph.x,1542);ctx.textAlign='center';ctx.fillText(String(Math.ceil(input.daily.length/2)),graph.x+graph.w/2,1542);ctx.textAlign='right';ctx.fillText(String(input.daily.length),graph.x+graph.w,1542);ctx.textAlign='left';
 
- // Monthly bags and ranking in one module.
- card(ctx,48,1608,984,520,38);ctx.fillStyle='rgba(82,91,120,.52)';ctx.font=`600 20px ${serif}`;ctx.fillText(input.language==='en'?'BEANS THIS MONTH':'本月豆子',78,1638);if(hasDrunkBags){const count=input.drunkBags.length,gap=Math.min(12,150/count),available=924-gap*(count-1),bagW=Math.min(88,available/count),bagH=Math.min(132,bagW*1.25),startX=78,y=1685+(132-bagH)/2;input.drunkBags.forEach((bag,index)=>drawDrunkBag(ctx,bag,bagImages.get(bag.id),startX+index*(bagW+gap),y,bagW,bagH,ui))}else{ctx.fillStyle='rgba(82,91,120,.38)';ctx.font=`italic 500 24px ${serif}`;ctx.fillText('COFFEE, SLOWLY COLLECTED.',80,1715)}ctx.strokeStyle='rgba(82,91,120,.11)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(78,1840);ctx.lineTo(1002,1840);ctx.stroke();ctx.fillStyle='rgba(82,91,120,.42)';ctx.font=`600 16px ${serif}`;ctx.fillText(input.language==='en'?'RANKING':'排行',78,1864);const ranking=input.beanRanking.slice(0,4),rankMax=Math.max(1,...ranking.map(bean=>bean.count));ranking.forEach((bean,index)=>{const y=1904+index*40;ctx.fillStyle='rgba(82,91,120,.36)';ctx.font=`italic 600 21px ${serif}`;ctx.fillText(String(index+1).padStart(2,'0'),80,y);ctx.fillStyle='#56617f';const size=fitText(ctx,bean.name,430,24,17,ui);ctx.font=`500 ${size}px ${ui}`;ctx.fillText(bean.name,126,y-1);ctx.fillStyle='rgba(141,151,190,.28)';roundRect(ctx,610,y+4,330,12,6);ctx.fill();ctx.fillStyle='rgba(128,143,190,.78)';roundRect(ctx,610,y+4,330*bean.count/rankMax,12,6);ctx.fill();ctx.fillStyle='rgba(82,91,120,.65)';ctx.font=`italic 600 22px ${serif}`;ctx.textAlign='right';ctx.fillText(`×${bean.count}`,992,y-4);ctx.textAlign='left'});
+ // Show one miniature package per physical bag instead of an abstract bar.
+ const bagRanking=[...input.drunkBags.reduce((groups,bag)=>{const group=groups.get(bag.name)||[];group.push(bag);groups.set(bag.name,group);return groups},new Map<string,DrunkBag[]>())].map(([name,bags])=>({name,bags})).sort((a,b)=>b.bags.length-a.bags.length||a.name.localeCompare(b.name)).slice(0,4);
+ card(ctx,48,1608,984,382,38);ctx.fillStyle='rgba(82,91,120,.52)';ctx.font=`600 20px ${serif}`;ctx.fillText(input.language==='en'?'BEANS THIS MONTH':'本月豆子',78,1638);if(!bagRanking.length){ctx.fillStyle='rgba(82,91,120,.38)';ctx.font=`italic 500 24px ${serif}`;ctx.fillText('COFFEE, SLOWLY COLLECTED.',80,1715)}bagRanking.forEach((bean,index)=>{const y=1715+index*66;ctx.fillStyle='rgba(82,91,120,.36)';ctx.font=`italic 600 21px ${serif}`;ctx.fillText(String(index+1).padStart(2,'0'),80,y);ctx.fillStyle='#56617f';const size=fitText(ctx,bean.name,220,24,17,ui);ctx.font=`500 ${size}px ${ui}`;ctx.fillText(bean.name,126,y-1);bean.bags.slice(0,10).forEach((bag,bagIndex)=>drawDrunkBag(ctx,bag,bagImages.get(bag.id),380+bagIndex*40,y-14,30,43,ui));if(bean.bags.length>10){ctx.fillStyle='rgba(82,91,120,.55)';ctx.font=`600 22px ${ui}`;ctx.fillText(`… ×${bean.bags.length}`,785,y-1)}});
  return new Promise<Blob>((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(Error('image')),'image/png'));
 }
