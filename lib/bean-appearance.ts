@@ -18,9 +18,9 @@ export function beanPalette(bean:Coffee):BeanPalette{let hash=0;for(const c of b
 export function calendarColors<T extends Coffee>(beans:T[],resolve:((bean:T)=>BeanPalette)=beanPalette as (bean:T)=>BeanPalette){const colors=[...new Set(beans.map(b=>resolve(b).fill))];return colors.length<2?colors[0]||'transparent':`linear-gradient(135deg,${colors.map((c,i)=>`${c} ${i/colors.length*100}% ${(i+1)/colors.length*100}%`).join(',')})`}
 
 function mix(rgb:[number,number,number],target:[number,number,number],amount:number){return rgb.map((value,index)=>Math.round(value*(1-amount)+target[index]*amount)) as [number,number,number]}
-function hex(rgb:[number,number,number]){return '#'+rgb.map(value=>value.toString(16).padStart(2,'0')).join('')}
-export function paletteFromDominantColor(rgb:[number,number,number]):BeanPalette{
- return {fill:hex(mix(rgb,[255,255,255],.7)),side:hex(mix(rgb,[255,255,255],.58)),line:hex(mix(rgb,[82,78,88],.42))};
+function hexRgb(hex:string):[number,number,number]{return [Number.parseInt(hex.slice(1,3),16),Number.parseInt(hex.slice(3,5),16),Number.parseInt(hex.slice(5,7),16)]}
+export function paletteFromDominantColor(dominant:[number,number,number]):BeanPalette{
+ const softened=mix(dominant,[255,255,255],.7),index=palettes.map(([fill],index)=>{const color=hexRgb(fill),distance=(softened[0]-color[0])**2+(softened[1]-color[1])**2+(softened[2]-color[2])**2;return {index,distance}}).sort((a,b)=>a.distance-b.distance)[0].index,[fill,line,side]=palettes[index];return {fill,line,side};
 }
 
 const imagePaletteCache=new Map<string,Promise<BeanPalette|null>>();
