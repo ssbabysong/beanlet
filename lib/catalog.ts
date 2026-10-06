@@ -23,18 +23,32 @@ const americanProducts=[
  {id:'onyx-tropical-weather',name:'Tropical Weather',roaster:'Onyx Coffee Lab',origin:'埃塞俄比亚',process:'水洗与日晒拼配',flavor:'混合莓果、甜茶、蜂蜜、李子',icon:'berry',variety:'Blend',roast:'浅烘焙',sourceUrl:'https://onyxcoffeelab.com/products/tropical-weather',en:{origin:'Ethiopia',process:'Washed and natural blend',flavor:'Mixed berries, sweet tea, raw honey, plum'}},
  {id:'black-white-the-natural',name:'The Natural',roaster:'Black & White Coffee Roasters',origin:'产地随季节调整',process:'日晒拼配',flavor:'明亮红色水果、浓郁果香',icon:'berry',variety:'Blend',roast:'中烘焙',sourceUrl:'https://www.blackwhiteroasters.com/products/the-natural',en:{origin:'Seasonal origins',process:'Natural blend',flavor:'Vibrant red fruit, bold fruit character'}},
  {id:'black-white-the-classic',name:'The Classic',roaster:'Black & White Coffee Roasters',origin:'哥伦比亚与中美洲',process:'水洗拼配',flavor:'牛奶巧克力、甜焦糖',icon:'chocolate',variety:'Blend',roast:'中烘焙',sourceUrl:'https://www.blackwhiteroasters.com/products/the-classic',en:{origin:'Colombia and Central America',process:'Washed blend',flavor:'Milk chocolate, sweet caramel'}},
- {id:'black-white-the-original',name:'The Original',roaster:'Black & White Coffee Roasters',origin:'埃塞俄比亚',process:'季节性拼配',flavor:'明亮柑橘、花香',icon:'citrus',variety:'Blend',roast:'浅烘焙',sourceUrl:'https://www.blackwhiteroasters.com/products/the-original',en:{origin:'Ethiopia',process:'Seasonal blend',flavor:'Bright citrus, floral'}},
+ {id:'black-white-the-original',name:'The Original',roaster:'Black & White Coffee Roasters',origin:'埃塞俄比亚',process:'季节性拼配',flavor:'明亮柑橘、花香',icon:'citrus',variety:'Blend',roast:'浅烘焙',sourceUrl:'https://www.blackwhiteroasters.com/products/the-original-1',en:{origin:'Ethiopia',process:'Seasonal blend',flavor:'Bright citrus, floral'}},
  {id:'heart-stereo',name:'Stereo Seasonal Blend',roaster:'Heart Coffee Roasters',origin:'危地马拉与埃塞俄比亚',process:'季节性拼配',flavor:'樱桃、甜奶油、软糖',icon:'berry',variety:'Blend',roast:'中浅烘焙',sourceUrl:'https://www.heartroasters.com/collections/beans/products/stereo-seasonal-blend',en:{origin:'Guatemala and Ethiopia',process:'Seasonal blend',flavor:'Cherry, sweet cream, fudge'}},
  {id:'counter-culture-apollo',name:'Apollo',roaster:'Counter Culture Coffee',origin:'埃塞俄比亚',process:'水洗拼配',flavor:'柑橘、花香、丝滑',icon:'citrus',variety:'Blend',roast:'浅烘焙',sourceUrl:'https://counterculturecoffee.com/products/apollo',en:{origin:'Ethiopia',process:'Washed blend',flavor:'Citrus, floral, silky'}},
- {id:'counter-culture-hologram',name:'Hologram',roaster:'Counter Culture Coffee',origin:'产地随季节调整',process:'季节性拼配',flavor:'水果、牛奶巧克力、糖浆感',icon:'chocolate',variety:'Blend',roast:'中烘焙',sourceUrl:'https://counterculturecoffee.com/products/hologram',en:{origin:'Seasonal origins',process:'Seasonal blend',flavor:'Fruity, milk chocolate, syrupy'}},
- {id:'george-howell-dota',name:'Dota',roaster:'George Howell Coffee',origin:'哥斯达黎加 · Dota',process:'水洗',flavor:'黑巧克力、樱桃、橙子',icon:'chocolate',variety:'Blend',roast:'中烘焙',sourceUrl:'https://georgehowellcoffee.com/collections/coffee-coffee',en:{origin:'Costa Rica · Dota',process:'Washed',flavor:'Dark chocolate, cherry, orange'}},
+ {id:'counter-culture-hologram',name:'Hologram',roaster:'Counter Culture Coffee',origin:'产地随季节调整',process:'季节性拼配',flavor:'水果、牛奶巧克力、糖浆感',icon:'chocolate',variety:'Blend',roast:'中烘焙',sourceUrl:'https://counterculturecoffee.com/collections/coffee/products/12-oz-hologram',en:{origin:'Seasonal origins',process:'Seasonal blend',flavor:'Fruity, milk chocolate, syrupy'}},
+ {id:'george-howell-dota',name:'Dota',roaster:'George Howell Coffee',origin:'哥斯达黎加 · Dota',process:'水洗',flavor:'牛奶巧克力、樱桃、橙子',icon:'chocolate',variety:'Traditional',roast:'浅烘焙',sourceUrl:'https://georgehowellcoffee.com/products/dota-costa-rica',en:{origin:'Costa Rica · Dota',process:'Washed',flavor:'Milk chocolate, cherry, orange'}},
 ].map(product=>({...product,sourceDate:'2026-10-06',roastNote:'按品牌定位预填，可按豆袋调整',...catalogDefaults}));
 export const builtInCatalog=[...hydrangeaCatalog,...americanProducts.map(({en,...product})=>product)];
+
+const americanArt:Record<string,string>={
+ 'onyx-monarch':'onyx-monarch.png',
+ 'onyx-geometry':'onyx-geometry.png',
+ 'onyx-tropical-weather':'onyx-tropical-weather.png',
+ 'black-white-the-natural':'black-white-the-natural.jpg',
+ 'black-white-the-classic':'black-white-the-classic.jpg',
+ 'black-white-the-original':'black-white-the-original.jpg',
+ 'heart-stereo':'heart-stereo.png',
+ 'counter-culture-apollo':'counter-culture-apollo.jpg',
+ 'counter-culture-hologram':'counter-culture-hologram.jpg',
+ 'george-howell-dota':'george-howell-dota.png',
+};
 
 export function originalArt(bean?:{id?:string;catalogId?:string;sourceUrl?:string;icon?:string;useOriginalArt?:boolean}){
  if(!bean)return '';
  const entry=builtInCatalog.find(c=>c.id===bean.id||c.id===bean.catalogId||c.sourceUrl===bean.sourceUrl);
- return entry?.id.startsWith('hydrangea-')?'./hydrangea-art/'+entry.id.slice('hydrangea-'.length)+'.webp':'';
+ if(entry?.id.startsWith('hydrangea-'))return './hydrangea-art/'+entry.id.slice('hydrangea-'.length)+'.webp';
+ return entry&&americanArt[entry.id]?'./american-art/'+americanArt[entry.id]:'';
 }
 export function displayedArt(bean?:{id?:string;catalogId?:string;sourceUrl?:string;icon?:string;useOriginalArt?:boolean}){
  if(!bean||bean.useOriginalArt===false)return '';

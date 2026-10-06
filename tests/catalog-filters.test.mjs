@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {countryOf,processOf,matchesFilters,emptyFilters} from '../lib/catalog-filters.ts';
-import {builtInCatalog,bilingualBean} from '../lib/catalog.ts';
+import {builtInCatalog,bilingualBean,originalArt} from '../lib/catalog.ts';
 assert.equal(countryOf('China · Yunnan'),'中国');
 assert.equal(countryOf('中国 · 云南'),'中国');
 assert.equal(countryOf(''),'未记录');
@@ -18,6 +18,8 @@ assert.ok(!matchesFilters(custom,{...emptyFilters,brand:'Hydrangea'}));
 for(const b of builtInCatalog){const names=bilingualBean(b);assert.equal(names.zh,names.en);assert.ok(names.originEn);assert.ok(names.processEn);assert.ok(names.flavorEn)}
 assert.equal(builtInCatalog.filter(b=>b.roaster==='Onyx Coffee Lab').length,3);
 assert.equal(builtInCatalog.filter(b=>b.roaster==='Black & White Coffee Roasters').length,3);
+for(const b of builtInCatalog)assert.ok(originalArt(b),`${b.name} should have bundled official art`);
+assert.equal(originalArt(builtInCatalog.find(b=>b.id==='onyx-monarch')),'./american-art/onyx-monarch.png');
 assert.equal(bilingualBean({...builtInCatalog[0],name:'我的自定义名'}).en,'我的自定义名');
 console.log('Catalog: bilingual names, custom names, combined filters, reset, empty results passed');
 
