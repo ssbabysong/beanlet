@@ -8,13 +8,13 @@ function random(seed:number){return ((Math.imul(seed,1664525)+1013904223)>>>0)/4
 
 /** A small DOM physics loop for the coffee-photo pile. It avoids React renders while the phone moves. */
 export function useStickerPilePhysics(stageRef:RefObject<HTMLElement|null>,resetKey:string,active:boolean){
- const bodies=useRef<Body[]>([]),frame=useRef(0),gravity=useRef({x:0,y:.035}),last=useRef(0),quiet=useRef(0),permissionStarted=useRef(false),activeRef=useRef(active);
+ const bodies=useRef<Body[]>([]),frame=useRef(0),gravity=useRef({x:0,y:.035}),last=useRef(0),quiet=useRef(0),permissionStarted=useRef(false),activeRef=useRef(active),scrolling=useRef(false),scrollTimer=useRef(0);
  activeRef.current=active;
 
- const wake=useCallback(()=>{quiet.current=0;if(frame.current||!activeRef.current)return;last.current=0;frame.current=requestAnimationFrame(tick)},[]);
+ const wake=useCallback(()=>{quiet.current=0;if(frame.current||scrolling.current||!activeRef.current)return;last.current=0;frame.current=requestAnimationFrame(tick)},[]);
 
  function tick(now:number){
-  const stage=stageRef.current,list=bodies.current;if(!stage||!activeRef.current){frame.current=0;return}
+  const stage=stageRef.current,list=bodies.current;if(!stage||scrolling.current||!activeRef.current){frame.current=0;return}
   if(last.current&&now-last.current<25){frame.current=requestAnimationFrame(tick);return}
   const dt=last.current?clamp((now-last.current)/16.67,.65,1.8):1;last.current=now;
   const width=stage.clientWidth,height=stage.clientHeight;
@@ -77,9 +77,11 @@ export function useStickerPilePhysics(stageRef:RefObject<HTMLElement|null>,reset
    wake();
   };
   const timer=window.setTimeout(setup,30),resizer=new ResizeObserver(setup);resizer.observe(stage);
+  const pauseForScroll=()=>{scrolling.current=true;if(frame.current)cancelAnimationFrame(frame.current);frame.current=0;window.clearTimeout(scrollTimer.current);scrollTimer.current=window.setTimeout(()=>{scrolling.current=false;wake()},140)};
+  window.addEventListener('scroll',pauseForScroll,{passive:true});
   const Orientation=window.DeviceOrientationEvent as typeof DeviceOrientationEvent&{requestPermission?:()=>Promise<'granted'|'denied'>};
   if(!Orientation?.requestPermission)listen();
-  return()=>{window.clearTimeout(timer);resizer.disconnect();if(frame.current)cancelAnimationFrame(frame.current);frame.current=0;bodies.current=[]};
+  return()=>{window.clearTimeout(timer);window.clearTimeout(scrollTimer.current);window.removeEventListener('scroll',pauseForScroll);resizer.disconnect();if(frame.current)cancelAnimationFrame(frame.current);frame.current=0;scrolling.current=false;bodies.current=[]};
  },[active,resetKey,listen,stageRef,wake]);
 
  return enableMotion;

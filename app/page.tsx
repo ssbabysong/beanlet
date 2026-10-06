@@ -73,6 +73,7 @@ function Journal(){
  const [editing,setEditing]=useState<string|null>(null),[beanOpen,setBeanOpen]=useState(false),[draft,setDraft]=useState<any>(fresh),[file,setFile]=useState<File|null>(null),[preview,setPreview]=useState(''),[detail,setDetail]=useState<string|null>(null),[busy,setBusy]=useState(false),[formError,setFormError]=useState('');
  const [brewView,setBrewView]=useState('calendar'),[statsPeriod,setStatsPeriod]=useState<'month'|'year'>('month'),[calendarDay,setCalendarDay]=useState(()=>new Date()),[calendarMonth,setCalendarMonth]=useState(()=>new Date()),[sharingMonth,setSharingMonth]=useState(false),[monthReport,setMonthReport]=useState<{blob:Blob;url:string;name:string;text:string;title:string}|null>(null),[stickerWallMoving,setStickerWallMoving]=useState(false);
  const stickerStageRef=useRef<HTMLButtonElement>(null);
+ const statsPeriodPointerAt=useRef(0);
  const [brewActions,setBrewActions]=useState<Brew|null>(null);
 
  const [editingBrew,setEditingBrew]=useState<string|null>(null);
@@ -85,7 +86,7 @@ function Journal(){
  useEffect(()=>()=>{if(monthReport)URL.revokeObjectURL(monthReport.url)},[monthReport]);
  useEffect(()=>{const ctx=(document as any).modelContext;if(!ctx?.registerTool)return;const life=new AbortController();try{Promise.resolve(ctx.registerTool({name:'start_coffee_bean_collection',description:'打开新增咖啡豆表单；不会保存记录。',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:false},execute(input:unknown){if(!input||typeof input!=='object'||Object.keys(input).length)throw new Error('Expected an empty object');setEditing(null);setDraft({...fresh});setFile(null);setFormError('');setBeanOpen(true);return {opened:true,saved:false}}},{signal:life.signal})).catch(()=>{})}catch{}return()=>life.abort()},[]);
  function startBean(b?:Bean,asCatalog=false){setSaveToCatalog(!b);setPickerOpen(false);setEditing(b?.id||null);setDraft(b?{...fresh,...b,...editableBeanNames(b),...editableBeanInfo(b)}:{...fresh,recordType:asCatalog?'catalog':'bean'});setFile(null);setFormError('');setBeanOpen(true)}
- function startBrew(id?:string){setEditingBrew(null);const last=brews[0],preference=brewPreference(),kind=preference.kind==='milk'||preference.kind==='pourOver'?preference.kind:last?.kind||'pourOver',beanId=id||(beans.some(b=>b.id===preference.beanId)?preference.beanId:beans.some(b=>b.id===last?.beanId)?last!.beanId:beans[0]?.id)||'';rememberBrewPreference(kind,beanId);setBrewDraft({...brewDraftFor(kind,brews),beanId,date:tab==='brews'&&brewView==='calendar'?dateKey(calendarDay):dateKey(new Date()),notes:'',rating:0});setFormError('');setBrewOpen(true)}
+ function startBrew(id?:string){setEditingBrew(null);const available=beans.filter(bean=>bean.status!=='已喝完'),last=brews.find(brew=>available.some(bean=>bean.id===brew.beanId)),preference=brewPreference(),kind=preference.kind==='milk'||preference.kind==='pourOver'?preference.kind:last?.kind||'pourOver',beanId=id&&available.some(bean=>bean.id===id)?id:(available.some(b=>b.id===preference.beanId)?preference.beanId:available.some(b=>b.id===last?.beanId)?last!.beanId:available[0]?.id)||'';rememberBrewPreference(kind,beanId);setBrewDraft({...brewDraftFor(kind,brews),beanId,date:tab==='brews'&&brewView==='calendar'?dateKey(calendarDay):dateKey(new Date()),notes:'',rating:0});setFormError('');setBrewOpen(true)}
  function editBrew(b:Brew){setEditingBrew(b.id);setBrewDraft({...b,kind:b.kind||'pourOver'});setFormError('');setBrewOpen(true)}
  function changeBrewKind(kind:BrewKind){rememberBrewPreference(kind,brewDraft.beanId);if(kind===brewDraft.kind)return;setBrewDraft((draft:any)=>({...draft,...brewDraftFor(kind,brews)}))}
  async function addBrewPhoto(file?:File){if(!file)return;setBrewPhotoBusy(true);setFormError('');try{const sticker=await makeCoffeeSticker(file);setBrewPhotoEdit({source:sticker.photo,cutout:sticker.photoCutout})}catch(error){setFormError((error as Error).message)}finally{setBrewPhotoBusy(false)}}
@@ -117,6 +118,9 @@ function Journal(){
  const photoStickerBrews=activeBrews.filter(brew=>brew.photo).slice().sort((a,b)=>b.date.localeCompare(a.date)),monthLabel=new Intl.DateTimeFormat(language==='en'?'en-US':'zh-CN',{year:'numeric',month:'long'}).format(calendarMonth),statsLabel=statsPeriod==='year'?String(calendarMonth.getFullYear()):monthLabel;
  const enableStickerMotion=useStickerPilePhysics(stickerStageRef,`${statsPeriod}-${calendarMonth.getFullYear()}-${calendarMonth.getMonth()}-${photoStickerBrews.length}`,tab==='brews'&&brewView==='stats');
  function shiftCalendarMonth(offset:number){setCalendarMonth(current=>{const next=new Date(current.getFullYear(),current.getMonth()+offset,1),now=new Date();setCalendarDay(next.getFullYear()===now.getFullYear()&&next.getMonth()===now.getMonth()?now:next);return next});navigationFeedback()}
+ function chooseStatsPeriod(period:'month'|'year'){if(period===statsPeriod)return;setStatsPeriod(period);navigationFeedback()}
+ function chooseStatsPeriodPointer(event:any,period:'month'|'year'){if(event.pointerType==='mouse')return;event.preventDefault();event.stopPropagation();statsPeriodPointerAt.current=Date.now();chooseStatsPeriod(period)}
+ function chooseStatsPeriodClick(period:'month'|'year'){if(Date.now()-statsPeriodPointerAt.current<600)return;chooseStatsPeriod(period)}
  useEffect(()=>{if(tab!=='brews'||brewView!=='stats'||!photoStickerBrews.length)return;setStickerWallMoving(false);const start=window.setTimeout(()=>setStickerWallMoving(true),40),stop=window.setTimeout(()=>setStickerWallMoving(false),1500);return()=>{window.clearTimeout(start);window.clearTimeout(stop)}},[tab,brewView,calendarMonth,statsPeriod]);
  function reportBags(periodBrews:Brew[]){const beanIds=new Set(periodBrews.map(brew=>brew.beanId)),groups=[...beans.filter(bean=>beanIds.has(bean.id)).reduce((all,bean)=>{const key=coffeeIdentity(bean),group=all.get(key)||{beans:[],drunk:0};group.beans.push(bean);group.drunk+=periodBrews.filter(brew=>brew.beanId===bean.id).reduce((sum,brew)=>sum+(brew.dose||15),0);all.set(key,group);return all},new Map<string,{beans:Bean[];drunk:number}>()).values()].sort((a,b)=>b.drunk-a.drunk),bags=groups.flatMap(group=>group.beans.map(bean=>{const stock=beanStock(bean,brews),beanBrews=periodBrews.filter(brew=>brew.beanId===bean.id),periodDose=beanBrews.reduce((sum,brew)=>sum+(brew.dose||15),0),consumed=stock?1-stock.ratio:bean.status==='已喝完'?1:Math.min(.9,periodDose/250),palette=paletteFor(bean),icon=bean.icon==='cherry'||bean.icon==='cookie'?'brownie':bean.icon||'bag',sprite=['bag','cup','dripper','flower'].includes(icon)?icon:undefined,flavorFile=icon==='brownie'?'brownie-light':icon,art=bean.photo||displayedArt(bean)||(sprite?'./coffee-stickers.png':`./flavor-icons/${flavorFile}.png`);return{id:bean.id,name:label(bean),fill:palette.fill,line:palette.line,side:palette.side,consumed,drunk:periodDose,art,sprite}}));return bags}
  async function openMonthlyReport(){if(sharingMonth)return;const top=monthBeanCounts[0],topBean=top?{name:label(top.bean),count:top.count}:undefined,text=monthlyReportText({language,month:monthLabel,cups:monthBrews.length,pourOvers:monthPourOvers,milks:monthMilks,beanCount:monthBeanCounts.length,topBean}),drunkBags=reportBags(monthBrews);setSharingMonth(true);try{const blob=await createMonthlyReportImage({language,month:monthLabel,year:calendarMonth.getFullYear(),monthIndex:calendarMonth.getMonth(),cups:monthBrews.length,pourOvers:monthPourOvers,milks:monthMilks,beanCount:monthBeanCounts.length,daily:monthStats.daily,photos:photoStickerBrews.map(brew=>({id:brew.id,src:brew.photo!,date:brew.date,cutout:brew.photoCutout})),drunkBags}),name=`beanlet-${calendarMonth.getFullYear()}-${String(calendarMonth.getMonth()+1).padStart(2,'0')}.png`;setMonthReport({blob,url:URL.createObjectURL(blob),name,text,title:`Beanlet · ${monthLabel}`})}catch{toast.error(t('分享失败，请再试一次'))}finally{setSharingMonth(false)}}
@@ -211,7 +215,7 @@ function Journal(){
                    ? "添加到豆子合集"
                    : "记录一杯咖啡",
              )}
-             disabled={tab === "brews" && !beans.length}
+               disabled={tab === "brews" && !shown.length}
              onClick={() =>
                tab === "beans"
                  ? startBean()
@@ -693,8 +697,8 @@ function Journal(){
                      </button>
                    </div>
                    <div className="stats-period-switch" role="group" aria-label={t("统计周期")}>
-                     <button type="button" aria-pressed={statsPeriod==='month'} onClick={()=>setStatsPeriod('month')}>{t("月")}</button>
-                     <button type="button" aria-pressed={statsPeriod==='year'} onClick={()=>setStatsPeriod('year')}>{t("年")}</button>
+                     <button type="button" aria-pressed={statsPeriod==='month'} onPointerUp={event=>chooseStatsPeriodPointer(event,'month')} onClick={()=>chooseStatsPeriodClick('month')}>{t("月")}</button>
+                     <button type="button" aria-pressed={statsPeriod==='year'} onPointerUp={event=>chooseStatsPeriodPointer(event,'year')} onClick={()=>chooseStatsPeriodClick('year')}>{t("年")}</button>
                    </div>
                    <h2 className="review-period-label">{statsLabel}</h2>
                    {photoStickerBrews.length>0&&<section className="month-sticker-wall" aria-label={t("所有咖啡照片贴纸")}>
@@ -1379,7 +1383,7 @@ function Journal(){
                    position="popper"
                    align="start"
                  >
-                   {beans.map((b) => (
+                   {beans.filter((b) => b.status !== "已喝完" || (editingBrew && b.id === brewDraft.beanId)).map((b) => (
                      <SelectItem
                        className="brew-coffee-option"
                        key={b.id}
