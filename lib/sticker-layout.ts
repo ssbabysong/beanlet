@@ -19,9 +19,9 @@ export function stickerPlacement(id:string,index:number,count:number,portrait=fa
 export function wallStickerPlacement(id:string,index:number,count:number):WallStickerPlacement{
  const seed=hashValue(`${id}-${index}`);
  const columns=count<=6?Math.max(1,count):count<=18?5:6;
- const base=(count<=6?88:100)/columns;
- const size=base*(.70+unit(seed^0x9e3779b9)*.40);
- const lift=(unit(seed^0x85ebca6b)-.5)*18;
+ const base=(count<=6?96:100)/columns;
+ const size=base*(.74+unit(seed^0x9e3779b9)*.30);
+ const lift=(unit(seed^0x85ebca6b)-.5)*8;
  const rotation=-8+unit(seed^0xc2b2ae35)*16;
  return {size, lift, rotation};
 }

@@ -69,6 +69,7 @@ function Journal(){
  const [photoSource,setPhotoSource]=useState<File|string|null>(null);
  const [editing,setEditing]=useState<string|null>(null),[beanOpen,setBeanOpen]=useState(false),[draft,setDraft]=useState<any>(fresh),[file,setFile]=useState<File|null>(null),[preview,setPreview]=useState(''),[detail,setDetail]=useState<string|null>(null),[busy,setBusy]=useState(false),[formError,setFormError]=useState('');
  const [brewView,setBrewView]=useState('calendar'),[calendarDay,setCalendarDay]=useState(()=>new Date()),[calendarMonth,setCalendarMonth]=useState(()=>new Date()),[sharingMonth,setSharingMonth]=useState(false),[monthReport,setMonthReport]=useState<{blob:Blob;url:string;name:string;text:string}|null>(null),[stickerWallMoving,setStickerWallMoving]=useState(false);
+ const statsMonthPointerAt=useRef(0);
  const [brewActions,setBrewActions]=useState<Brew|null>(null);
 
  const [editingBrew,setEditingBrew]=useState<string|null>(null);
@@ -106,6 +107,9 @@ function Journal(){
  const monthDailyMax=Math.max(1,...monthStats.daily.map(day=>day.cups)),monthDailyTicks=Array.from(new Set([0,Math.ceil(monthDailyMax/2),monthDailyMax]));
  const monthKindData=(monthBrews.length?[{name:t('手冲'),value:monthPourOvers,color:'#9ba8ce'},{name:t('奶咖'),value:monthMilks,color:'#c8b4d7'}]:[{name:t('暂无记录'),value:1,color:'#e7e8f0'}]).filter(item=>item.value>0);
  const photoStickerBrews=monthBrews.filter(brew=>brew.photo).slice().sort((a,b)=>b.date.localeCompare(a.date)),monthLabel=new Intl.DateTimeFormat(language==='en'?'en-US':'zh-CN',{year:'numeric',month:'long'}).format(calendarMonth);
+ function shiftStatsMonth(offset:number){setCalendarMonth(month=>new Date(month.getFullYear(),month.getMonth()+offset,1))}
+ function shiftStatsMonthPointer(event:any,offset:number){if(event.pointerType==='mouse')return;event.preventDefault();event.stopPropagation();statsMonthPointerAt.current=Date.now();shiftStatsMonth(offset)}
+ function shiftStatsMonthClick(offset:number){if(Date.now()-statsMonthPointerAt.current<600)return;shiftStatsMonth(offset)}
  useEffect(()=>{if(tab!=='brews'||brewView!=='stats'||!photoStickerBrews.length)return;setStickerWallMoving(false);const start=window.setTimeout(()=>setStickerWallMoving(true),40),stop=window.setTimeout(()=>setStickerWallMoving(false),1500);return()=>{window.clearTimeout(start);window.clearTimeout(stop)}},[tab,brewView]);
  async function openMonthlyReport(){if(sharingMonth)return;const top=monthBeanCounts[0],topBean=top?{name:label(top.bean),count:top.count}:undefined,text=monthlyReportText({language,month:monthLabel,cups:monthBrews.length,pourOvers:monthPourOvers,milks:monthMilks,beanCount:monthBeanCounts.length,topBean});setSharingMonth(true);try{const blob=await createMonthlyReportImage({language,month:monthLabel,year:calendarMonth.getFullYear(),monthIndex:calendarMonth.getMonth(),cups:monthBrews.length,pourOvers:monthPourOvers,milks:monthMilks,beanCount:monthBeanCounts.length,daily:monthStats.daily,beanRanking:monthBeanCounts.map(row=>({name:label(row.bean),count:row.count})),photos:photoStickerBrews.map(brew=>({id:brew.id,src:brew.photo!,date:brew.date,cutout:brew.photoCutout}))}),name=`beanlet-${calendarMonth.getFullYear()}-${String(calendarMonth.getMonth()+1).padStart(2,'0')}.png`;setMonthReport({blob,url:URL.createObjectURL(blob),name,text})}catch{toast.error(t('分享失败，请再试一次'))}finally{setSharingMonth(false)}}
  async function shareMonthlyReport(){if(!monthReport)return;try{if((globalThis as any).Capacitor?.isNativePlatform?.()){const {shareNativeImage}=await import('@/lib/native-video');await shareNativeImage(monthReport.blob,monthReport.name,`Beanlet · ${monthLabel}`)}else{const file=new File([monthReport.blob],monthReport.name,{type:'image/png'}),shareData={title:`Beanlet · ${monthLabel}`,text:monthReport.text,files:[file]};if(navigator.share&&navigator.canShare?.(shareData))await navigator.share(shareData);else{const link=document.createElement('a');link.href=monthReport.url;link.download=monthReport.name;link.click();toast.success(t('月报图片已保存'))}}}catch(error){if((error as Error).name!=='AbortError')toast.error(t('分享失败，请再试一次'))}}
@@ -697,9 +701,9 @@ function Journal(){
                ) : (
                  <section className="month-stats">
                    <header className="month-stats-heading">
-                     <button className="icon-button" aria-label={t("上个月")} onClick={()=>setCalendarMonth(month=>new Date(month.getFullYear(),month.getMonth()-1,1))}><ChevronLeft size={19}/></button>
+                     <button type="button" className="icon-button" aria-label={t("上个月")} onPointerUp={event=>shiftStatsMonthPointer(event,-1)} onClick={()=>shiftStatsMonthClick(-1)}><ChevronLeft size={19}/></button>
                      <h2>{monthLabel}</h2>
-                     <button className="icon-button" aria-label={t("下个月")} onClick={()=>setCalendarMonth(month=>new Date(month.getFullYear(),month.getMonth()+1,1))}><ChevronRight size={19}/></button>
+                     <button type="button" className="icon-button" aria-label={t("下个月")} onPointerUp={event=>shiftStatsMonthPointer(event,1)} onClick={()=>shiftStatsMonthClick(1)}><ChevronRight size={19}/></button>
                    </header>
                    {photoStickerBrews.length>0&&<section className="month-sticker-wall" aria-label={t("所有咖啡照片贴纸")}>
                      <button type="button" className={`month-sticker-stage${stickerWallMoving?' is-moving':''}`} aria-label={t("晃动咖啡贴纸")} onClick={()=>{setStickerWallMoving(false);requestAnimationFrame(()=>{setStickerWallMoving(true);navigationFeedback();setTimeout(()=>setStickerWallMoving(false),1450)})}}>
