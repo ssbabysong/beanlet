@@ -115,6 +115,7 @@ function Journal(){
  async function shareMonthlyReport(){if(!monthReport)return;try{if((globalThis as any).Capacitor?.isNativePlatform?.()){const {shareNativeImage}=await import('@/lib/native-video');await shareNativeImage(monthReport.blob,monthReport.name,`Beanlet · ${monthLabel}`)}else{const file=new File([monthReport.blob],monthReport.name,{type:'image/png'}),shareData={title:`Beanlet · ${monthLabel}`,text:monthReport.text,files:[file]};if(navigator.share&&navigator.canShare?.(shareData))await navigator.share(shareData);else{const link=document.createElement('a');link.href=monthReport.url;link.download=monthReport.name;link.click();toast.success(t('月报图片已保存'))}}}catch(error){if((error as Error).name!=='AbortError')toast.error(t('分享失败，请再试一次'))}}
  async function toggleFinished(b:Bean){if(busy)return;setBusy(true);try{await api('/api/journal',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'bean',id:b.id,data:{...b,status:b.status==='已喝完'?'正在喝':'已喝完'}})});await refresh();toast.success(t(b.status==='已喝完'?'放回豆架了':'收进喝完的豆子了'))}catch(e){toast.error(t((e as Error).message))}finally{setBusy(false)}}
  function beanCard(b:Bean,group?:Bean[]){const stock=beanStock(b,brews),fade=stock?1-stock.ratio:0;return <button className="bean-card" key={b.id} aria-label={label(b)+(group?` · ${group.length} ${t('包')}`:'')} onClick={()=>{setReturnToTaste(null);if(group){setTasteDetail(coffeeIdentity(b))}else setDetail(b.id)}}><div className='coffee-bag' style={{'--bag-fill':beanPalette(b).fill,'--bag-line':beanPalette(b).line,'--bag-side':beanPalette(b).side} as CSSProperties}>{group&&group.length>1&&<span className="finished-count"><span className="finished-times">×</span>{group.length}</span>}{b.roaster&&<span className="bag-brand-tag" title={b.roaster}><span>{b.roaster}</span></span>}<BagPaper ratio={stock?.ratio}/><span style={stock?{maskImage:`linear-gradient(to bottom,rgba(0,0,0,.18) ${fade*100}%,#000 ${fade*100}%)`}:undefined} className={'coffee-bag-label'+(b.photo||displayedArt(b)?' has-picture':'')}><BeanVisual bean={b}/></span>{b.roastDate&&(!group||group.length===1)&&<span className="bag-date-tag" title={t('烘焙于')+' '+b.roastDate} aria-label={t('烘焙于')+' '+b.roastDate}><time dateTime={b.roastDate}>{b.roastDate.replaceAll('-','.')}</time></span>}<span className="bag-meta-row">{stock&&!group&&<span className="bag-remaining" aria-label={language==='en'?`${stock.remaining}g remaining`:`剩余 ${stock.remaining}g`}>{stock.remaining}<small>g</small></span>}</span>{isFavorite(b)&&<span className="bag-heart" aria-label={t("已收藏")}><Heart size={16} fill="currentColor"/></span>}</div><div className="bean-info"><h3>{label(b)}</h3>{info(b,'flavor')&&<p className="shelf-name-secondary">{info(b,'flavor')}</p>}</div></button>}
+ function finishedCard(group:Bean[]){const b=group[0],dates=group.map(item=>item.roastDate).filter(Boolean).sort().reverse(),date=dates[0];return <button className="finished-memory" key={coffeeIdentity(b)} aria-label={label(b)+` · ${group.length} ${t('包')}`} onClick={()=>{setReturnToTaste(null);setTasteDetail(coffeeIdentity(b))}} style={{'--memory-fill':beanPalette(b).fill,'--memory-line':beanPalette(b).line} as CSSProperties}><span className="finished-memory-art"><BeanVisual bean={b}/>{group.length>1&&<span className="finished-memory-count"><b>×</b>{group.length}</span>}</span><span className="finished-memory-copy"><strong>{label(b)}</strong>{b.roaster&&<small>{b.roaster}</small>}{date&&<time dateTime={date}>{date.replaceAll('-','.')}</time>}</span></button>}
 
  function brewCard(b:Brew,hideDate=false,inMemory=false){const hasDetails=!!(b.dose||b.grind||b.time||b.notes||b.rating||b.photo||(b.kind==='milk'?(b.yield||b.milkAmount||(b.milkType&&b.milkType!=='未记录')||(b.serving&&b.serving!=='未记录')):(b.water||b.temp)));return <PressableRecord className={'brew-card'+(hasDetails?'':' brew-card-compact')+(inMemory?' memory-coffee-record':'')+(b.photo?' has-brew-photo':'')} key={b.id} label={label(beans.find(x=>x.id===b.beanId))+' · '+b.date+' · '+t('点击编辑记录')} onClick={()=>editBrew(b)} onActions={()=>setBrewActions(b)}>{!inMemory&&<span className="brew-bean" style={{backgroundColor:beanPalette(beans.find(x=>x.id===b.beanId)||{id:b.beanId}).fill}} aria-hidden="true"><BeanVisual bean={beans.find(x=>x.id===b.beanId)}/></span>}{b.photo&&<span className={'brew-photo-sticker'+(b.photoCutout?' is-cutout':'')} aria-label={t('这杯咖啡的照片')}><img src={b.photo} alt=""/></span>}<div className="brew-body"><div className="row"><h3>{inMemory?<time dateTime={b.date}>{new Intl.DateTimeFormat(language==='en'?'en-US':'zh-CN',{year:'numeric',month:'short',day:'numeric'}).format(new Date(b.date+'T12:00:00'))}</time>:label(beans.find(x=>x.id===b.beanId))}</h3></div>{!hideDate&&!inMemory&&<span className="meta brew-record-date">{b.date}</span>}<div className="parameters">{b.dose!=null&&<span>{b.dose} {t('g 粉')}</span>}{b.kind==='milk'?<>{b.yield!=null&&<span>{t('出液')} {b.yield} g</span>}{b.milkAmount!=null&&<span>{t('奶量')} {b.milkAmount} ml</span>}{b.milkType&&b.milkType!=='未记录'&&<span>{t(b.milkType)}</span>}{b.serving&&b.serving!=='未记录'&&<span>{t(b.serving)}</span>}</>:<>{b.water!=null&&<span>{b.water} {t('ml 水')}</span>}{b.temp!=null&&<span>{b.temp} °C</span>}{!!b.dose&&!!b.water&&<span>1 : {(b.water/b.dose).toFixed(1)}</span>}</>}</div>{(b.grind||b.time)&&<p className="meta brew-method">{[b.grind&&t(`研磨 ${b.grind}`),b.time&&t(`用时 ${b.time}`)].filter(Boolean).join(' · ')}</p>}{b.notes&&<p className="notes">{b.notes}</p>}{b.rating>0&&<Rating value={b.rating}/>}</div></PressableRecord>}
  function selectMenu(value:string){setTab(value);if(value==='catalog'){setAtlasView(tasted.length?'tasted':'discover');setCatalogQuery('');setFilters({...emptyFilters})}requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'})))}
@@ -320,8 +321,8 @@ function Journal(){
                      <ChevronDown size={17} />
                    </CollapsibleTrigger>
                    <CollapsibleContent>
-                     <div className="cards">
-                       {finished.map((group) => beanCard(group[0], group))}
+                     <div className="finished-memories">
+                       {finished.map((group) => finishedCard(group))}
                      </div>
                    </CollapsibleContent>
                  </Collapsible>
@@ -710,6 +711,14 @@ function Journal(){
                        <span className="month-sticker-collage">{photoStickerBrews.map((brew,index)=>{const place=wallStickerPlacement(brew.id,index,photoStickerBrews.length),size=place.size*1.2;return <figure className={brew.photoCutout?'is-cutout':''} key={brew.id} style={{'--sticker-size':`${size}%`,'--sticker-overlap':`${-size*.05}%`,'--sticker-lift':`${place.lift}px`,'--sticker-rotation':`${place.rotation}deg`,'--sticker-delay':`${Math.min(index,12)*35}ms`} as CSSProperties}><img src={brew.photo} alt={label(beans.find(bean=>bean.id===brew.beanId))}/></figure>})}</span>
                      </button>
                    </section>}
+                   <div className="month-bean-table">
+                     <h3>{t("本月常喝")}</h3>
+                     {monthBeanCounts.length?monthBeanCounts.slice(0,5).map(({bean,count})=><div className="month-bean-row" key={bean.id}>
+                       <span className="month-bean-art" style={{backgroundColor:beanPalette(bean).fill}}><BeanVisual bean={bean}/></span>
+                       <span className="month-bean-name">{label(bean)}<i><b style={{width:`${count/monthMaxBeanCount*100}%`}}/></i></span>
+                       <strong>{count} {t("杯")}</strong>
+                     </div>):<div className="month-stats-empty"><Sticker icon="cup"/><span>{t("这个月还没有咖啡记录")}</span></div>}
+                   </div>
                    <div className="month-analysis-grid">
                      <section className="month-chart-card month-trend-card">
                        <header><h3>{t("每日冲煮")}</h3></header>
@@ -739,14 +748,6 @@ function Journal(){
                          </div>
                        </div>
                      </section>
-                   </div>
-                   <div className="month-bean-table">
-                     <h3>{t("本月常喝")}</h3>
-                     {monthBeanCounts.length?monthBeanCounts.slice(0,5).map(({bean,count})=><div className="month-bean-row" key={bean.id}>
-                       <span className="month-bean-art" style={{backgroundColor:beanPalette(bean).fill}}><BeanVisual bean={bean}/></span>
-                       <span className="month-bean-name">{label(bean)}<i><b style={{width:`${count/monthMaxBeanCount*100}%`}}/></i></span>
-                       <strong>{count} {t("杯")}</strong>
-                     </div>):<div className="month-stats-empty"><Sticker icon="cup"/><span>{t("这个月还没有咖啡记录")}</span></div>}
                    </div>
                    <div className="month-share-actions">
                      <button type="button" className="month-share-button" disabled={!monthBrews.length||sharingMonth} onClick={openMonthlyReport}><Share2 size={18}/><span>{sharingMonth?t("正在生成…"):t("分享月报")}</span></button>
