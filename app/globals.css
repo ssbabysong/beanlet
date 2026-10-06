@@ -541,11 +541,17 @@ html[lang=en] .bean-shelf .bag-roast-print{font-size:10px;letter-spacing:0}
 .menu-swipe [data-slot=tabs-content][data-state=active]{animation:menu-arrive .2s ease-out}
 @keyframes menu-arrive{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
 /* Print the remaining grams below the artwork, beside a small roast sticker. */
-.bean-shelf .coffee-bag-label{left:32%;top:34%;width:50%;height:44%;box-sizing:border-box;padding:0;border:0;background:transparent;border-radius:0;clip-path:none;overflow:visible;transform:rotate(-2deg)}
-.bean-shelf .coffee-bag-label.has-picture{left:33%;top:35%;width:47%;height:42%;padding:5px;background:#fff;border:1px solid #fff;border-radius:48% 52% 43% 57% / 57% 42% 58% 43%;clip-path:none;overflow:hidden;transform:rotate(-5deg);box-shadow:0 1px 0 #d9d0ca,0 4px 6px #665b5224}
+.bean-shelf .coffee-bag-label{--label-shape:polygon(4% 10%,8% 7%,50% 5%,89% 1%,93% 5%,96% 48%,99% 87%,96% 91%,52% 97%,14% 99%,10% 95%,7% 49%);--label-angle:-1deg;left:31%;top:33%;width:52%;height:46%;box-sizing:border-box;padding:3px;border:0;background:#fffaf0;border-radius:0;clip-path:var(--label-shape);overflow:hidden;transform:rotate(var(--label-angle));box-shadow:0 2px 4px #665b5212}
+.bean-shelf .coffee-bag-label.has-picture{left:31%;top:33%;width:52%;height:46%;padding:3px;background:#fffaf0;border:0;border-radius:0;clip-path:var(--label-shape);overflow:hidden;transform:rotate(var(--label-angle));box-shadow:0 2px 4px #665b5212}
 .sticker{filter:saturate(.9) contrast(.94)}
-.bean-shelf .coffee-bag-label>.sticker{width:96%;height:96%;max-width:none;filter:saturate(.82) contrast(.9) brightness(1.05) drop-shadow(1.7px 0 #fff) drop-shadow(-1.7px 0 #fff) drop-shadow(0 1.7px #fff) drop-shadow(0 -1.7px #fff) drop-shadow(.9px .9px #fff) drop-shadow(-.9px -.9px #fff) drop-shadow(0 2.5px 2px #665b521c)}
-.bean-shelf .coffee-bag-label>.bean-thumb{width:91%;height:91%;object-fit:contain;border-radius:43% 51% 45% 55% / 54% 44% 56% 46%;clip-path:none;margin:0;padding:0;filter:drop-shadow(0 1px 1px #665b5218)}
+.bean-shelf .coffee-bag-label:has(>.sticker){left:31%;top:33%;width:52%;height:46%;padding:3px;background:#fffaf0;border:0;border-radius:0;clip-path:var(--label-shape);overflow:hidden;transform:rotate(var(--label-angle));box-shadow:0 2px 4px #665b5212}
+.bean-shelf .coffee-bag-label.label-shape-0{--label-shape:polygon(4% 10%,8% 7%,49% 6%,88% 2%,92% 6%,96% 48%,98% 86%,95% 91%,53% 96%,15% 98%,11% 94%,8% 50%);--label-angle:-1.15deg}
+.bean-shelf .coffee-bag-label.label-shape-1{--label-shape:polygon(5% 8%,9% 6%,53% 6%,90% 4%,94% 8%,96% 52%,96% 89%,93% 93%,48% 97%,12% 96%,9% 92%,7% 44%);--label-angle:-.55deg}
+.bean-shelf .coffee-bag-label.label-shape-2{--label-shape:polygon(3% 10%,8% 7%,51% 6%,89% 3%,94% 7%,95% 50%,98% 87%,95% 92%,50% 95%,14% 98%,10% 94%,7% 47%);--label-angle:-.85deg}
+.bean-shelf .coffee-bag-label.label-shape-3{--label-shape:polygon(5% 8%,10% 6%,55% 7%,91% 3%,95% 7%,97% 55%,95% 90%,91% 94%,47% 98%,10% 94%,7% 90%,6% 41%);--label-angle:-.25deg}
+.bean-shelf .coffee-bag-label.label-shape-4{--label-shape:polygon(4% 7%,9% 6%,50% 5%,90% 6%,94% 10%,94% 55%,97% 88%,94% 92%,50% 94%,12% 97%,9% 93%,7% 45%);--label-angle:-.7deg}
+.bean-shelf .coffee-bag-label>.sticker{width:92%;height:92%;max-width:none;transform:none;filter:saturate(.82) contrast(.9) brightness(1.05) drop-shadow(0 1px 1px #665b5212)}
+.bean-shelf .coffee-bag-label>.bean-thumb{width:94%;height:94%;object-fit:contain;border-radius:0;clip-path:none;margin:0;padding:0;transform:none;filter:drop-shadow(0 1px 1px #665b5218)}
 .bean-shelf .coffee-bag-label>.bean-thumb:not(.original-art){mix-blend-mode:multiply}
 .bean-shelf .bag-meta-row{position:absolute;left:20%;right:14%;top:79%;display:flex;align-items:center;justify-content:space-between;gap:4px;min-height:15px;pointer-events:none}
 .bag-remaining{margin-left:auto;color:#6e7080;font-size:7px;line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
