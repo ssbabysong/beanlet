@@ -40,27 +40,27 @@ Keep every bag of coffee on a little shelf, know when it is ready to brew, and l
 **Description**:
 Beanlet is a small, gentle journal for the coffee you brew at home.
 
-☕ Your coffee shelf
+Your coffee shelf
 · Add each bag you buy and watch it empty as you brew
 · See how many grams are left at a glance
 
-🌸 A watercolor coffee atlas
+A watercolor coffee atlas
 · Browse a library of specialty coffees, each with its own watercolor cover
 · Filter by roaster, roast, origin and process, then add a bag in one tap
 · Every coffee you finish becomes a sticker in your own tasting atlas
 
-⏳ Rest and brew guidance
+Rest and brew guidance
 · Enter the roast date and Beanlet tells you when the beans are ready and when they taste best
 · Suggested temperature, ratio and grind for each roast
 
-📅 Brew calendar and monthly recap
+Brew calendar and monthly recap
 · Log pour-overs and milk drinks in seconds: dose, water, temperature, grind, time and rating
 · A calendar of every cup, plus a monthly and yearly recap you can share
 · Turn your coffee photos into a stacked sticker reel
 
-🌏 English and 中文
+English and 中文
 
-🔒 No account, no ads, no tracking. Everything stays on your iPhone. Export a backup any time.
+No account, no ads, no tracking. Everything stays on your iPhone. Export a backup any time.
 
 **Keywords** (100):
 coffee,journal,pour over,brew,beans,roast,barista,diary,tracker,specialty,v60,latte,log,cafe
@@ -82,27 +82,27 @@ First release! Keep a coffee shelf, browse a watercolor coffee atlas and log eve
 **描述**：
 Beanlet 是一本小小的、温柔的家庭咖啡日记。
 
-☕ 我的豆仓
+我的豆仓
 · 买回来的每一包豆子都放上豆架，冲一次少一点
 · 剩多少克一眼就知道
 
-🌸 水彩咖啡图鉴
+水彩咖啡图鉴
 · 收录多款精品咖啡，每一款都有专属的水彩封面
 · 按品牌、烘焙度、产地、处理法筛选，一键加进豆仓
 · 喝完的咖啡会变成贴纸，收进你自己的图鉴
 
-⏳ 养豆期和冲煮建议
+养豆期和冲煮建议
 · 填上烘焙日期，自动告诉你什么时候可以开冲、什么时候进入最佳赏味期
 · 按烘焙度给出水温、粉水比和研磨度参考
 
-📅 冲煮日历和月度回顾
+冲煮日历和月度回顾
 · 几秒记一杯手冲或奶咖：粉量、水量、水温、研磨、时间、评分
 · 每一杯都在日历上，月度和年度回顾可以直接分享
 · 把咖啡照片做成层层叠叠的贴纸短片
 
-🌏 中文 / English
+中文 / English
 
-🔒 不用注册，没有广告，不追踪。所有记录只存在你的 iPhone 上，随时可以导出备份。
+不用注册，没有广告，不追踪。所有记录只存在你的 iPhone 上，随时可以导出备份。
 
 **关键词**（100 字符以内，逗号分隔，不加空格）：
 咖啡,手冲,咖啡豆,日记,记录,烘焙,养豆,咖啡馆,拿铁,精品咖啡,图鉴,coffee
