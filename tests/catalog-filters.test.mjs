@@ -21,8 +21,8 @@ assert.equal(builtInCatalog.filter(b=>b.roaster==='Black & White Coffee Roasters
 assert.equal(builtInCatalog.filter(b=>b.roaster==='Heart Coffee Roasters').length,3);
 assert.equal(builtInCatalog.filter(b=>b.roaster==='Counter Culture Coffee').length,8);
 assert.equal(builtInCatalog.filter(b=>b.roaster==='George Howell Coffee').length,5);
-for(const b of builtInCatalog)assert.ok(originalArt(b),`${b.name} should have bundled official art`);
-assert.equal(originalArt(builtInCatalog.find(b=>b.id==='onyx-monarch')),'./american-art/onyx-monarch.png');
+for(const b of builtInCatalog)assert.ok(originalArt(b),`${b.name} should have a bundled watercolor cover`);
+assert.equal(originalArt(builtInCatalog.find(b=>b.id==='onyx-monarch')),'./watercolor-art/onyx-monarch.jpg');
 assert.equal(bilingualBean({...builtInCatalog[0],name:'我的自定义名'}).en,'我的自定义名');
 console.log('Catalog: bilingual names, custom names, combined filters, reset, empty results passed');
 

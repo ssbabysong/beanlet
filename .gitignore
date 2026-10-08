@@ -6,3 +6,4 @@ node_modules/
 # Local iOS build outputs
 dist-ios/
 ios-build/
+.ios-build/

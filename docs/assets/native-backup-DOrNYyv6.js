@@ -1,1 +1,0 @@
-import{i as e,n as t,r as n,t as r}from"./esm-DjxWk8lq.js";async function i(i,a){let{uri:o}=await t.writeFile({path:a,data:i,directory:n.Cache,encoding:e.UTF8});try{await r.share({title:`Beanlet backup`,files:[o]})}finally{await t.deleteFile({path:a,directory:n.Cache}).catch(()=>{})}}export{i as shareNativeBackup};

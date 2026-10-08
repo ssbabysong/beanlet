@@ -22,14 +22,16 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>拍摄咖啡豆包装，作为你的豆子插画。</string>
+	<string>Take a photo of your coffee bag to use as its picture.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>选择咖啡豆包装照片。</string>
+	<string>Choose a photo of your coffee bag.</string>
 	<key>NSMotionUsageDescription</key>
-	<string>轻轻晃动手机，让咖啡贴纸自然碰撞和堆叠。</string>
+	<string>Give your phone a gentle shake to make the coffee stickers tumble and stack.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -55,7 +57,7 @@
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>armv7</string>
+		<string>arm64</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

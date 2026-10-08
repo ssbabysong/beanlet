@@ -63,6 +63,8 @@ function DialogContent({
 }) {
   const swipe=useSwipeNavigation(direction=>{if(direction==='previous')onSwipeBack?.()},!!onSwipeBack)
   const down=React.useRef<{x:number;y:number;active:boolean;moved:boolean}|null>(null)
+  const [dismissY,setDismissY]=React.useState(0)
+  const [draggingDown,setDraggingDown]=React.useState(false)
   function downStart(event:React.PointerEvent<HTMLElement>){
     down.current=null
     if(!onSwipeDown||event.button!==0||!event.isPrimary)return
@@ -73,32 +75,41 @@ function DialogContent({
   function downMove(event:React.PointerEvent<HTMLElement>){
     const start=down.current;if(!start)return
     const dx=event.clientX-start.x,dy=event.clientY-start.y
-    if(!start.active&&dy>12&&Math.abs(dy)>Math.abs(dx)*1.25){start.active=true;event.currentTarget.setPointerCapture(event.pointerId)}
-    if(start.active&&dy>18)start.moved=true
+    if(!start.active&&dy>12&&Math.abs(dy)>Math.abs(dx)*1.25){start.active=true;setDraggingDown(true);event.currentTarget.setPointerCapture(event.pointerId)}
+    if(start.active){
+      if(dy>18)start.moved=true
+      setDismissY(Math.max(0,Math.min(150,dy*.82)))
+    }
   }
   function downEnd(event:React.PointerEvent<HTMLElement>){
     const start=down.current;down.current=null
     if(!start?.active)return
     if(event.currentTarget.hasPointerCapture(event.pointerId))event.currentTarget.releasePointerCapture(event.pointerId)
-    if(event.clientY-start.y>72&&Math.abs(event.clientX-start.x)<Math.abs(event.clientY-start.y))onSwipeDown?.()
+    const shouldDismiss=event.clientY-start.y>82&&Math.abs(event.clientX-start.x)<Math.abs(event.clientY-start.y)
+    setDraggingDown(false)
+    setDismissY(0)
+    if(shouldDismiss)onSwipeDown?.()
   }
   return (
     <DialogPortal data-slot="dialog-portal">
       <DialogOverlay />
       <DialogPrimitive.Content
         data-slot="dialog-content"
+        data-swipe-down-enabled={!!onSwipeDown}
         onDragStart={swipe.onDragStart}
         onPointerDown={event=>{swipe.onPointerDown(event);downStart(event)}}
         onPointerMove={event=>{swipe.onPointerMove(event);downMove(event)}}
         onPointerUp={event=>{swipe.onPointerUp(event);downEnd(event)}}
-        onPointerCancel={event=>{swipe.onPointerCancel();down.current=null}}
+        onPointerCancel={event=>{swipe.onPointerCancel();down.current=null;setDraggingDown(false);setDismissY(0)}}
         onClickCapture={event=>{swipe.onClickCapture(event);if(down.current?.moved){event.preventDefault();event.stopPropagation();down.current.moved=false}}}
+        {...props}
         className={cn(
           "fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border bg-background p-6 shadow-lg duration-200 outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg",
           className
         )}
-        {...props}
+        style={{...props.style,translate:`-50% calc(-50% + ${dismissY}px)`,transition:draggingDown?'none':undefined}}
       >
+        {onSwipeDown && <span className="dialog-drag-handle" aria-hidden="true" />}
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close

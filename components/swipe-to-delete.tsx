@@ -20,7 +20,7 @@ export function SwipeActions({children,deleteLabel,onDelete,leadingActions=[],cl
   <div className="swipe-content" style={{transform:`translateX(${offset}px)`,transition:dragging?'none':undefined}}
    onPointerDown={e=>{if(e.button!==0)return;moved.current=false;gesture.current={x:e.clientX,y:e.clientY,offset:offsetRef.current}}}
    onPointerMove={e=>{const g=gesture.current;if(!g)return;const dx=e.clientX-g.x,dy=e.clientY-g.y;if(!g.axis&&Math.max(Math.abs(dx),Math.abs(dy))>8)g.axis=Math.abs(dx)>Math.abs(dy)?'x':'y';if(g.axis==='x'){e.currentTarget.setPointerCapture(e.pointerId);moved.current=true;setDragging(true);move(Math.max(-actionWidth,Math.min(0,g.offset+dx)))}}}
-   onPointerUp={e=>{const horizontal=gesture.current?.axis==='x';if(horizontal){if(e.currentTarget.hasPointerCapture(e.pointerId))e.currentTarget.releasePointerCapture(e.pointerId);offsetRef.current<-38?reveal():close()}gesture.current=null;setDragging(false)}}
+   onPointerUp={e=>{const horizontal=gesture.current?.axis==='x';if(horizontal){if(e.currentTarget.hasPointerCapture(e.pointerId))e.currentTarget.releasePointerCapture(e.pointerId);const threshold=Math.min(84,Math.max(44,actionWidth*.3));offsetRef.current<-threshold?reveal():close()}gesture.current=null;setDragging(false)}}
    onPointerCancel={()=>{move(gesture.current?.offset||0);gesture.current=null;setDragging(false)}}
    onClickCapture={e=>{if(moved.current){e.preventDefault();e.stopPropagation();moved.current=false}else if(offsetRef.current){e.preventDefault();e.stopPropagation();close()}}}
    onKeyDown={e=>{if(e.key==='Escape')close()}}>{children}</div>

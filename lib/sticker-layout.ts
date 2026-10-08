@@ -15,16 +15,36 @@ export function stickerPlacement(id:string,index:number,count:number,portrait=fa
  return {x:Math.max(7,Math.min(93,x)),y:Math.max(8,Math.min(92,y)),size:base*(.86+unit(seed^0xc2b2ae35)*.32),rotation:-14+unit(seed^0x27d4eb2f)*28,z:index+1};
 }
 
-/** Stable portrait scatter that fills a Reel from the masthead to the bottom edge. */
-export function reelStickerPlacement(id:string,index:number,count:number):StickerPlacement{
- const seed=hashValue(`${id}-${index}`);
- if(count<=1)return {x:50,y:55,size:64,rotation:(unit(seed)-.5)*10,z:1};
- const columns=count<=8?2:count<=18?3:4,rows=Math.ceil(count/columns),row=Math.floor(index/columns),column=index%columns;
- const cellWidth=84/columns,cellHeight=76/rows;
- const x=8+(column+.5)*cellWidth+(unit(seed^0x9e3779b9)-.5)*cellWidth*.34;
- const y=17+(row+.5)*cellHeight+(unit(seed^0x85ebca6b)-.5)*cellHeight*.34;
- const base=count<=5?47:count<=10?38:count<=20?31:25;
- return {x:Math.max(7,Math.min(93,x)),y:Math.max(16,Math.min(95,y)),size:base*(.88+unit(seed^0xc2b2ae35)*.24),rotation:-12+unit(seed^0x27d4eb2f)*24,z:index+1};
+/**
+ * Reel collage: big stickers piled over each other until they hide most of the 9:16 frame below the masthead.
+ * Each sticker tries a few dozen seeded spots, drawn mostly near the middle, and takes the one where the pile is
+ * thinnest, discounted by distance from the centre: the pile grows outward from the middle without lining up in a
+ * grid, leaving some background at the corners. Later stickers land on top. Positions are % of width/height.
+ */
+export function reelStickerLayout(ids:string[]):StickerPlacement[]{
+ const count=ids.length,frame=16/9*100,top=.15*frame,areaH=frame-top;   // heights below are in % of the width
+ if(!count)return [];
+ // Total sticker area ≈ 2.1× the area, so stickers overlap and little background shows; never narrower than half the frame.
+ const base=Math.max(50,Math.min(84,Math.sqrt(2.1*100*areaH/count)));
+ const gx=24,gy=Math.round(gx*areaH/100),cw=100/gx,ch=areaH/gy,cover=new Uint16Array(gx*gy);
+ return ids.map((id,index)=>{
+  const seed=hashValue(`${id}-${index}`),size=count===1?base:Math.max(50,base*(.88+unit(seed^0xc2b2ae35)*.26)),half=size*.42;
+  const cy=top+areaH*.48,ry=areaH/2-half*.3;
+  let best={x:50,y:cy,score:-1};
+  for(let k=0;k<(count===1?1:32);k++){
+   // Sum of two uniforms: candidates cluster around the centre but can still reach the edges
+   const u=(salt:number)=>unit(seed^Math.imul(k+1,salt)),x=count===1?50:50+(u(0x9e3779b9)+u(0x7feb352d)-1)*44,y=count===1?cy:cy+(u(0x85ebca6b)+u(0x846ca68b)-1)*ry;
+   const d2=((x-50)/44)**2+((y-cy)/ry)**2;
+   let score=0;
+   for(let gyi=Math.max(0,Math.floor((y-top-half)/ch));gyi<Math.min(gy,Math.ceil((y-top+half)/ch));gyi++)
+    for(let gxi=Math.max(0,Math.floor((x-half)/cw));gxi<Math.min(gx,Math.ceil((x+half)/cw));gxi++)score+=1/(1+cover[gyi*gx+gxi]);
+   score=score/(1+.8*d2)+unit(seed^k)*.01;
+   if(score>best.score)best={x,y,score};
+  }
+  for(let gyi=Math.max(0,Math.floor((best.y-top-half)/ch));gyi<Math.min(gy,Math.ceil((best.y-top+half)/ch));gyi++)
+   for(let gxi=Math.max(0,Math.floor((best.x-half)/cw));gxi<Math.min(gx,Math.ceil((best.x+half)/cw));gxi++)cover[gyi*gx+gxi]++;
+  return {x:best.x,y:best.y/frame*100,size,rotation:-16+unit(seed^0x27d4eb2f)*32,z:index+1};
+ });
 }
 
 /** Stable, row-based scatter for the monthly wall. Items vary in size and lift, but keep their own layout space. */

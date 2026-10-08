@@ -53,7 +53,7 @@ function rememberBrewPreference(kind:BrewKind,beanId?:string){try{localStorage.s
 
 const icons=[{id:'bag',name:'豆袋'},{id:'cup',name:'咖啡杯'},{id:'dripper',name:'手冲壶'},{id:'flower',name:'小花'},{id:'berry',name:'莓果'},{id:'blueberry',name:'蓝莓'},{id:'citrus',name:'柑橘'},{id:'peach',name:'蜜桃'},{id:'grape',name:'葡萄'},{id:'jasmine',name:'茉莉'},{id:'honey',name:'蜂蜜'},{id:'chocolate',name:'巧克力'},{id:'hazelnut',name:'榛果'},{id:'tea',name:'红茶'},{id:'brownie',name:'布朗尼'}];
 function Sticker({icon='bag',className=''}:{icon?:string;className?:string}){if(icon==='cherry'||icon==='cookie')icon='brownie';const {t,language,label}=useI18n();return <span role="img" aria-label={t(icons.find(x=>x.id===icon)?.name||'豆袋')} className={`sticker sticker-${icon} ${className}`}/>}
-function BeanVisual({bean}:{bean?:Bean}){const {t,language,label}=useI18n();return bean?.photo?<img className="bean-thumb" src={photo(bean.photo)} alt={t(bean.name)}/>:displayedArt(bean)?<img className="bean-thumb original-art" src={displayedArt(bean)} alt={t(`${bean?.name} · 官方封面`)} loading="lazy"/>:<Sticker icon={bean?.icon}/>}
+function BeanVisual({bean}:{bean?:Bean}){const {t,language,label}=useI18n();return bean?.photo?<img className="bean-thumb" src={photo(bean.photo)} alt={t(bean.name)}/>:displayedArt(bean)?<img className="bean-thumb original-art" src={displayedArt(bean)} alt={`${t(bean?.name||"")} · ${t("水彩封面")}`} loading="lazy"/>:<Sticker icon={bean?.icon}/>}
 function dateKey(date:Date){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`}
 function CoffeeGuide({bean,onEdit}:{bean:Bean;onEdit:()=>void}){const {t,language,label}=useI18n();const guide=roastGuide(bean.roast,bean.roaster),window=flavorWindow(bean.roast,bean.roastDate,dateKey(new Date()),bean.roaster);return <section className="coffee-guide"><div className="guide-heading"><Sticker icon="dripper"/><h3>{t("这包怎么喝")}</h3></div>{bean.roastDate&&<p className="guide-roast-date">{t("烘焙于")} <time dateTime={bean.roastDate}>{bean.roastDate}</time></p>}{guide?<><span className="meta">{t("养豆与最佳赏味期 · 参考")}</span><strong>{t(window.label)}</strong><p className="guide-dates">{t(window.dates)}</p><p className="guide-dates">{t(window.hint)}</p><div className="guide-recipe"><span>{guide.temp} °C</span><span>{guide.ratio}</span><span>{t(guide.grind)}</span></div><Collapsible><CollapsibleTrigger className="guide-more">{t("小贴士")}<ChevronDown size={13}/></CollapsibleTrigger><CollapsibleContent><p>{t("先用 15 g 粉，闷蒸 30–45 秒。酸涩偏薄试着磨细，苦涩试着磨粗，每次只改一项。")}</p><p>{t("常温密封整豆的估算范围，开封与储存会影响风味，以烘焙商建议和实际味道为准。赏味窗口不是保质期。")}</p><p>{/hydrangea/i.test(bean.roaster)&&<><a href="https://hydrangea.coffee/pages/faq" target="_blank" rel="noreferrer">{t("Hydrangea 官方：养豆 2–3 周，佳期 4–6 周")}</a>{t("。浅烘焙优先采用此建议。")}<br/></>}{t("参考")}<a href="https://rovala.nl/en/pages/brewing-tips" target="_blank" rel="noreferrer">{t("Rovala 冲煮指南")}</a> · <a href="https://sca.coffee/sca-news/coffee-decoded-9-fresh-coffee" target="_blank" rel="noreferrer">{t("SCA 新鲜度")}</a>{t("；中间烘焙度与窗口终点为综合估算。")}</p></CollapsibleContent></Collapsible></>:<button className="guide-edit" onClick={onEdit}>{t(window.label)} <Pencil size={14}/></button>}</section>}
 function Choice({label,value,options,onChange}:{label:string;value:string;options:string[];onChange:(s:string)=>void}){const {t}=useI18n();return <label className="field">{label}<Select value={value} onValueChange={onChange}><SelectTrigger className="choice"><SelectValue placeholder={t("请选择")}/></SelectTrigger><SelectContent>{options.map(x=><SelectItem key={x} value={x}>{t(x)}</SelectItem>)}</SelectContent></Select></label>}
@@ -402,7 +402,7 @@ function Journal(){
                      )}
                      <p className="catalog-source">
                        {t(
-                         "Hydrangea 官网资料 · 2026.10.02 收录 · 原插画 © Hydrangea Coffee Roasters",
+                         "咖啡资料来自烘焙商官网 · 封面为 Beanlet 原创水彩",
                        )}
                      </p>
                    </>
@@ -921,14 +921,17 @@ function Journal(){
            <p className="backup-note">
              {t("导入会补充新记录，已有记录不会被覆盖。")}
            </p>
-           <a
-             className="meta"
-             href="https://bean-island-journal.csscss.chatgpt.site/"
-             target="_blank"
-             rel="noreferrer"
-           >
-             {t("旧版云端数据：打开原网站导出备份 ↗")}
-           </a>
+           {/* Migration from the old cloud site only matters on the web; the App Store build starts fresh. */}
+           {!(globalThis as any).Capacitor?.isNativePlatform?.() && (
+             <a
+               className="meta"
+               href="https://bean-island-journal.csscss.chatgpt.site/"
+               target="_blank"
+               rel="noreferrer"
+             >
+               {t("旧版云端数据：打开原网站导出备份 ↗")}
+             </a>
+           )}
          </div>
        </DialogContent>
      </Dialog>
@@ -1114,8 +1117,8 @@ function Journal(){
                    d("useOriginalArt", true);
                  }}
                >
-                 <img src={originalArt(draft)} alt={t("官网封面")} />
-                 <span>{t("使用官网封面")}</span>
+                <img src={originalArt(draft)} alt={t("水彩封面")} />
+                 <span>{t("使用水彩封面")}</span>
                </button>
              )}
              <RadioGroup

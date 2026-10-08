@@ -1,4 +1,4 @@
-// Public product facts checked 2026-10-02. Original product art is attributed to Hydrangea Coffee Roasters.
+// Public product facts checked 2026-10-02. Covers are original Beanlet watercolor illustrations.
 const products = [
  ['castillo-lulo-washed-finca-santa-monica','Santa Monica · Lulo','哥伦比亚 · Quindio','露露果共发酵水洗','菠萝、露露果、热带水果','citrus','Castillo'],
  ['salma-bermudez','El Paraiso · Salma','哥伦比亚 · Cauca','特殊发酵水洗','芒果、牛奶焦糖、接骨木花','honey','Gesha'],
@@ -47,40 +47,10 @@ const americanProducts=[
 ].map(product=>({...product,sourceDate:'2026-10-06',roastNote:'按品牌定位预填，可按豆袋调整',...catalogDefaults}));
 export const builtInCatalog=[...hydrangeaCatalog,...americanProducts.map(({en,...product})=>product)];
 
-const americanArt:Record<string,string>={
- 'onyx-monarch':'onyx-monarch.png',
- 'onyx-geometry':'onyx-geometry.png',
- 'onyx-tropical-weather':'onyx-tropical-weather.png',
- 'onyx-southern-weather':'onyx-southern-weather.png',
- 'black-white-the-natural':'black-white-the-natural.jpg',
- 'black-white-the-classic':'black-white-the-classic.jpg',
- 'black-white-the-original':'black-white-the-original.jpg',
- 'black-white-the-traditional':'black-white-the-traditional.jpg',
- 'black-white-sugarcane-decaf':'black-white-sugarcane-decaf.jpg',
- 'black-white-new-school-strawberry':'black-white-new-school-strawberry.jpg',
- 'heart-stereo':'heart-stereo.png',
- 'heart-phono':'heart-phono.png',
- 'heart-colombia-decaf':'heart-colombia-decaf.png',
- 'counter-culture-apollo':'counter-culture-apollo.jpg',
- 'counter-culture-hologram':'counter-culture-hologram.jpg',
- 'counter-culture-big-trouble':'counter-culture-big-trouble.jpg',
- 'counter-culture-forty-six':'counter-culture-forty-six.jpg',
- 'counter-culture-gradient':'counter-culture-gradient.jpg',
- 'counter-culture-fast-forward':'counter-culture-fast-forward.jpg',
- 'counter-culture-slow-motion':'counter-culture-slow-motion.jpg',
- 'counter-culture-even-keel':'counter-culture-even-keel.jpg',
- 'george-howell-dota':'george-howell-dota.png',
- 'george-howell-alchemy':'george-howell-alchemy.png',
- 'george-howell-dota-medium':'george-howell-dota-medium.png',
- 'george-howell-dota-dark':'george-howell-dota-dark.png',
- 'george-howell-la-minita':'george-howell-la-minita.png',
-};
-
 export function originalArt(bean?:{id?:string;catalogId?:string;sourceUrl?:string;icon?:string;useOriginalArt?:boolean}){
  if(!bean)return '';
  const entry=builtInCatalog.find(c=>c.id===bean.id||c.id===bean.catalogId||c.sourceUrl===bean.sourceUrl);
- if(entry?.id.startsWith('hydrangea-'))return './hydrangea-art/'+entry.id.slice('hydrangea-'.length)+'.webp';
- return entry&&americanArt[entry.id]?'./american-art/'+americanArt[entry.id]:'';
+ return entry?'./watercolor-art/'+entry.id+'.jpg':'';
 }
 export function displayedArt(bean?:{id?:string;catalogId?:string;sourceUrl?:string;icon?:string;useOriginalArt?:boolean}){
  if(!bean||bean.useOriginalArt===false)return '';
