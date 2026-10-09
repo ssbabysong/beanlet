@@ -764,11 +764,14 @@ img,svg{-webkit-user-drag:none}
 .dialog-drag-handle{position:absolute;top:8px;left:50%;width:34px;height:4px;transform:translateX(-50%);border-radius:999px;background:#c9ccd7;opacity:.7;pointer-events:none}.editor[data-swipe-down-enabled=true]{padding-top:31px!important}
 /* Roaster above the coffee name in the library list (an older rule hid every last .meta, including this one). */
 .catalog-copy>span.meta.catalog-roaster{display:block;font-size:10.5px;line-height:1.3;color:#8a93ab;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px}
-/* Library rows: the card plus two quick buttons on the right (no swipe). */
-.catalog-row{display:flex;align-items:stretch;gap:6px;min-width:0}.catalog-row>.catalog-card{flex:1;min-width:0}
-.catalog-quick{display:flex;gap:5px;align-items:center;flex-shrink:0}
-.catalog-quick-button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:50px;min-height:52px;padding:4px 2px;border:0;border-radius:14px;background:#eceef5;color:#707b9a;font-size:10px;line-height:1.15;text-align:center}
-.catalog-quick-button.is-done{background:#e4dff0;color:#6f5f97}.catalog-quick-button.is-add{background:#e1ece7;color:#5f7d6b}
-.catalog-quick-button:active{transform:scale(.95)}.catalog-quick-button:disabled{opacity:.6}
+/* Library rows: one card holding the coffee and two quick actions on its right edge (no swipe). */
+.catalog-row{display:flex;align-items:center;gap:2px;min-width:0;padding-right:10px;border-radius:16px;background:#ffffffc4}
+.catalog-row>.catalog-card{flex:1;min-width:0;background:transparent!important;box-shadow:none!important}
+.catalog-quick{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.catalog-quick-button{display:flex;flex-direction:column;align-items:center;gap:3px;width:44px;padding:0;border:0;background:none;color:#7a849f;font-size:9.5px;line-height:1.15;text-align:center}
+.catalog-quick-button svg{box-sizing:content-box;width:16px;height:16px;padding:8px;border-radius:50%;background:#eef0f6}
+.catalog-quick-button.is-done{color:#6f5f97}.catalog-quick-button.is-done svg{background:#e4dff0}
+.catalog-quick-button.is-add{color:#5f7d6b}.catalog-quick-button.is-add svg{background:#e3eee8}
+.catalog-quick-button:active svg{transform:scale(.92)}.catalog-quick-button:disabled{opacity:.6}
 .form-submit-actions .delete-entry{flex:0 0 48px;height:48px;border-radius:14px;background:#f1dce0;color:#a15f70}
 .source-link{display:block;margin:0 auto 10px;font-size:13px;color:#687a9b;background:none;border:0}
