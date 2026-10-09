@@ -28,7 +28,6 @@ import { originalArt,displayedArt,beanLabel } from '@/lib/catalog';
 import { LocaleProvider,useI18n } from '@/lib/i18n';
 import {countryOf,processOf,matchesFilters,emptyFilters,type CatalogFilters} from '@/lib/catalog-filters';
 import {PressableRecord} from '@/components/pressable-record';
-import {SwipeActions} from '@/components/swipe-to-delete';
 import {useSwipeNavigation} from '@/components/use-swipe-navigation';
 import {adjacentTab} from '@/lib/swipe-navigation';
 import {navigationFeedback} from '@/lib/haptic-feedback';
@@ -92,7 +91,7 @@ function Journal(){
  async function addBrewPhoto(file?:File){if(!file)return;setBrewPhotoBusy(true);setFormError('');try{const sticker=await makeCoffeeSticker(file);setBrewPhotoEdit({source:sticker.photo,cutout:sticker.photoCutout})}catch(error){setFormError((error as Error).message)}finally{setBrewPhotoBusy(false)}}
  async function saveBean(e:FormEvent){e.preventDefault();if(!roastOptions.includes(draft.roast)){setFormError('先选一个烘焙度');return;}if(draft.recordType!=='catalog'&&draft.roastDate>dateKey(new Date())){setFormError('烘焙日期不能在未来');return;}setBusy(true);setFormError('');try{let key=draft.photo;if(file){const f=new FormData();f.set('photo',file);key=(await api('/api/photos',{method:'POST',body:f})).key;setDraft((d:any)=>({...d,photo:key}));setFile(null)}const previous=editing?beans.find(bean=>bean.id===editing):undefined;const data={...draft,...(draft.recordType==='catalog'&&!editing?{roastDate:'',status:'未开封',notes:''}:{}),roaster:draft.roaster.trim(),weight:draft.recordType==='catalog'||draft.weight===''||draft.weight==null?undefined:Number(draft.weight),stockAdjustment:draft.recordType==='catalog'?undefined:draft.stockAdjustment,finishedDate:draft.recordType==='catalog'||draft.status!=='已喝完'?'':draft.finishedDate||previous?.finishedDate||dateKey(new Date()),nameEn:draft.nameEn?.trim()||'',name:draft.name.trim()||draft.nameEn?.trim()||randomBeanName(language,[...beans,...catalog].map(b=>b.name)),photo:key};const saved=await api('/api/journal',{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'bean',id:editing,data,saveToCatalog:!editing&&saveToCatalog&&draft.recordType!=='catalog'&&!draft.catalogId})});if(!editing&&draft.recordType==='catalog')setAtlasView('discover');setBeanOpen(false);if(!editing)setTab(draft.recordType==='catalog'?'catalog':'beans');await refresh();toast.success(t(editing?'豆子资料已更新':draft.recordType==='catalog'?'已加入豆子合集':'已放进豆仓'))}catch(e){setFormError((e as Error).message)}finally{setBusy(false)}}
  async function saveBrew(e:FormEvent){e.preventDefault();if(!Number.isFinite(Number(brewDraft.dose))||Number(brewDraft.dose)<=0||Number(brewDraft.dose)>200){setFormError('请填写粉量（大于 0，最多 200 g）');return}setBusy(true);setFormError('');try{await api('/api/journal',{method:editingBrew?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'brew',id:editingBrew,data:brewPayload(brewDraft)})});setBrewOpen(false);const savedDate=new Date(brewDraft.date+'T12:00:00');setCalendarDay(savedDate);setCalendarMonth(savedDate);await refresh();toast.success(t(editingBrew?'咖啡记录已更新':'这杯咖啡，记下了'))}catch(e){setFormError((e as Error).message)}finally{setBusy(false)}}
- async function remove(){if(!deleteId)return;setBusy(true);try{await api('/api/journal',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify(deleteId)});if(deleteId.kind==='bean')setDetail(null);if(deleteId.kind==='catalog'){setBeanOpen(false);setEditing(null)}setDeleteId(null);await refresh();toast.success(t('记录已删除'))}catch(e){toast.error(t((e as Error).message))}finally{setBusy(false)}}
+ async function remove(){if(!deleteId)return;setBusy(true);try{await api('/api/journal',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify(deleteId)});if(deleteId.kind==='bean')setDetail(null);if(deleteId.kind==='catalog'){setBeanOpen(false);setEditing(null)}if(deleteId.kind==='brew'){setBrewOpen(false);setEditingBrew(null)}setDeleteId(null);await refresh();toast.success(t('记录已删除'))}catch(e){toast.error(t((e as Error).message))}finally{setBusy(false)}}
  function chooseCatalog(b:Bean){const next={...fresh,...b,...editableBeanNames(b),...editableBeanInfo(b),weight:undefined,stockAdjustment:undefined,id:undefined,recordType:'bean',catalogId:b.id,roastDate:'',status:'未开封',rating:0,repurchase:false,notes:''};beanInitialDraft.current=JSON.stringify(next);setEditing(null);setDraft(next);setSaveToCatalog(false);setPickerOpen(false);setFile(null);setFormError('');setBeanOpen(true)}
  const catalogShown=catalog.filter(b=>matchesFilters(b,filters)&&[b.name,...Object.values(bilingualBean(b)),b.roaster,b.origin,b.flavor,b.variety,t(b.roast),t(b.process)].join(' ').toLowerCase().includes(catalogQuery.trim().toLowerCase()));
  const tastedShown=tasted.filter(x=>[label(x.bean),otherLabel(x.bean),x.bean.roaster,x.bean.flavor,x.bean.origin].join(' ').toLowerCase().includes(catalogQuery.trim().toLowerCase()));
@@ -129,7 +128,7 @@ function Journal(){
  async function toggleFinished(b:Bean){if(busy)return;setBusy(true);try{const finishing=b.status!=='已喝完';await api('/api/journal',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'bean',id:b.id,data:{...b,status:finishing?'已喝完':'正在喝',finishedDate:finishing?b.finishedDate||dateKey(new Date()):''}})});await refresh();toast.success(t(b.status==='已喝完'?'放回豆架了':'收进喝完的豆子了'))}catch(e){toast.error(t((e as Error).message))}finally{setBusy(false)}}
  function beanCard(b:Bean,group?:Bean[]){const stock=beanStock(b,brews),fade=stock?1-stock.ratio:0,coverFade=((14+fade*184)-66)/92;return <button className="bean-card" key={b.id} aria-label={label(b)+(group?` · ${group.length} ${t('包')}`:'')} onClick={()=>{setReturnToTaste(null);if(group){setTasteDetail(coffeeIdentity(b))}else setDetail(b.id)}}><div className='coffee-bag' style={{'--bag-fill':paletteFor(b).fill,'--bag-line':paletteFor(b).line,'--bag-side':paletteFor(b).side} as CSSProperties}>{group&&group.length>1&&<span className="finished-count"><span className="finished-times">×</span>{group.length}</span>}{b.roaster&&<span className="bag-brand-tag" title={b.roaster}><span>{b.roaster}</span></span>}<BagPaper ratio={stock?.ratio} sway={beanShelfWaving}/><span style={stock?{'--water-stop':`${coverFade*100}%`,maskImage:'linear-gradient(var(--water-angle,172.47deg),rgba(0,0,0,.18) var(--water-stop),#000 var(--water-stop))'} as CSSProperties:undefined} className={'coffee-bag-label label-shape-'+stickerShape(b.id)+(b.photo||displayedArt(b)?' has-picture':'')+(beanShelfWaving?' is-swaying':'')}><BeanVisual bean={b}/></span>{b.roastDate&&(!group||group.length===1)&&<span className="bag-date-tag" title={t('烘焙于')+' '+b.roastDate} aria-label={t('烘焙于')+' '+b.roastDate}><time dateTime={b.roastDate}>{b.roastDate.replaceAll('-','.')}</time></span>}<span className="bag-meta-row">{stock&&!group&&<span className="bag-remaining" aria-label={language==='en'?`${stock.remaining}g remaining`:`剩余 ${stock.remaining}g`}>{stock.remaining}<small>g</small></span>}</span>{isFavorite(b)&&<span className="bag-heart" aria-label={t("已收藏")}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.2 20.7C10.5 19.4 4.1 15.5 3.7 9.9 3.5 7.1 5.2 5.1 7.9 5c1.7-.1 3.3.8 4.2 2.2.8-1.6 2.3-2.7 4.2-2.8 2.7-.1 4.5 1.7 4.5 4.4.1 5.8-6.9 10.7-8.6 11.9Z"/></svg></span>}</div><div className="bean-info"><h3>{label(b)}</h3>{info(b,'flavor')&&<p className="shelf-name-secondary">{info(b,'flavor')}</p>}</div></button>}
 
- function brewCard(b:Brew,hideDate=false,inMemory=false){const hasDetails=!!(b.dose||b.grind||b.time||b.notes||b.rating||b.photo||(b.kind==='milk'?(b.yield||b.milkAmount||(b.milkType&&b.milkType!=='未记录')||(b.serving&&b.serving!=='未记录')):(b.water||b.temp)));return <SwipeActions key={b.id} className="brew-swipe-row" deleteLabel={t('删除')} onDelete={()=>setDeleteId({id:b.id,kind:'brew'})}><PressableRecord className={'brew-card'+(hasDetails?'':' brew-card-compact')+(inMemory?' memory-coffee-record':'')+(b.photo?' has-brew-photo':'')} label={label(beans.find(x=>x.id===b.beanId))+' · '+b.date+' · '+t('点击编辑记录')} onClick={()=>editBrew(b)}>{!inMemory&&<span className="brew-bean" style={{backgroundColor:paletteFor(beans.find(x=>x.id===b.beanId)||{id:b.beanId}).fill}} aria-hidden="true"><BeanVisual bean={beans.find(x=>x.id===b.beanId)}/></span>}{b.photo&&<span className={'brew-photo-sticker'+(b.photoCutout?' is-cutout':'')} aria-label={t('这杯咖啡的照片')}><img src={b.photo} alt=""/></span>}<div className="brew-body"><div className="row"><h3>{inMemory?<time dateTime={b.date}>{new Intl.DateTimeFormat(language==='en'?'en-US':'zh-CN',{year:'numeric',month:'short',day:'numeric'}).format(new Date(b.date+'T12:00:00'))}</time>:label(beans.find(x=>x.id===b.beanId))}</h3></div>{!hideDate&&!inMemory&&<span className="meta brew-record-date">{b.date}</span>}<div className="parameters">{b.dose!=null&&<span>{b.dose} {t('g 粉')}</span>}{b.kind==='milk'?<>{b.yield!=null&&<span>{t('出液')} {b.yield} g</span>}{b.milkAmount!=null&&<span>{t('奶量')} {b.milkAmount} ml</span>}{b.milkType&&b.milkType!=='未记录'&&<span>{t(b.milkType)}</span>}{b.serving&&b.serving!=='未记录'&&<span>{t(b.serving)}</span>}</>:<>{b.water!=null&&<span>{b.water} {t('ml 水')}</span>}{b.temp!=null&&<span>{b.temp} °C</span>}{!!b.dose&&!!b.water&&<span>1 : {(b.water/b.dose).toFixed(1)}</span>}</>}</div>{(b.grind||b.time)&&<p className="meta brew-method">{[b.grind&&t(`研磨 ${b.grind}`),b.time&&t(`用时 ${b.time}`)].filter(Boolean).join(' · ')}</p>}{b.notes&&<p className="notes">{b.notes}</p>}{b.rating>0&&<Rating value={b.rating}/>}</div></PressableRecord></SwipeActions>}
+ function brewCard(b:Brew,hideDate=false,inMemory=false){const hasDetails=!!(b.dose||b.grind||b.time||b.notes||b.rating||b.photo||(b.kind==='milk'?(b.yield||b.milkAmount||(b.milkType&&b.milkType!=='未记录')||(b.serving&&b.serving!=='未记录')):(b.water||b.temp)));return <div key={b.id} className="brew-swipe-row"><PressableRecord className={'brew-card'+(hasDetails?'':' brew-card-compact')+(inMemory?' memory-coffee-record':'')+(b.photo?' has-brew-photo':'')} label={label(beans.find(x=>x.id===b.beanId))+' · '+b.date+' · '+t('点击编辑记录')} onClick={()=>editBrew(b)}>{!inMemory&&<span className="brew-bean" style={{backgroundColor:paletteFor(beans.find(x=>x.id===b.beanId)||{id:b.beanId}).fill}} aria-hidden="true"><BeanVisual bean={beans.find(x=>x.id===b.beanId)}/></span>}{b.photo&&<span className={'brew-photo-sticker'+(b.photoCutout?' is-cutout':'')} aria-label={t('这杯咖啡的照片')}><img src={b.photo} alt=""/></span>}<div className="brew-body"><div className="row"><h3>{inMemory?<time dateTime={b.date}>{new Intl.DateTimeFormat(language==='en'?'en-US':'zh-CN',{year:'numeric',month:'short',day:'numeric'}).format(new Date(b.date+'T12:00:00'))}</time>:label(beans.find(x=>x.id===b.beanId))}</h3></div>{!hideDate&&!inMemory&&<span className="meta brew-record-date">{b.date}</span>}<div className="parameters">{b.dose!=null&&<span>{b.dose} {t('g 粉')}</span>}{b.kind==='milk'?<>{b.yield!=null&&<span>{t('出液')} {b.yield} g</span>}{b.milkAmount!=null&&<span>{t('奶量')} {b.milkAmount} ml</span>}{b.milkType&&b.milkType!=='未记录'&&<span>{t(b.milkType)}</span>}{b.serving&&b.serving!=='未记录'&&<span>{t(b.serving)}</span>}</>:<>{b.water!=null&&<span>{b.water} {t('ml 水')}</span>}{b.temp!=null&&<span>{b.temp} °C</span>}{!!b.dose&&!!b.water&&<span>1 : {(b.water/b.dose).toFixed(1)}</span>}</>}</div>{(b.grind||b.time)&&<p className="meta brew-method">{[b.grind&&t(`研磨 ${b.grind}`),b.time&&t(`用时 ${b.time}`)].filter(Boolean).join(' · ')}</p>}{b.notes&&<p className="notes">{b.notes}</p>}{b.rating>0&&<Rating value={b.rating}/>}</div></PressableRecord></div>}
  function selectMenu(value:string){setTab(value);if(value==='brews')setBrewView('calendar');if(value==='catalog'){setAtlasView(tasted.length?'tasted':'discover');setCatalogQuery('');setFilters({...emptyFilters})}requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'})))}
  const calendarSwipe=useSwipeNavigation(direction=>shiftCalendarMonth(direction==='next'?1:-1),tab==='brews'&&brewView==='calendar'&&!beanOpen&&!brewOpen&&!settingsOpen&&!pickerOpen&&!detail&&!tasteDetail&&!deleteId,true);
  const mainSwipe=useSwipeNavigation(direction=>{if(tab==='brews'){if(brewView==='stats'&&direction==='previous'){setBrewView('calendar');navigationFeedback()}return}const tabs=tasted.length?['tasted','discover']:['discover','tasted'],next=adjacentTab(atlasView,direction,tabs);if(!next)return;setAtlasView(next);setCatalogQuery('');setFilters({...emptyFilters});navigationFeedback()},((tab==='brews'&&brewView==='stats')||tab==='catalog')&&!beanOpen&&!brewOpen&&!settingsOpen&&!pickerOpen&&!detail&&!tasteDetail&&!deleteId);
@@ -344,32 +343,7 @@ function Journal(){
                      {filterControls()}
                      <div className="catalog-list">
                        {catalogShown.map((b) => (
-                         <SwipeActions
-                           key={b.id}
-                           className="catalog-swipe-row"
-                           deleteLabel={t("删除")}
-                           onDelete={() => setDeleteId({id:b.id,kind:"catalog"})}
-                           leadingActions={[
-                             {
-                               label: t(tasted.some((x) => x.id === coffeeIdentity(b)) ? "已喝过" : "标记喝过"),
-                               icon: <Coffee size={16}/>,
-                               tone: "plain",
-                               onAction: () => tasted.some((x) => x.id === coffeeIdentity(b)) ? setTasteDetail(coffeeIdentity(b)) : markTasted(b),
-                             },
-                             {
-                               label: t("放进豆仓"),
-                               icon: <Plus size={16}/>,
-                               tone: "add",
-                               onAction: () => chooseCatalog(b),
-                             },
-                             ...(b.sourceUrl ? [{
-                               label: t("官网资料"),
-                               icon: <ArrowUpRight size={16}/>,
-                               tone: "link" as const,
-                               onAction: () => { window.open(b.sourceUrl, "_blank", "noopener,noreferrer") },
-                             }] : []),
-                           ]}
-                         >
+                         <div key={b.id} className="catalog-row">
                            <button className="catalog-card" type="button" onClick={() => startBean({...b,recordType:"catalog"})}>
                              <div
                                className="catalog-art"
@@ -394,7 +368,19 @@ function Journal(){
                                ) && <small>{t("豆仓里有这款")}</small>}
                              </div>
                            </button>
-                         </SwipeActions>
+                           {/* Quick actions on the row; edit and delete live inside the entry. */}
+                           <div className="catalog-quick">
+                             {(() => { const done = tasted.some((x) => x.id === coffeeIdentity(b)); return (
+                               <button type="button" className={"catalog-quick-button" + (done ? " is-done" : "")} aria-pressed={done} disabled={busy}
+                                 onClick={() => done ? setTasteDetail(coffeeIdentity(b)) : markTasted(b)}>
+                                 <Coffee size={17} /><span>{t(done ? "已喝过" : "喝过")}</span>
+                               </button>
+                             ); })()}
+                             <button type="button" className="catalog-quick-button is-add" onClick={() => chooseCatalog(b)}>
+                               <Plus size={17} /><span>{t("放进豆仓")}</span>
+                             </button>
+                           </div>
+                         </div>
                        ))}
                      </div>
                      {!catalogShown.length && (
@@ -1271,7 +1257,17 @@ function Journal(){
                  {t(formError)}
                </p>
              )}
+             {draft.recordType === "catalog" && editing && draft.sourceUrl && (
+               <button type="button" className="link-button source-link" onClick={() => window.open(draft.sourceUrl, "_blank", "noopener,noreferrer")}>
+                 {t("官网资料")} ↗
+               </button>
+             )}
              <div className="form-submit-actions">
+               {draft.recordType === "catalog" && editing && (
+                 <button type="button" className="icon-button delete-entry" aria-label={t("从图鉴删除")} disabled={busy} onClick={() => setDeleteId({ id: editing, kind: "catalog" })}>
+                   <Trash2 size={18} />
+                 </button>
+               )}
                <button type="submit" className="primary save" disabled={busy}>
                  {busy ? t("正在保存…") : t("收好")}
                </button>
@@ -1480,9 +1476,16 @@ function Journal(){
                  {t(formError)}
                </p>
              )}
-             <button type="submit" className="primary save" disabled={busy||brewPhotoBusy}>
-               {busy ? t("正在保存…") : brewPhotoBusy?t("正在制作贴纸…"):t("保存")}
-             </button>
+             <div className="form-submit-actions">
+               {editingBrew && (
+                 <button type="button" className="icon-button delete-entry" aria-label={t("删除这条记录")} disabled={busy} onClick={() => setDeleteId({ id: editingBrew, kind: "brew" })}>
+                   <Trash2 size={18} />
+                 </button>
+               )}
+               <button type="submit" className="primary save" disabled={busy||brewPhotoBusy}>
+                 {busy ? t("正在保存…") : brewPhotoBusy?t("正在制作贴纸…"):t("保存")}
+               </button>
+             </div>
            </div>
          </form>
        </DialogContent>

@@ -762,11 +762,13 @@ img,svg{-webkit-user-drag:none}
 .catalog-copy h3{margin:0!important;font-size:13px!important;line-height:1.25!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.catalog-copy p{margin:1px 0 0;font-size:10.5px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.catalog-copy>.meta{font-size:8.5px;line-height:1.15}.catalog-copy small{display:block;margin-top:1px;font-size:8.5px;line-height:1.2}
 .brew-swipe-row .brew-card{border-radius:var(--swipe-radius);padding:14px 15px;gap:10px}.brew-swipe-row .brew-card .parameters{gap:6px 11px;margin:6px 0 3px}.brew-swipe-row .brew-card .brew-method,.brew-swipe-row .brew-card .notes{margin:4px 0}.brew-swipe-row .brew-bean{width:48px;height:50px}.brew-swipe-row .brew-bean .sticker,.brew-swipe-row .brew-bean .bean-thumb{width:44px;height:44px}
 .dialog-drag-handle{position:absolute;top:8px;left:50%;width:34px;height:4px;transform:translateX(-50%);border-radius:999px;background:#c9ccd7;opacity:.7;pointer-events:none}.editor[data-swipe-down-enabled=true]{padding-top:31px!important}
-/* Swipe rows: one solid piece that slides as a unit; the buttons join its right edge with no gap or double corners. */
-.swipe-actions-row .swipe-content{background:var(--background);transition:transform .32s cubic-bezier(.22,.9,.3,1),border-radius .2s}
-.swipe-actions-row .swipe-content.is-swiped,.swipe-actions-row .swipe-content.is-swiped>*{border-top-right-radius:0;border-bottom-right-radius:0}
-.swipe-actions-row .swipe-actions{left:auto;right:0;width:var(--swipe-action-width);border-radius:0;transition:transform .32s cubic-bezier(.22,.9,.3,1)}
-.swipe-actions-row .swipe-actions>button{gap:5px;padding:6px 4px;font-size:11px;line-height:1.2}
-.swipe-actions-row .swipe-actions>button svg{width:18px;height:18px}
 /* Roaster above the coffee name in the library list (an older rule hid every last .meta, including this one). */
 .catalog-copy>span.meta.catalog-roaster{display:block;font-size:10.5px;line-height:1.3;color:#8a93ab;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px}
+/* Library rows: the card plus two quick buttons on the right (no swipe). */
+.catalog-row{display:flex;align-items:stretch;gap:6px;min-width:0}.catalog-row>.catalog-card{flex:1;min-width:0}
+.catalog-quick{display:flex;gap:5px;align-items:center;flex-shrink:0}
+.catalog-quick-button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:50px;min-height:52px;padding:4px 2px;border:0;border-radius:14px;background:#eceef5;color:#707b9a;font-size:10px;line-height:1.15;text-align:center}
+.catalog-quick-button.is-done{background:#e4dff0;color:#6f5f97}.catalog-quick-button.is-add{background:#e1ece7;color:#5f7d6b}
+.catalog-quick-button:active{transform:scale(.95)}.catalog-quick-button:disabled{opacity:.6}
+.form-submit-actions .delete-entry{flex:0 0 48px;height:48px;border-radius:14px;background:#f1dce0;color:#a15f70}
+.source-link{display:block;margin:0 auto 10px;font-size:13px;color:#687a9b;background:none;border:0}
