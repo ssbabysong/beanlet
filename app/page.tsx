@@ -378,7 +378,7 @@ function Journal(){
                                <BeanVisual bean={b} />
                              </div>
                              <div className="catalog-copy">
-                               <span className="meta">
+                               <span className="meta catalog-roaster">
                                  {b.roaster || t("我的收录")}
                                </span>
                                <h3 title={b.name}>{label(b)}</h3>
