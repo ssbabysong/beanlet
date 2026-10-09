@@ -770,7 +770,6 @@ img,svg{-webkit-user-drag:none}
 .catalog-quick{display:flex;gap:6px;align-items:center;flex-shrink:0}
 .catalog-quick-button{display:flex;flex-direction:column;align-items:center;gap:3px;width:44px;padding:0;border:0;background:none;color:#7a849f;font-size:9.5px;line-height:1.15;text-align:center}
 .catalog-quick-button svg{box-sizing:content-box;width:16px;height:16px;padding:8px;border-radius:50%;background:#eef0f6}
-.catalog-quick-button.is-done{color:#6f5f97}.catalog-quick-button.is-done svg{background:#e4dff0}
 .catalog-quick-button.is-add{color:#5f7d6b}.catalog-quick-button.is-add svg{background:#e3eee8}
 .catalog-quick-button:active svg{transform:scale(.92)}.catalog-quick-button:disabled{opacity:.6}
 .form-submit-actions .delete-entry{flex:0 0 48px;height:48px;border-radius:14px;background:#f1dce0;color:#a15f70}

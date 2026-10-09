@@ -370,12 +370,11 @@ function Journal(){
                            </button>
                            {/* Quick actions on the row; edit and delete live inside the entry. */}
                            <div className="catalog-quick">
-                             {(() => { const done = tasted.some((x) => x.id === coffeeIdentity(b)); return (
-                               <button type="button" className={"catalog-quick-button" + (done ? " is-done" : "")} aria-pressed={done} disabled={busy}
-                                 onClick={() => done ? setTasteDetail(coffeeIdentity(b)) : markTasted(b)}>
-                                 <Coffee size={17} /><span>{t(done ? "已喝过" : "喝过")}</span>
+                             {!tasted.some((x) => x.id === coffeeIdentity(b)) && (
+                               <button type="button" className="catalog-quick-button" disabled={busy} onClick={() => markTasted(b)}>
+                                 <Coffee size={17} /><span>{t("标记喝过")}</span>
                                </button>
-                             ); })()}
+                             )}
                              <button type="button" className="catalog-quick-button is-add" onClick={() => chooseCatalog(b)}>
                                <Plus size={17} /><span>{t("放进豆仓")}</span>
                              </button>
