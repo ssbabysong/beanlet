@@ -75,6 +75,7 @@ class BeanletBridgeViewController: CAPBridgeViewController {
     override func capacitorDidLoad() {
         bridge?.registerPluginInstance(BeanletStickerPlugin())
         bridge?.registerPluginInstance(BeanletWidgetPlugin())
+        bridge?.registerPluginInstance(NativeTabsPlugin())
     }
 }
 
@@ -85,11 +86,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = scene as? UIWindowScene else { return }
 
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = BeanletBridgeViewController()
+        // The web view sits inside the system tab bar (see NativeTabs.swift).
+        window?.rootViewController = TabsController()
         window?.makeKeyAndVisible()
 
         SceneDelegateProxy.shared.scene(scene, willConnectTo: session, options: connectionOptions)
         connectionOptions.urlContexts.forEach { BeanletWidgetPlugin.open($0.url) }
+        #if DEBUG
+        // Debug only: xcrun simctl launch <device> com.ssbabysong.beanlet -link brew  → opens a page the way a widget tap does, without the system prompt.
+        let args = CommandLine.arguments
+        if let i = args.firstIndex(of: "-link"), i + 1 < args.count, let url = URL(string: "beanlet://" + args[i + 1]) { BeanletWidgetPlugin.open(url) }
+        #endif
     }
 
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {

@@ -27,6 +27,9 @@
 		BEB000000000000000000017 /* AnnieUseYourTelescope.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BEB00000000000000000000C /* AnnieUseYourTelescope.ttf */; };
 		BEB000000000000000000018 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BEB00000000000000000000D /* Localizable.strings */; };
 		BEB000000000000000000019 /* BeanletWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BEB000000000000000000011 /* BeanletWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BEC000000000000000000002 /* NativeTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC000000000000000000001 /* NativeTabs.swift */; };
+		BEC000000000000000000003 /* BeanletXiaolai.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BEB00000000000000000000B /* BeanletXiaolai.ttf */; };
+		BEC000000000000000000004 /* AnnieUseYourTelescope.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BEB00000000000000000000C /* AnnieUseYourTelescope.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,6 +86,7 @@
 		BEB00000000000000000000F /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		BEB000000000000000000010 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		BEB000000000000000000011 /* BeanletWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BeanletWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		BEC000000000000000000001 /* NativeTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTabs.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +131,7 @@
 			isa = PBXGroup;
 			children = (
 				9582B6822FE993A50072D4E8 /* SceneDelegate.swift */,
+				BEC000000000000000000001 /* NativeTabs.swift */,
 				BEB000000000000000000001 /* BeanletWidgetPlugin.swift */,
 				BEB000000000000000000003 /* App.entitlements */,
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
@@ -266,6 +271,8 @@
 				50379B232058CBB4000EE86E /* capacitor.config.json in Resources */,
 				504EC30D1FED79650016851F /* Main.storyboard in Resources */,
 				2FAD9763203C412B000D30F8 /* config.xml in Resources */,
+				BEC000000000000000000003 /* BeanletXiaolai.ttf in Resources */,
+				BEC000000000000000000004 /* AnnieUseYourTelescope.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,6 +296,7 @@
 			files = (
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
+				BEC000000000000000000002 /* NativeTabs.swift in Sources */,
 				BEB000000000000000000002 /* BeanletWidgetPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

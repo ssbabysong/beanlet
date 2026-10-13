@@ -43,6 +43,8 @@ import {CoffeeReel} from '@/components/coffee-reel';
 import {useStickerPilePhysics} from '@/components/use-sticker-pile-physics';
 import {buildWidgetSnapshot,parseWidgetLink} from '@/lib/widget-snapshot';
 import {onWidgetLink,syncWidgets} from '@/lib/native-widget';
+import {runDevSeed} from '@/lib/dev-seed';
+import {hasNativeTabs,onNativeTabs,syncNativeBar,syncNativeTabs} from '@/lib/native-tabs';
 import {ResponsiveContainer,BarChart,Bar,XAxis,YAxis,Tooltip,PieChart,Pie,Cell} from 'recharts';
 type Bean={bagColor?:number;weight?:number;stockAdjustment?:number;finishedDate?:string;nameEn?:string;useOriginalArt?:boolean;recordType?:string;catalogId?:string;sourceUrl?:string;sourceDate?:string;variety?:string;roastNote?:string;icon?:string;id:string;name:string;roaster:string;origin:string;process:string;roast:string;flavor:string;status:string;rating:number;repurchase:boolean;photo:string;roastDate:string;notes:string};
 type Brew=BrewRecord;
@@ -79,7 +81,7 @@ function Journal(){
  const [editingBrew,setEditingBrew]=useState<string|null>(null);
  const [brewOpen,setBrewOpen]=useState(false),[brewDraft,setBrewDraft]=useState<any>({}),[brewPhotoBusy,setBrewPhotoBusy]=useState(false),[brewPhotoEdit,setBrewPhotoEdit]=useState<{source:string;cutout:boolean}|null>(null),[deleteId,setDeleteId]=useState<{id:string;kind:string}|null>(null);
  async function refresh(){try{const data=await api('/api/journal');setBeans(data.beans);setCatalog(data.catalog);setBrews(data.brews);setTasted(data.tasted||[]);if(!atlasInitialized.current){setAtlasView(data.tasted?.length?'tasted':'discover');atlasInitialized.current=true;}setFavorites(data.favorites||[]);setError('')}catch(e){setError((e as Error).message)}finally{setLoading(false)}}
- useEffect(()=>{refresh()},[]);
+ useEffect(()=>{runDevSeed().catch(()=>false).finally(refresh)},[]);
  useEffect(()=>{if(tab!=='beans'||loading){setBeanShelfWaving(false);return}setBeanShelfWaving(false);const start=window.setTimeout(()=>setBeanShelfWaving(true),60),stop=window.setTimeout(()=>setBeanShelfWaving(false),2600);return()=>{window.clearTimeout(start);window.clearTimeout(stop)}},[tab,loading]);
  useEffect(()=>{if(!file){setPreview('');return}const url=URL.createObjectURL(file);setPreview(url);return()=>URL.revokeObjectURL(url)},[file]);
  useEffect(()=>()=>{if(monthReport)URL.revokeObjectURL(monthReport.url)},[monthReport]);
@@ -141,15 +143,97 @@ function Journal(){
  },[widgetLink,loading]);
  useEffect(()=>{if(loading)return;const timer=window.setTimeout(()=>{syncWidgets(buildWidgetSnapshot({beans,brews,language,today,preference:brewPreference(),name:label,roaster:bean=>bean.roaster||'',palette:paletteFor,art:bean=>bean.photo?photo(bean.photo):displayedArt(bean),stock:bean=>beanStock(bean,brews)})).catch(()=>{})},400);return()=>window.clearTimeout(timer)},[loading,beans,brews,language,today]);
  function selectMenu(value:string){setTab(value);if(value==='brews')setBrewView('calendar');if(value==='catalog'){setAtlasView(tasted.length?'tasted':'discover');setCatalogQuery('');setFilters({...emptyFilters})}requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'})))}
+ // iOS app: the system tab bar and navigation bar replace the web menu capsule and header buttons (see lib/native-tabs.ts).
+ const nativeTabs=hasNativeTabs();
+ useEffect(()=>{if(nativeTabs)document.documentElement.classList.add('native-tabs')},[]);
+ const overlayOpen=!!(memory||selected||settingsOpen||beanOpen||brewOpen||pickerOpen||monthReport||deleteId||photoSource||brewPhotoEdit);
+ const showAdd=(tab!=='catalog'||atlasView==='discover')&&!(tab==='brews'&&(brewView==='stats'||!shown.length));
+ const addLabel=t(tab==='beans'?'收藏新豆子':tab==='catalog'?'添加到豆子合集':'记录一杯咖啡');
+ function addFromHeader(){if(tab==='beans')startBean();else if(tab==='catalog')startBean(undefined,true);else startBrew()}
+ const beanFormRef=useRef<HTMLFormElement>(null),brewFormRef=useRef<HTMLFormElement>(null);
+ const nativeTap=useRef<(id:string)=>void>(()=>{});nativeTap.current=id=>{if(id==='add')addFromHeader();else if(id==='me')setSettingsOpen(true);else if(id==='save-bean')beanFormRef.current?.requestSubmit();else if(id==='save-brew')brewFormRef.current?.requestSubmit();else if(id==='back'){if(busy)return;if(brewOpen){if(!brewTimerRunning)setBrewOpen(false)}else setBeanOpen(false)}};
+ const nativeSelect=useRef<(key:string)=>void>(()=>{});nativeSelect.current=key=>{if(key!==tab){selectMenu(key);navigationFeedback()}};
+ useEffect(()=>onNativeTabs(key=>nativeSelect.current(key),id=>nativeTap.current(id)),[]);
+ useEffect(()=>{syncNativeTabs({active:tab,language,overlay:overlayOpen,titles:{beans:t('豆仓'),brews:t('记录'),catalog:t('图鉴')}}).catch(()=>{})},[tab,language,overlayOpen]);
  const calendarSwipe=useSwipeNavigation(direction=>shiftCalendarMonth(direction==='next'?1:-1),tab==='brews'&&brewView==='calendar'&&!beanOpen&&!brewOpen&&!settingsOpen&&!pickerOpen&&!detail&&!tasteDetail&&!deleteId,true);
  const mainSwipe=useSwipeNavigation(direction=>{if(tab==='brews'){if(brewView==='stats'&&direction==='previous'){setBrewView('calendar');navigationFeedback()}return}const tabs=tasted.length?['tasted','discover']:['discover','tasted'],next=adjacentTab(atlasView,direction,tabs);if(!next)return;setAtlasView(next);setCatalogQuery('');setFilters({...emptyFilters});navigationFeedback()},((tab==='brews'&&brewView==='stats')||tab==='catalog')&&!beanOpen&&!brewOpen&&!settingsOpen&&!pickerOpen&&!detail&&!tasteDetail&&!deleteId);
+ // Unfolded iPhone Duo (app only, so the browser stays as it is): the brew form and its timer share one full-screen workspace
+ // instead of a timer dialog stacked on the brew dialog stacked on the bean sheet.
+ const [wide,setWide]=useState(false);useEffect(()=>{const query=matchMedia('(min-width: 720px)'),update=()=>setWide(query.matches);update();query.addEventListener('change',update);return()=>query.removeEventListener('change',update)},[]);
+ const brewWorkspace=nativeTabs&&wide,[brewTimerRunning,setBrewTimerRunning]=useState(false);
+ useEffect(()=>{if(!brewOpen)setBrewTimerRunning(false)},[brewOpen]);
+ // App: adding a bag picks from the catalog inside the same sheet (a switch on a phone or the folded Duo,
+ // a list beside the form when unfolded) instead of closing it and opening a second picker dialog.
+ const beanPicking=nativeTabs&&!editing&&draft.recordType!=='catalog',beanWorkspace=beanPicking&&wide;
+ const [beanSource,setBeanSource]=useState<'manual'|'catalog'>('manual'),[pickQuery,setPickQuery]=useState('');
+ useEffect(()=>{if(beanOpen){setBeanSource('manual');setPickQuery('')}},[beanOpen]);
+ const pickShown=catalog.filter(b=>[label(b),otherLabel(b),b.roaster,b.origin,b.flavor].join(' ').toLowerCase().includes(pickQuery.trim().toLowerCase()));
+ const catalogPicker=(
+  <div className="inline-picker">
+   <input className="catalog-search" aria-label={t("搜索豆子图鉴")} placeholder={t("找名字、产地或风味")} value={pickQuery} onChange={(e) => setPickQuery(e.target.value)} />
+   <div className="pick-list">
+    {pickShown.map((b) => (
+     <button type="button" key={b.id} aria-pressed={draft.catalogId === b.id} onClick={() => { chooseCatalog(b); setBeanSource("manual"); }}>
+      <BeanVisual bean={b} />
+      <span>
+       <strong>{label(b)}</strong>
+       <small>{b.roaster} · {info(b, "flavor") || t(b.roast)}</small>
+      </span>
+      <Plus size={17} />
+     </button>
+    ))}
+    {!pickShown.length && <p className="day-empty">{t("没有符合条件的豆子")}</p>}
+   </div>
+  </div>
+ );
+ // Native bar buttons for the current view. While an editor page is on top, its save button moves there too
+ // (on the folded Duo: the column under the status bar); the web save button is hidden in the app.
+ const saveLabel=t(busy?'正在保存…':brewPhotoBusy?'正在制作贴纸…':brewOpen?'保存':'收好');
+ const editorSave=photoSource||brewPhotoEdit||pickerOpen||deleteId?null:brewOpen?'save-brew':beanOpen&&!(beanPicking&&!beanWorkspace&&beanSource==='catalog')?'save-bean':null;
+ const nativeBarItems=editorSave?[{id:editorSave,symbol:'',title:saveLabel,prominent:true,disabled:busy||(editorSave==='save-brew'&&brewPhotoBusy)}]:overlayOpen?[]:[...(tab==='catalog'?[{id:'me',symbol:'person.crop.circle',title:t('我的'),me:true}]:[]),...(showAdd?[{id:'add',symbol:'plus',title:addLabel}]:[])];
+ const nativeBack=editorSave?{title:t('返回'),disabled:busy||(editorSave==='save-brew'&&brewTimerRunning)}:undefined;
+ useEffect(()=>{syncNativeBar(nativeBarItems,nativeBack).catch(()=>{})},[JSON.stringify(nativeBarItems),JSON.stringify(nativeBack)]);
+ // Toasts also keep clear of the side bars (the Duo status-bar column).
+ const nativeToastOffset={bottom:'calc(16px + env(safe-area-inset-bottom, 0px))',left:'calc(16px + env(safe-area-inset-left, 0px))',right:'calc(16px + env(safe-area-inset-right, 0px))'};
+ const brewPhotoField=(
+             <section className="brew-photo-field">
+               <div className="brew-photo-heading">
+                 <span>{t("给这杯留张照片")}</span>
+                 <small>{t("iPhone 会自动抠出咖啡并做成贴纸")}</small>
+               </div>
+               {brewDraft.photo ? (
+                 <div className={"brew-photo-preview"+(brewDraft.photoCutout?" is-cutout":"")}>
+                   <img src={brewDraft.photo} alt={t("咖啡贴纸预览")} />
+                   <div>
+                     <button type="button" className="secondary" onClick={()=>setBrewPhotoEdit({source:brewDraft.photo,cutout:!!brewDraft.photoCutout})}><Pencil size={15}/>{t("调整")}</button>
+                     <label className="secondary">
+                       {t("换一张")}
+                       <input type="file" accept="image/*" onChange={(e)=>{const selected=e.target.files?.[0];e.target.value="";void addBrewPhoto(selected)}} />
+                     </label>
+                     <button type="button" className="icon-button" aria-label={t("移除照片")} onClick={()=>setBrewDraft((draft:any)=>({...draft,photo:undefined,photoCutout:undefined}))}><Trash2 size={17}/></button>
+                   </div>
+                 </div>
+               ) : (
+                 <div className="brew-photo-buttons">
+                   <label className="secondary">
+                     <Camera size={17}/>{brewPhotoBusy?t("正在制作贴纸…"):t("拍一张")}
+                     <input disabled={brewPhotoBusy} type="file" accept="image/*" capture="environment" onChange={(e)=>{const selected=e.target.files?.[0];e.target.value="";void addBrewPhoto(selected)}} />
+                   </label>
+                   <label className="secondary">
+                     {t("从相册选")}
+                     <input disabled={brewPhotoBusy} type="file" accept="image/*" onChange={(e)=>{const selected=e.target.files?.[0];e.target.value="";void addBrewPhoto(selected)}} />
+                   </label>
+                 </div>
+               )}
+             </section>
+ );
  return (
    <>
      <Toaster
        className="beanlet-toaster"
        position="bottom-center"
-       offset="calc(106px + env(safe-area-inset-bottom, 0px))"
-       mobileOffset="calc(106px + env(safe-area-inset-bottom, 0px))"
+       offset={nativeTabs ? nativeToastOffset : "calc(106px + env(safe-area-inset-bottom, 0px))"}
+       mobileOffset={nativeTabs ? nativeToastOffset : "calc(106px + env(safe-area-inset-bottom, 0px))"}
        visibleToasts={1}
        toastOptions={{ className: "beanlet-toast", duration: 2500 }}
        icons={{
@@ -965,8 +1049,9 @@ function Journal(){
          onSwipeBack={() => {
            if (!busy) setBeanOpen(false);
          }}
-         onSwipeDown={!busy && !file && JSON.stringify(draft) === beanInitialDraft.current ? () => setBeanOpen(false) : undefined}
-         className="editor bean-editor form-editor"
+         onSwipeDown={!nativeTabs && !busy && !file && JSON.stringify(draft) === beanInitialDraft.current ? () => setBeanOpen(false) : undefined}
+         onOpenAutoFocus={(event) => event.preventDefault()}
+         className={"editor bean-editor form-editor" + (beanPicking ? " bean-sheet" : "") + (beanWorkspace ? " bean-workspace" : "")}
        >
          <DialogTitle>
            {editing
@@ -978,9 +1063,22 @@ function Journal(){
          <DialogDescription className="sr-only">
            {t("烘焙度必填，其他信息可稍后补充。")}
          </DialogDescription>
-         <form onSubmit={saveBean}>
+         {beanWorkspace && (
+           <aside className="bean-workspace-side">
+             <h3>{t("从图鉴选")}</h3>
+             {catalogPicker}
+           </aside>
+         )}
+         {beanPicking && !beanWorkspace && (
+           <div className="atlas-switch bean-source-switch" role="group" aria-label={t("从图鉴选")}>
+             <button type="button" aria-pressed={beanSource === "manual"} onClick={() => setBeanSource("manual")}>{t("自己填")}</button>
+             <button type="button" aria-pressed={beanSource === "catalog"} onClick={() => setBeanSource("catalog")}>{t("从图鉴选")}</button>
+           </div>
+         )}
+         {beanPicking && !beanWorkspace && beanSource === "catalog" && catalogPicker}
+         <form ref={beanFormRef} onSubmit={saveBean} hidden={beanPicking && !beanWorkspace && beanSource === "catalog"}>
            <div className="form-scroll">
-             {!editing && draft.recordType !== "catalog" && (
+             {!editing && draft.recordType !== "catalog" && !beanPicking && (
                <button
                  type="button"
                  className="catalog-entry"
@@ -1335,19 +1433,20 @@ function Journal(){
          </button>
        </DialogContent>
      </Dialog>
-     <Dialog open={brewOpen} onOpenChange={(v) => !busy && setBrewOpen(v)}>
+     <Dialog open={brewOpen} onOpenChange={(v) => !busy && !brewTimerRunning && setBrewOpen(v)}>
        <DialogContent
          onSwipeBack={() => {
-           if (!busy) setBrewOpen(false);
+           if (!busy && !brewTimerRunning) setBrewOpen(false);
          }}
-         onSwipeDown={!busy && JSON.stringify(brewDraft) === brewInitialDraft.current ? () => setBrewOpen(false) : undefined}
-         className="editor form-editor"
+         onSwipeDown={!nativeTabs && !busy && !brewTimerRunning && JSON.stringify(brewDraft) === brewInitialDraft.current ? () => setBrewOpen(false) : undefined}
+         onOpenAutoFocus={(event) => event.preventDefault()}
+         className={"editor form-editor" + (brewWorkspace ? " brew-workspace" : "")}
        >
          <DialogTitle>{t(editingBrew ? "编辑咖啡记录" : "记一杯")}</DialogTitle>
          <DialogDescription className="sr-only">
            {t("简单记下这杯咖啡。")}
          </DialogDescription>
-         <form onSubmit={saveBrew}>
+         <form ref={brewFormRef} onSubmit={saveBrew}>
            <div className="form-scroll">
              <div
                className="brew-kind-picker"
@@ -1439,7 +1538,7 @@ function Journal(){
                  />
                </label>
              </div>
-             {brewDraft.kind === "pourOver" && (
+             {brewDraft.kind === "pourOver" && !brewWorkspace && (
                <PourTimer
                  dose={Number(brewDraft.dose)}
                  onComplete={(result) =>
@@ -1454,36 +1553,7 @@ function Journal(){
                  }
                />
              )}
-             <section className="brew-photo-field">
-               <div className="brew-photo-heading">
-                 <span>{t("给这杯留张照片")}</span>
-                 <small>{t("iPhone 会自动抠出咖啡并做成贴纸")}</small>
-               </div>
-               {brewDraft.photo ? (
-                 <div className={"brew-photo-preview"+(brewDraft.photoCutout?" is-cutout":"")}>
-                   <img src={brewDraft.photo} alt={t("咖啡贴纸预览")} />
-                   <div>
-                     <button type="button" className="secondary" onClick={()=>setBrewPhotoEdit({source:brewDraft.photo,cutout:!!brewDraft.photoCutout})}><Pencil size={15}/>{t("调整")}</button>
-                     <label className="secondary">
-                       {t("换一张")}
-                       <input type="file" accept="image/*" onChange={(e)=>{const selected=e.target.files?.[0];e.target.value="";void addBrewPhoto(selected)}} />
-                     </label>
-                     <button type="button" className="icon-button" aria-label={t("移除照片")} onClick={()=>setBrewDraft((draft:any)=>({...draft,photo:undefined,photoCutout:undefined}))}><Trash2 size={17}/></button>
-                   </div>
-                 </div>
-               ) : (
-                 <div className="brew-photo-buttons">
-                   <label className="secondary">
-                     <Camera size={17}/>{brewPhotoBusy?t("正在制作贴纸…"):t("拍一张")}
-                     <input disabled={brewPhotoBusy} type="file" accept="image/*" capture="environment" onChange={(e)=>{const selected=e.target.files?.[0];e.target.value="";void addBrewPhoto(selected)}} />
-                   </label>
-                   <label className="secondary">
-                     {t("从相册选")}
-                     <input disabled={brewPhotoBusy} type="file" accept="image/*" onChange={(e)=>{const selected=e.target.files?.[0];e.target.value="";void addBrewPhoto(selected)}} />
-                   </label>
-                 </div>
-               )}
-             </section>
+             {!(brewWorkspace&&brewDraft.kind==="milk")&&brewPhotoField}
              <div className="form-grid">
                <label className="field full">
                  {t("笔记")}
@@ -1515,6 +1585,27 @@ function Journal(){
              </div>
            </div>
          </form>
+           {brewWorkspace && (
+             <aside className="brew-workspace-side">
+               {brewDraft.kind === "pourOver" ? (
+                 <PourTimer
+                   inline
+                   onRunningChange={setBrewTimerRunning}
+                   dose={Number(brewDraft.dose)}
+                 onComplete={(result) =>
+                   setBrewDraft((draft: any) => ({
+                     ...draft,
+                     dose: result.dose,
+                     water: result.water,
+                     temp: result.temp ?? draft.temp,
+                     time: result.time,
+                     grind: result.grind,
+                   }))
+                 }
+                 />
+               ) : brewPhotoField}
+             </aside>
+           )}
        </DialogContent>
      </Dialog>
      <Sheet open={!!selected} onOpenChange={(v) => !v && backFromBean()}>

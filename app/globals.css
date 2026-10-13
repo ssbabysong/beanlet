@@ -775,3 +775,72 @@ img,svg{-webkit-user-drag:none}
 .form-submit-actions .delete-entry{flex:0 0 48px;height:48px;border-radius:14px;background:#f1dce0;color:#a15f70}
 .source-link{display:block;margin:0 auto 10px;font-size:13px;color:#687a9b;background:none;border:0}
 .bag-color-picker{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 2px 16px;color:#8891ad;font-size:14px}.bag-color-picker>div{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px}.bag-color-picker button{width:26px;height:26px;border-radius:50%;background:var(--swatch-fill);border:1.5px solid var(--swatch-line);box-shadow:0 0 0 2px transparent;transition:box-shadow .15s,transform .15s}.bag-color-picker button[aria-checked=true]{box-shadow:0 0 0 2.5px #fff,0 0 0 4.5px var(--swatch-line);transform:scale(1.06)}.bag-color-picker button:focus-visible{outline:2px solid #8495be;outline-offset:3px}
+
+/* iOS app: the system tab bar and navigation bar replace the web capsule and header buttons (lib/native-tabs.ts).
+   Safe areas now include those bars, and on iPhone Duo the status-bar column on the right, so the page stays inside them. */
+.native-tabs .main-tabs,.native-tabs .bottom-menu-backdrop,.native-tabs .heading .add-button,.native-tabs .personal-entry{display:none!important}
+.native-tabs body{padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);box-sizing:border-box}
+.native-tabs main{padding-bottom:calc(36px + env(safe-area-inset-bottom,0px))}
+
+/* Unfolded iPhone Duo: “记一杯” becomes one full-screen workspace — form on the left, the pour timer (or the photo, for milk drinks) on the right. */
+@media(min-width:720px){
+.native-tabs .editor.form-editor.brew-workspace[data-slot=dialog-content]{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);grid-template-rows:auto minmax(0,1fr);column-gap:28px;row-gap:10px!important}
+.native-tabs .brew-workspace>[data-slot=dialog-title]{grid-column:1;grid-row:1}
+.native-tabs .brew-workspace>form{grid-column:1;grid-row:2}
+.native-tabs .brew-workspace>.brew-workspace-side{grid-column:2;grid-row:1/-1;margin-bottom:calc(14px + var(--safe-bottom));min-height:0;display:flex;flex-direction:column;overflow:hidden;background:#f8f8fd;border-radius:24px;padding:20px 20px 18px}
+.native-tabs .brew-workspace>[data-slot=dialog-close]{z-index:3}
+.native-tabs .brew-workspace-side .pour-timer-inline{display:flex;flex-direction:column;gap:10px;min-height:0;flex:1}
+.native-tabs .brew-workspace-side .pour-timer-nav{padding-right:36px}
+.native-tabs .brew-workspace-side .pour-timer-nav h2{font-size:19px;margin:0}
+.native-tabs .brew-workspace-side .pour-timer-scroll{flex:1}
+.native-tabs .brew-workspace-side .pour-timer-focus .pour-timer-clock>strong{font-size:64px}
+.native-tabs .brew-workspace-side>.brew-photo-field{margin:0;overflow-y:auto}
+}
+
+/* App: pop-ups centre within the safe area, so on iPhone Duo they stay left of the status-bar column instead of running under it. */
+.native-tabs{--safe-x:calc(env(safe-area-inset-left,0px) + env(safe-area-inset-right,0px));--safe-center:calc(50% + (env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)) / 2)}
+.native-tabs [data-slot=dialog-content],.native-tabs [data-slot=alert-dialog-content]{left:var(--safe-center)!important}
+.native-tabs .editor[data-slot=dialog-content]{width:calc(100vw - var(--safe-x) - 24px);max-width:min(540px,calc(100vw - var(--safe-x) - 24px))!important}
+.native-tabs .editor.settings-dialog{max-width:min(380px,calc(100vw - var(--safe-x) - 24px))!important}
+.native-tabs .pour-timer-dialog{width:calc(100vw - var(--safe-x) - 24px)!important}
+.native-tabs [data-slot=alert-dialog-content],.native-tabs .monthly-report-dialog{max-width:min(512px,calc(100vw - var(--safe-x) - 32px))!important}
+@media(min-width:720px){
+/* The form already asks for the dose, so the timer column uses that one. */
+.native-tabs .brew-workspace-side .pour-timer-setup{grid-template-columns:minmax(0,1fr)}
+.native-tabs .brew-workspace-side .pour-timer-setup .field:nth-child(2){display:none}
+/* Milk drinks have no timer: the photo takes the whole column. */
+.native-tabs .brew-workspace-side:has(>.brew-photo-field){background:transparent;padding:0}
+.native-tabs .brew-workspace-side>.brew-photo-field{flex:1;display:flex;flex-direction:column;padding:22px}
+.native-tabs .brew-workspace-side>.brew-photo-field>.brew-photo-buttons{flex:1;display:grid;grid-template-rows:minmax(0,1fr) auto;grid-template-columns:1fr;gap:12px;margin-top:6px}
+.native-tabs .brew-workspace-side>.brew-photo-field>.brew-photo-buttons>label{min-height:50px;font-size:15px;background:#ffffffb0}
+.native-tabs .brew-workspace-side>.brew-photo-field>.brew-photo-buttons>label:first-child{flex-direction:column;gap:12px;min-height:0;border:2px dashed #c9cde2;border-radius:24px;background:#f9f9fd;color:#7480a8;font-size:17px}
+.native-tabs .brew-workspace-side>.brew-photo-field>.brew-photo-buttons>label:first-child svg{width:40px;height:40px;stroke-width:1.4}
+.native-tabs .brew-workspace-side>.brew-photo-field>.brew-photo-preview{flex:1;min-height:0}
+.native-tabs .brew-workspace-side>.brew-photo-field>.brew-photo-preview>img{max-height:calc(100% - 64px);object-fit:contain}
+}
+
+/* App: editors open as their own full-screen page (back at the top left, save at the bottom), like the bean details page. */
+.native-tabs .editor.form-editor[data-slot=dialog-content]{top:0!important;left:0!important;translate:none!important;width:100vw!important;max-width:none!important;height:100dvh!important;max-height:none!important;border-radius:0!important;box-shadow:none!important;padding:calc(var(--safe-top) + 6px) calc(env(safe-area-inset-right,0px) + 22px) 0 calc(env(safe-area-inset-left,0px) + 22px)!important;gap:10px!important}
+.native-tabs .editor.form-editor>[data-slot=dialog-close]{display:none}
+.native-tabs .editor.form-editor .form-submit{padding-bottom:calc(14px + var(--safe-bottom))}
+/* Catalog picking inside the add-a-bag sheet. */
+.native-tabs .bean-sheet>form[hidden]{display:none!important}
+.native-tabs .bean-source-switch{flex-shrink:0;margin:2px 0 6px}
+.native-tabs .inline-picker{display:flex;flex-direction:column;gap:12px;flex:1;min-height:0}
+.native-tabs .inline-picker .catalog-search{flex-shrink:0}
+.native-tabs .inline-picker .pick-list{flex:1;min-height:0;max-height:none;overflow-y:auto;padding-bottom:calc(12px + var(--safe-bottom))}
+.native-tabs .inline-picker .pick-list button{border-radius:16px;padding-left:8px;padding-right:8px}
+.native-tabs .inline-picker .pick-list button[aria-pressed=true]{background:#eeedf7}
+/* Unfolded: catalog on the left, form on the right, like the brew workspace. */
+@media(min-width:720px){
+.native-tabs .editor.form-editor.bean-workspace[data-slot=dialog-content]{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);grid-template-rows:auto minmax(0,1fr);column-gap:28px;row-gap:10px!important}
+.native-tabs .bean-workspace>[data-slot=dialog-title]{grid-column:2;grid-row:1}
+.native-tabs .bean-workspace>form{grid-column:2;grid-row:2}
+.native-tabs .bean-workspace>.bean-workspace-side{grid-column:1;grid-row:1/-1;margin-bottom:calc(14px + var(--safe-bottom));min-height:0;display:flex;flex-direction:column;gap:12px;overflow:hidden;background:#f8f8fd;border-radius:24px;padding:20px 16px 0}
+.native-tabs .bean-workspace-side>h3{font-size:18px;margin:0 4px;color:#56617f}
+.native-tabs .bean-workspace>[data-slot=dialog-close]{z-index:3}
+}
+/* App: the editors' save button is in the native bar; the bar below keeps only errors, delete and the source link. */
+.native-tabs .editor.form-editor .form-submit .save{display:none}
+.native-tabs .editor.form-editor .form-submit:not(:has(.error,.delete-entry,.source-link)){display:none}
+.native-tabs .editor.form-editor .form-scroll{padding-bottom:calc(24px + var(--safe-bottom))}
