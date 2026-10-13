@@ -1,0 +1,8 @@
+"widget.shelf.name" = "Bean Shelf";
+"widget.shelf.description" = "The bags you're drinking, and how much is left.";
+"widget.month.name" = "Month";
+"widget.month.description" = "This month's coffee calendar.";
+"widget.year.name" = "Year";
+"widget.year.description" = "Every coffee day of the year at a glance.";
+"widget.brew.name" = "Brew a Cup";
+"widget.brew.description" = "Log a coffee in one tap.";

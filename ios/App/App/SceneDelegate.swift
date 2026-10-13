@@ -74,6 +74,7 @@ class BeanletStickerPlugin: CAPPlugin, CAPBridgedPlugin {
 class BeanletBridgeViewController: CAPBridgeViewController {
     override func capacitorDidLoad() {
         bridge?.registerPluginInstance(BeanletStickerPlugin())
+        bridge?.registerPluginInstance(BeanletWidgetPlugin())
     }
 }
 
@@ -88,9 +89,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
 
         SceneDelegateProxy.shared.scene(scene, willConnectTo: session, options: connectionOptions)
+        connectionOptions.urlContexts.forEach { BeanletWidgetPlugin.open($0.url) }
     }
 
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        URLContexts.forEach { BeanletWidgetPlugin.open($0.url) }
         SceneDelegateProxy.shared.scene(scene, openURLContexts: URLContexts)
     }
 

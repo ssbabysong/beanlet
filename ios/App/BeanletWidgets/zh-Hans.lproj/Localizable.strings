@@ -1,0 +1,8 @@
+"widget.shelf.name" = "豆仓";
+"widget.shelf.description" = "正在喝的豆子，还剩多少。";
+"widget.month.name" = "月历";
+"widget.month.description" = "这个月的咖啡日历。";
+"widget.year.name" = "年历";
+"widget.year.description" = "一年里每个喝咖啡的日子。";
+"widget.brew.name" = "冲一杯";
+"widget.brew.description" = "轻点一下，记一杯咖啡。";

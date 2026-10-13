@@ -18,7 +18,40 @@
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6822FE993A50072D4E8 /* SceneDelegate.swift */; };
+		BEB000000000000000000002 /* BeanletWidgetPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB000000000000000000001 /* BeanletWidgetPlugin.swift */; };
+		BEB000000000000000000012 /* WidgetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB000000000000000000005 /* WidgetData.swift */; };
+		BEB000000000000000000013 /* BagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB000000000000000000006 /* BagView.swift */; };
+		BEB000000000000000000014 /* BeanletWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB000000000000000000007 /* BeanletWidgets.swift */; };
+		BEB000000000000000000015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BEB00000000000000000000A /* Assets.xcassets */; };
+		BEB000000000000000000016 /* BeanletXiaolai.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BEB00000000000000000000B /* BeanletXiaolai.ttf */; };
+		BEB000000000000000000017 /* AnnieUseYourTelescope.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BEB00000000000000000000C /* AnnieUseYourTelescope.ttf */; };
+		BEB000000000000000000018 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = BEB00000000000000000000D /* Localizable.strings */; };
+		BEB000000000000000000019 /* BeanletWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BEB000000000000000000011 /* BeanletWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BEB00000000000000000001F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BEB00000000000000000001E;
+			remoteInfo = BeanletWidgets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BEB00000000000000000001D /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				BEB000000000000000000019 /* BeanletWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		BEA000000000000000000013 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -36,6 +69,20 @@
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
 		9582B6822FE993A50072D4E8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
+		BEB000000000000000000001 /* BeanletWidgetPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeanletWidgetPlugin.swift; sourceTree = "<group>"; };
+		BEB000000000000000000003 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
+		BEB000000000000000000005 /* WidgetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetData.swift; sourceTree = "<group>"; };
+		BEB000000000000000000006 /* BagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BagView.swift; sourceTree = "<group>"; };
+		BEB000000000000000000007 /* BeanletWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeanletWidgets.swift; sourceTree = "<group>"; };
+		BEB000000000000000000008 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BEB000000000000000000009 /* BeanletWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BeanletWidgets.entitlements; sourceTree = "<group>"; };
+		BEB00000000000000000000A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BEB00000000000000000000B /* BeanletXiaolai.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = BeanletXiaolai.ttf; sourceTree = "<group>"; };
+		BEB00000000000000000000C /* AnnieUseYourTelescope.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = AnnieUseYourTelescope.ttf; sourceTree = "<group>"; };
+		BEB00000000000000000000E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		BEB00000000000000000000F /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		BEB000000000000000000010 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		BEB000000000000000000011 /* BeanletWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BeanletWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +94,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BEB00000000000000000001B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -55,6 +109,7 @@
 			children = (
 				958DCC722DB07C7200EA8C5F /* debug.xcconfig */,
 				504EC3061FED79650016851F /* App */,
+				BEB000000000000000000004 /* BeanletWidgets */,
 				504EC3051FED79650016851F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -63,6 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				504EC3041FED79650016851F /* App.app */,
+				BEB000000000000000000011 /* BeanletWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -71,6 +127,8 @@
 			isa = PBXGroup;
 			children = (
 				9582B6822FE993A50072D4E8 /* SceneDelegate.swift */,
+				BEB000000000000000000001 /* BeanletWidgetPlugin.swift */,
+				BEB000000000000000000003 /* App.entitlements */,
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
@@ -85,6 +143,30 @@
 			path = App;
 			sourceTree = "<group>";
 		};
+		BEB000000000000000000004 /* BeanletWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				BEB000000000000000000007 /* BeanletWidgets.swift */,
+				BEB000000000000000000005 /* WidgetData.swift */,
+				BEB000000000000000000006 /* BagView.swift */,
+				BEB00000000000000000000A /* Assets.xcassets */,
+				BEB000000000000000000024 /* Fonts */,
+				BEB00000000000000000000D /* Localizable.strings */,
+				BEB000000000000000000008 /* Info.plist */,
+				BEB000000000000000000009 /* BeanletWidgets.entitlements */,
+			);
+			path = BeanletWidgets;
+			sourceTree = "<group>";
+		};
+		BEB000000000000000000024 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				BEB00000000000000000000B /* BeanletXiaolai.ttf */,
+				BEB00000000000000000000C /* AnnieUseYourTelescope.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -95,10 +177,12 @@
 				504EC3001FED79650016851F /* Sources */,
 				504EC3011FED79650016851F /* Frameworks */,
 				504EC3021FED79650016851F /* Resources */,
+				BEB00000000000000000001D /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				BEB000000000000000000020 /* PBXTargetDependency */,
 			);
 			name = App;
 			packageProductDependencies = (
@@ -107,6 +191,23 @@
 			productName = App;
 			productReference = 504EC3041FED79650016851F /* App.app */;
 			productType = "com.apple.product-type.application";
+		};
+		BEB00000000000000000001E /* BeanletWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BEB000000000000000000021 /* Build configuration list for PBXNativeTarget "BeanletWidgets" */;
+			buildPhases = (
+				BEB00000000000000000001A /* Sources */,
+				BEB00000000000000000001B /* Frameworks */,
+				BEB00000000000000000001C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BeanletWidgets;
+			productName = BeanletWidgets;
+			productReference = BEB000000000000000000011 /* BeanletWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -120,6 +221,10 @@
 					504EC3031FED79650016851F = {
 						CreatedOnToolsVersion = 9.2;
 						LastSwiftMigration = 1100;
+						ProvisioningStyle = Automatic;
+					};
+					BEB00000000000000000001E = {
+						CreatedOnToolsVersion = 27.0;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -143,6 +248,7 @@
 			projectRoot = "";
 			targets = (
 				504EC3031FED79650016851F /* App */,
+				BEB00000000000000000001E /* BeanletWidgets */,
 			);
 		};
 /* End PBXProject section */
@@ -163,6 +269,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BEB00000000000000000001C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BEB000000000000000000015 /* Assets.xcassets in Resources */,
+				BEB000000000000000000016 /* BeanletXiaolai.ttf in Resources */,
+				BEB000000000000000000017 /* AnnieUseYourTelescope.ttf in Resources */,
+				BEB000000000000000000018 /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -172,10 +289,29 @@
 			files = (
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
+				BEB000000000000000000002 /* BeanletWidgetPlugin.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BEB00000000000000000001A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BEB000000000000000000014 /* BeanletWidgets.swift in Sources */,
+				BEB000000000000000000012 /* WidgetData.swift in Sources */,
+				BEB000000000000000000013 /* BagView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BEB000000000000000000020 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BEB00000000000000000001E /* BeanletWidgets */;
+			targetProxy = BEB00000000000000000001F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		BEA000000000000000000012 /* InfoPlist.strings */ = {
@@ -202,6 +338,16 @@
 				504EC3111FED79650016851F /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		BEB00000000000000000000D /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BEB00000000000000000000E /* en */,
+				BEB00000000000000000000F /* zh-Hans */,
+				BEB000000000000000000010 /* zh-Hant */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -323,6 +469,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -347,6 +494,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
 				INFOPLIST_FILE = App/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -359,6 +507,58 @@
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		BEB000000000000000000022 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
+				CODE_SIGN_ENTITLEMENTS = BeanletWidgets/BeanletWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = BN3CG5FXJ2;
+				INFOPLIST_FILE = BeanletWidgets/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ssbabysong.beanlet.widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		BEB000000000000000000023 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
+				CODE_SIGN_ENTITLEMENTS = BeanletWidgets/BeanletWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = BN3CG5FXJ2;
+				INFOPLIST_FILE = BeanletWidgets/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ssbabysong.beanlet.widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -381,6 +581,15 @@
 			buildConfigurations = (
 				504EC3171FED79650016851F /* Debug */,
 				504EC3181FED79650016851F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BEB000000000000000000021 /* Build configuration list for PBXNativeTarget "BeanletWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BEB000000000000000000022 /* Debug */,
+				BEB000000000000000000023 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
