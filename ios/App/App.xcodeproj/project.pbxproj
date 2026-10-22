@@ -19,6 +19,7 @@
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6822FE993A50072D4E8 /* SceneDelegate.swift */; };
 		BEB000000000000000000002 /* BeanletWidgetPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB000000000000000000001 /* BeanletWidgetPlugin.swift */; };
+		CC1000000000000000000002 /* BeanletCloudPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1000000000000000000001 /* BeanletCloudPlugin.swift */; };
 		BEB000000000000000000012 /* WidgetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB000000000000000000005 /* WidgetData.swift */; };
 		BEB000000000000000000013 /* BagView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB000000000000000000006 /* BagView.swift */; };
 		BEB000000000000000000014 /* BeanletWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB000000000000000000007 /* BeanletWidgets.swift */; };
@@ -73,6 +74,7 @@
 		9582B6822FE993A50072D4E8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
 		BEB000000000000000000001 /* BeanletWidgetPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeanletWidgetPlugin.swift; sourceTree = "<group>"; };
+		CC1000000000000000000001 /* BeanletCloudPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeanletCloudPlugin.swift; sourceTree = "<group>"; };
 		BEB000000000000000000003 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 		BEB000000000000000000005 /* WidgetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetData.swift; sourceTree = "<group>"; };
 		BEB000000000000000000006 /* BagView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BagView.swift; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 				9582B6822FE993A50072D4E8 /* SceneDelegate.swift */,
 				BEC000000000000000000001 /* NativeTabs.swift */,
 				BEB000000000000000000001 /* BeanletWidgetPlugin.swift */,
+				CC1000000000000000000001 /* BeanletCloudPlugin.swift */,
 				BEB000000000000000000003 /* App.entitlements */,
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
 				504EC3071FED79650016851F /* AppDelegate.swift */,
@@ -298,6 +301,7 @@
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
 				BEC000000000000000000002 /* NativeTabs.swift in Sources */,
 				BEB000000000000000000002 /* BeanletWidgetPlugin.swift in Sources */,
+				CC1000000000000000000002 /* BeanletCloudPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

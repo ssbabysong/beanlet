@@ -14,12 +14,15 @@ export function translate(value:string,language:Language):string{
  [/^赏味期还剩 (\d+) 天$/,n=>`${n} days left in the flavor window`],
  [/^赏味第 (\d+)–(\d+) 天$/,(a,b)=>`Enjoy on days ${a}–${b}`],
  [/^建议养豆 ([\d–]+) 天 · 赏味第 (\d+)–(\d+) 天$/,(r,a,b)=>`Rest ${r} days · enjoy on days ${a}–${b}`],
+ [/^养豆 (\d+) 天 · 赏味第 (\d+)–(\d+) 天$/,(r,a,b)=>`Rest ${r} days · enjoy on days ${a}–${b}`],
+ [/^赏味期剩 (\d+) 天$/,n=>`${n} ${n==='1'?'day':'days'} left`],[/^养豆 · 还需 (\d+) 天$/,n=>`Resting · ${n} ${n==='1'?'day':'days'}`],
+ [/^建议 (\d+) 天$/,n=>`Suggested: ${n} days`],
  [/^ · 养豆约 (\d+) 天$/,n=>` · rest about ${n} days`],
  [/^(\d+) 包在手边$/,n=>`${n} bags on your shelf`],
  [/^(\d+) 款风味，慢慢收集$/,n=>`${n} coffees to discover`],
  [/^(\d+) 杯$/,n=>`${n} brews`],
  [/^评分 (\d+) \/ 5$/,n=>`Rating ${n} / 5`],[/^(\d+) 星$/,n=>`${n} stars`],
- [/^研磨 (.*) · $/,n=>`Grind ${n} · `],[/^用时 (.*)$/,n=>`Time ${n}`],
+ [/^研磨 (.*?)(?: · )?$/,n=>`Grind ${translate(n,language)}`+(value.endsWith(' · ')?' · ':'')],[/^用时 (.*)$/,n=>`Time ${n}`],
  [/^查看(.*)$/,n=>`View ${n}`],[/^编辑(.*)$/,n=>`Edit ${n}`],[/^(.*)官网资料$/,n=>`${n} source`],
  ];
  for(const [r,fn] of rules){const m=value.match(r);if(m)return fn(...m.slice(1))}

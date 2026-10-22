@@ -6,11 +6,12 @@ const url=new URL('../lib/local-store.ts',import.meta.url);
 let source=await readFile(url,'utf8');
 source=source.replace("'./bean-stock'",JSON.stringify(new URL('../lib/bean-stock.ts',import.meta.url).href));
 source=source.replace("'./tasted'",JSON.stringify(new URL('../lib/tasted.ts',import.meta.url).href));
+source=source.replace("'./cloud-merge'",JSON.stringify(new URL('../lib/cloud-merge.ts',import.meta.url).href));
 source=source.replace("'zod'",JSON.stringify(new URL('../node_modules/zod/index.js',import.meta.url).href)).replace("'./catalog'",JSON.stringify(new URL('../lib/catalog.ts',import.meta.url).href)).replace("'./coffee-guide'",JSON.stringify(new URL('../lib/coffee-guide.ts',import.meta.url).href));
 const js=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
-const {localApi,importBackup,exportBackup,backupSchema,migrateStarters}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
+const {localApi,importBackup,exportBackup,backupSchema,migrateStarters,mergeCloud,setChangeListener}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
 const request=(method,body)=>localApi('/api/journal',{method,body:JSON.stringify(body)});
-let initial=await localApi('/api/journal');assert.equal(initial.beans.length,0);assert.equal(initial.catalog.length,40);assert.equal((await localApi('/api/journal')).beans.length,0);
+let initial=await localApi('/api/journal');assert.equal(initial.beans.length,0);assert.equal(initial.catalog.length,56);assert.equal((await localApi('/api/journal')).beans.length,0);
 const starters=initial.catalog.map(b=>({...b,id:'starter-'+b.id,catalogId:b.id,recordType:'bean',status:'未开封',useOriginalArt:true}));
 const old={format:'beanlet',version:1,beans:starters,catalog:[],brews:[]};
 assert.equal(migrateStarters(old).beans.length,0);
@@ -18,7 +19,7 @@ const edited={...old,beans:starters.map((b,i)=>i===0?{...b,notes:'我的笔记'}
 const migrated=migrateStarters(edited);assert.equal(migrated.beans.length,2);assert.equal(migrated.beans[0].notes,'我的笔记');assert.equal(migrated.beans[1].id,starters[1].id);assert.equal(migrateStarters(migrated),migrated);
 const base={name:'测试豆',roaster:'Test',origin:'China',process:'水洗',roast:'浅烘焙',flavor:'桃子',status:'未开封',rating:0,repurchase:false,photo:'',roastDate:'',notes:''};
 const {id}=await request('POST',{kind:'bean',data:base,saveToCatalog:true});
-let state=await localApi('/api/journal');assert.equal(state.beans.length,1);assert.equal(state.catalog.length,41);assert.ok(state.beans[0].catalogId);
+let state=await localApi('/api/journal');assert.equal(state.beans.length,1);assert.equal(state.catalog.length,57);assert.ok(state.beans[0].catalogId);
 await request('PUT',{kind:'bean',id,data:{...state.beans[0],status:'已喝完',finishedDate:'2026-10-06'}});
 state=await localApi('/api/journal');assert.equal(state.beans[0].finishedDate,'2026-10-06');
 await request('POST',{kind:'brew',data:{beanId:id,date:'2026-10-02',dose:15,water:225,temp:92,grind:'中细',time:'2:30',notes:'好喝',rating:4}});
@@ -177,3 +178,24 @@ const built=initial.catalog[0];
 await request('PUT',{kind:'bean',id:built.id,data:{...built,recordType:'catalog',name:'内置豆编辑'}});
 syncState=await localApi('/api/journal');assert.equal(syncState.catalog.filter(b=>b.id===built.id).length,1);assert.equal(syncState.catalog.find(b=>b.id===built.id).name,'内置豆编辑');
 console.log('Catalog sync: shared fields, photo removal, bag isolation, memories and built-in overrides passed');
+
+let saves=0;setChangeListener(()=>saves++);
+const cloudBean={name:'云端豆',roaster:'',origin:'',process:'未记录',roast:'浅烘焙',flavor:'',status:'未开封',rating:0,repurchase:false,photo:'',roastDate:'',notes:''};
+const {id:cloudId}=await request('POST',{kind:'bean',data:cloudBean});
+assert.equal(saves,1);
+let stored=await localApi('/api/journal');assert.ok(stored.clock['beans:'+cloudId]>0);
+const otherDevice=JSON.parse((await mergeCloud([])).contents);
+assert.ok(otherDevice.beans.some(b=>b.id===cloudId));
+// Another device deletes the bag and adds one of its own; merging brings both changes here without counting as a local save.
+const later=Date.now()+1000,padId='from-ipad';
+otherDevice.beans=[{...cloudBean,id:padId,name:'iPad 的豆'},...otherDevice.beans.filter(b=>b.id!==cloudId)];
+otherDevice.clock={...otherDevice.clock,['beans:'+padId]:later};delete otherDevice.clock['beans:'+cloudId];
+otherDevice.removed={...otherDevice.removed,['beans:'+cloudId]:later};
+const pulled=await mergeCloud([JSON.stringify(otherDevice)]);
+assert.ok(pulled.changed);assert.equal(saves,1);
+stored=await localApi('/api/journal');
+assert.ok(stored.beans.some(b=>b.id===padId));assert.ok(!stored.beans.some(b=>b.id===cloudId));
+// An unreadable copy is never overwritten.
+assert.equal((await mergeCloud(['not json'])).contents,null);
+console.log('iCloud: saves are stamped, remote edits and deletions merge in, unreadable copies are left alone');
+const settled=await mergeCloud([pulled.contents]);assert.equal(settled.changed,false);assert.equal(settled.contents,null);

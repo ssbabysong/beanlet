@@ -382,6 +382,11 @@ html[lang=en] .bean-shelf .bag-roast-print{font-size:12px;letter-spacing:.025em}
 html[lang=en] .bean-shelf .bag-roast-print{font-size:10px;letter-spacing:0}
 .bean-shelf .shelf-name-secondary{margin:3px 0 0;font-size:14px;line-height:1.3;color:#959888;overflow-wrap:anywhere}
 .bean-shelf .shelf-name-secondary[lang=zh-CN]{font-size:11px;line-height:1.5}
+.bean-shelf .bag-phase{display:inline-flex;align-items:center;gap:4px;margin-top:5px;padding:2px 8px;border-radius:10px;background:#eef0f5;color:#8a8fa3;font-size:11px;line-height:1.5;white-space:nowrap}
+.bean-shelf .bag-phase::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.75}
+.bean-shelf .bag-phase.is-peak{background:#e3f0e8;color:#4f8a66;font-weight:500}
+.bean-shelf .bag-phase.is-soon{background:#fbeedd;color:#b07a3c}
+.bean-shelf .bag-phase.is-opening{background:#edf3f1;color:#688579}
 
 /* Shared coffee colors and compact shelf details. */
 .bean-shelf .bag-roast-print{right:20%;bottom:15%}
@@ -462,7 +467,7 @@ html[lang=en] .bean-shelf .bag-roast-print{font-size:10px;letter-spacing:0}
 .form-editor .brew-basics input[type=date]::-webkit-date-and-time-value{text-align:left;min-height:24px}
 
 .bean-shelf .bag-stock{position:absolute;bottom:5%;left:24%;width:58%;text-align:center;font-size:10px;color:#6e7683;line-height:1.2;pointer-events:none}
-.bag-weight-field{margin:12px 0 16px}
+.bag-weight-field{margin:12px 0 16px}.rest-days-field{display:block;margin:0 0 16px}.rest-days-field input{box-sizing:border-box;width:100%}
 .weight-presets{display:flex;gap:8px;margin-top:7px}
 .weight-presets button{padding:4px 12px;border:0;border-radius:10px;background:#f1eff7;color:#8a8fa3;font-size:12px}
 .weight-presets button[aria-pressed=true]{background:#e4e1ef;color:#666e89}

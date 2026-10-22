@@ -1,7 +1,9 @@
 export type BrewKind='pourOver'|'milk';
 export type BrewRecord={id:string;beanId:string;date:string;kind?:BrewKind;dose?:number;water?:number;temp?:number;yield?:number;milkAmount?:number;milkType?:string;serving?:string;grind:string;time:string;notes:string;rating:number;photo?:string;photoCutout?:boolean};
-export function brewDraftFor(kind:BrewKind,_records:BrewRecord[]){
- return {kind,dose:kind==='milk'?16:15,water:undefined,temp:undefined,yield:undefined,milkAmount:undefined,milkType:undefined,serving:undefined,grind:'',time:''};
+// remembered: the dose and grind saved with the previous brew of this kind.
+export function brewDraftFor(kind:BrewKind,_records:BrewRecord[],remembered:{dose?:number;grind?:string}={}){
+ const dose=typeof remembered.dose==='number'&&remembered.dose>0&&remembered.dose<=200?remembered.dose:kind==='milk'?16:15;
+ return {kind,dose,water:undefined,temp:undefined,yield:undefined,milkAmount:undefined,milkType:undefined,serving:undefined,grind:remembered.grind||'',time:''};
 }
 export function brewPayload(d:Record<string,any>){
  const number=(v:unknown)=>v===''||v===undefined?undefined:Number(v);

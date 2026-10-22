@@ -23,7 +23,7 @@ import { Empty,EmptyHeader,EmptyTitle,EmptyDescription } from '@/components/ui/e
 import { Skeleton } from '@/components/ui/skeleton';
 import { Toaster,toast } from 'sonner';
 import { Calendar,CalendarDayButton } from '@/components/ui/calendar';
-import { roastGuide, flavorWindow, roastOptions } from '@/lib/coffee-guide';
+import { roastGuide, flavorWindow, roastOptions, shelfPhase } from '@/lib/coffee-guide';
 import { originalArt,displayedArt,beanLabel } from '@/lib/catalog';
 import { LocaleProvider,useI18n } from '@/lib/i18n';
 import {countryOf,processOf,matchesFilters,emptyFilters,type CatalogFilters} from '@/lib/catalog-filters';
@@ -44,21 +44,35 @@ import {useStickerPilePhysics} from '@/components/use-sticker-pile-physics';
 import {buildWidgetSnapshot,parseWidgetLink} from '@/lib/widget-snapshot';
 import {onWidgetLink,syncWidgets} from '@/lib/native-widget';
 import {runDevSeed} from '@/lib/dev-seed';
+import {cloudChangedEvent,cloudStatus,cloudSyncSupported,onCloudStatus,startCloudSync,syncNow,type CloudStatus} from '@/lib/cloud-sync';
 import {hasNativeTabs,onNativeTabs,syncNativeBar,syncNativeTabs} from '@/lib/native-tabs';
 import {ResponsiveContainer,BarChart,Bar,XAxis,YAxis,Tooltip,PieChart,Pie,Cell} from 'recharts';
-type Bean={bagColor?:number;weight?:number;stockAdjustment?:number;finishedDate?:string;nameEn?:string;useOriginalArt?:boolean;recordType?:string;catalogId?:string;sourceUrl?:string;sourceDate?:string;variety?:string;roastNote?:string;icon?:string;id:string;name:string;roaster:string;origin:string;process:string;roast:string;flavor:string;status:string;rating:number;repurchase:boolean;photo:string;roastDate:string;notes:string};
+type Bean={restDays?:number;bagColor?:number;weight?:number;stockAdjustment?:number;finishedDate?:string;nameEn?:string;useOriginalArt?:boolean;recordType?:string;catalogId?:string;sourceUrl?:string;sourceDate?:string;variety?:string;roastNote?:string;icon?:string;id:string;name:string;roaster:string;origin:string;process:string;roast:string;flavor:string;status:string;rating:number;repurchase:boolean;photo:string;roastDate:string;notes:string};
 type Brew=BrewRecord;
 const fresh={icon:'bag',name:'',nameEn:'',roaster:'',origin:'',process:'未记录',roast:'',flavor:'',status:'未开封',rating:0,repurchase:false,photo:'',roastDate:'',notes:''};
 const photo=(key:string)=>key;
 const brewPreferenceKey='beanlet-brew-preference';
-function brewPreference(){try{return JSON.parse(localStorage.getItem(brewPreferenceKey)||'{}') as {kind?:BrewKind;beanId?:string}}catch{return {}}}
-function rememberBrewPreference(kind:BrewKind,beanId?:string){try{localStorage.setItem(brewPreferenceKey,JSON.stringify({kind,beanId}))}catch{}}
+// grind is kept per kind and per kind+bag, so each bag reopens with the grind last used for it.
+type BrewPreference={kind?:BrewKind;beanId?:string;dose?:Partial<Record<BrewKind,number>>;grind?:Record<string,string>};
+function brewPreference(){try{return JSON.parse(localStorage.getItem(brewPreferenceKey)||'{}') as BrewPreference}catch{return {}}}
+function saveBrewPreference(next:BrewPreference){try{localStorage.setItem(brewPreferenceKey,JSON.stringify(next))}catch{}}
+function rememberBrewPreference(kind:BrewKind,beanId?:string){saveBrewPreference({...brewPreference(),kind,beanId})}
+function rememberedBrew(kind:BrewKind,beanId?:string){const p=brewPreference();return {dose:p.dose?.[kind],grind:(beanId&&p.grind?.[`${kind}:${beanId}`])||p.grind?.[kind]}}
+function rememberBrewSettings(kind:BrewKind,beanId:string,dose:number,grind:string){const p=brewPreference(),grinds={...p.grind};if(grind){grinds[kind]=grind;grinds[`${kind}:${beanId}`]=grind}else delete grinds[`${kind}:${beanId}`];saveBrewPreference({...p,kind,beanId,dose:{...p.dose,[kind]:dose},grind:grinds})}
+// New bags start from the roast, bag weight and resting days of the last bag added; resting days are kept per roast.
+const beanPreferenceKey='beanlet-bean-preference';
+type BeanPreference={roast?:string;weight?:number;rest?:Record<string,number>};
+function beanPreference(){try{return JSON.parse(localStorage.getItem(beanPreferenceKey)||'{}') as BeanPreference}catch{return {}}}
+function rememberBeanPreference(roast:string,weight?:number,restDays?:number){const p=beanPreference(),rest={...p.rest};if(restDays===undefined)delete rest[roast];else rest[roast]=restDays;try{localStorage.setItem(beanPreferenceKey,JSON.stringify({roast,weight:weight??p.weight,rest}))}catch{}}
+function rememberedBean(roast?:string){const p=beanPreference(),known=roast??(p.roast&&roastOptions.includes(p.roast)?p.roast:'');return {roast:known,weight:p.weight,restDays:known?p.rest?.[known]:undefined}}
+const restValue=(value:unknown)=>value===''||value==null?undefined:Number(value);
 
 const icons=[{id:'bag',name:'豆袋'},{id:'cup',name:'咖啡杯'},{id:'dripper',name:'手冲壶'},{id:'flower',name:'小花'},{id:'berry',name:'莓果'},{id:'blueberry',name:'蓝莓'},{id:'citrus',name:'柑橘'},{id:'peach',name:'蜜桃'},{id:'grape',name:'葡萄'},{id:'jasmine',name:'茉莉'},{id:'honey',name:'蜂蜜'},{id:'chocolate',name:'巧克力'},{id:'hazelnut',name:'榛果'},{id:'tea',name:'红茶'},{id:'brownie',name:'布朗尼'}];
 function Sticker({icon='bag',className=''}:{icon?:string;className?:string}){if(icon==='cherry'||icon==='cookie')icon='brownie';const {t,language,label}=useI18n();return <span role="img" aria-label={t(icons.find(x=>x.id===icon)?.name||'豆袋')} className={`sticker sticker-${icon} ${className}`}/>}
 function BeanVisual({bean}:{bean?:Bean}){const {t,language,label}=useI18n();return bean?.photo?<img className="bean-thumb" src={photo(bean.photo)} alt={t(bean.name)}/>:displayedArt(bean)?<img className="bean-thumb original-art" src={displayedArt(bean)} alt={`${t(bean?.name||"")} · ${t("水彩封面")}`} loading="lazy"/>:<Sticker icon={bean?.icon}/>}
 function dateKey(date:Date){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`}
-function CoffeeGuide({bean,onEdit}:{bean:Bean;onEdit:()=>void}){const {t,language,label}=useI18n();const guide=roastGuide(bean.roast,bean.roaster),window=flavorWindow(bean.roast,bean.roastDate,dateKey(new Date()),bean.roaster);return <section className="coffee-guide"><div className="guide-heading"><Sticker icon="dripper"/><h3>{t("这包怎么喝")}</h3></div>{bean.roastDate&&<p className="guide-roast-date">{t("烘焙于")} <time dateTime={bean.roastDate}>{bean.roastDate}</time></p>}{guide?<><span className="meta">{t("养豆与最佳赏味期 · 参考")}</span><strong>{t(window.label)}</strong><p className="guide-dates">{t(window.dates)}</p><p className="guide-dates">{t(window.hint)}</p><div className="guide-recipe"><span>{guide.temp} °C</span><span>{guide.ratio}</span><span>{t(guide.grind)}</span></div><Collapsible><CollapsibleTrigger className="guide-more">{t("小贴士")}<ChevronDown size={13}/></CollapsibleTrigger><CollapsibleContent><p>{t("先用 15 g 粉，闷蒸 30–45 秒。酸涩偏薄试着磨细，苦涩试着磨粗，每次只改一项。")}</p><p>{t("常温密封整豆的估算范围，开封与储存会影响风味，以烘焙商建议和实际味道为准。赏味窗口不是保质期。")}</p><p>{/hydrangea/i.test(bean.roaster)&&<><a href="https://hydrangea.coffee/pages/faq" target="_blank" rel="noreferrer">{t("Hydrangea 官方：养豆 2–3 周，佳期 4–6 周")}</a>{t("。浅烘焙优先采用此建议。")}<br/></>}{t("参考")}<a href="https://rovala.nl/en/pages/brewing-tips" target="_blank" rel="noreferrer">{t("Rovala 冲煮指南")}</a> · <a href="https://sca.coffee/sca-news/coffee-decoded-9-fresh-coffee" target="_blank" rel="noreferrer">{t("SCA 新鲜度")}</a>{t("；中间烘焙度与窗口终点为综合估算。")}</p></CollapsibleContent></Collapsible></>:<button className="guide-edit" onClick={onEdit}>{t(window.label)} <Pencil size={14}/></button>}</section>}
+const cloudLabels:Record<CloudStatus,string>={off:'iCloud 同步准备中',syncing:'正在与 iCloud 同步…',synced:'已通过 iCloud 同步',unavailable:'未登录 iCloud，记录只保存在这台设备',error:'iCloud 同步失败，稍后会自动重试'};
+function CoffeeGuide({bean,onEdit}:{bean:Bean;onEdit:()=>void}){const {t,language,label}=useI18n();const guide=roastGuide(bean.roast,bean.roaster),window=flavorWindow(bean.roast,bean.roastDate,dateKey(new Date()),bean.roaster,bean.restDays);return <section className="coffee-guide"><div className="guide-heading"><Sticker icon="dripper"/><h3>{t("这包怎么喝")}</h3></div>{bean.roastDate&&<p className="guide-roast-date">{t("烘焙于")} <time dateTime={bean.roastDate}>{bean.roastDate}</time></p>}{guide?<><span className="meta">{t("养豆与最佳赏味期 · 参考")}</span><strong>{t(window.label)}</strong><p className="guide-dates">{t(window.dates)}</p><p className="guide-dates">{t(window.hint)}</p><div className="guide-recipe"><span>{guide.temp} °C</span><span>{guide.ratio}</span><span>{t(guide.grind)}</span></div><Collapsible><CollapsibleTrigger className="guide-more">{t("小贴士")}<ChevronDown size={13}/></CollapsibleTrigger><CollapsibleContent><p>{t("先用 15 g 粉，闷蒸 30–45 秒。酸涩偏薄试着磨细，苦涩试着磨粗，每次只改一项。")}</p><p>{t("常温密封整豆的估算范围，开封与储存会影响风味，以烘焙商建议和实际味道为准。赏味窗口不是保质期。")}</p><p>{/hydrangea/i.test(bean.roaster)&&<><a href="https://hydrangea.coffee/pages/faq" target="_blank" rel="noreferrer">{t("Hydrangea 官方：养豆 2–3 周，佳期 4–6 周")}</a>{t("。浅烘焙优先采用此建议。")}<br/></>}{t("参考")}<a href="https://rovala.nl/en/pages/brewing-tips" target="_blank" rel="noreferrer">{t("Rovala 冲煮指南")}</a> · <a href="https://sca.coffee/sca-news/coffee-decoded-9-fresh-coffee" target="_blank" rel="noreferrer">{t("SCA 新鲜度")}</a>{t("；中间烘焙度与窗口终点为综合估算。")}</p></CollapsibleContent></Collapsible></>:<button className="guide-edit" onClick={onEdit}>{t(window.label)} <Pencil size={14}/></button>}</section>}
 function Choice({label,value,options,onChange}:{label:string;value:string;options:string[];onChange:(s:string)=>void}){const {t}=useI18n();return <label className="field">{label}<Select value={value} onValueChange={onChange}><SelectTrigger className="choice"><SelectValue placeholder={t("请选择")}/></SelectTrigger><SelectContent>{options.map(x=><SelectItem key={x} value={x}>{t(x)}</SelectItem>)}</SelectContent></Select></label>}
 function Rating({value,onChange}:{value:number;onChange?:(n:number)=>void}){const {t,language,label}=useI18n();return <div className="stars" aria-label={t(`评分 ${value} / 5`)}>{[1,2,3,4,5].map(n=>onChange?<button key={n} type="button" aria-label={t(`${n} 星`)} aria-pressed={value===n} onClick={()=>onChange(n)}><Star size={23} fill={n<=value?'currentColor':'none'}/></button>:<Star key={n} size={15} fill={n<=value?'currentColor':'none'}/>)}</div>}
 export default function Home(){return <LocaleProvider><Journal/></LocaleProvider>}
@@ -82,19 +96,21 @@ function Journal(){
  const [brewOpen,setBrewOpen]=useState(false),[brewDraft,setBrewDraft]=useState<any>({}),[brewPhotoBusy,setBrewPhotoBusy]=useState(false),[brewPhotoEdit,setBrewPhotoEdit]=useState<{source:string;cutout:boolean}|null>(null),[deleteId,setDeleteId]=useState<{id:string;kind:string}|null>(null);
  async function refresh(){try{const data=await api('/api/journal');setBeans(data.beans);setCatalog(data.catalog);setBrews(data.brews);setTasted(data.tasted||[]);if(!atlasInitialized.current){setAtlasView(data.tasted?.length?'tasted':'discover');atlasInitialized.current=true;}setFavorites(data.favorites||[]);setError('')}catch(e){setError((e as Error).message)}finally{setLoading(false)}}
  useEffect(()=>{runDevSeed().catch(()=>false).finally(refresh)},[]);
+ const [cloud,setCloud]=useState(cloudStatus());
+ useEffect(()=>{const changed=()=>{refresh()};window.addEventListener(cloudChangedEvent,changed);const off=onCloudStatus(()=>setCloud(cloudStatus()));startCloudSync();return()=>{window.removeEventListener(cloudChangedEvent,changed);off()}},[]);
  useEffect(()=>{if(tab!=='beans'||loading){setBeanShelfWaving(false);return}setBeanShelfWaving(false);const start=window.setTimeout(()=>setBeanShelfWaving(true),60),stop=window.setTimeout(()=>setBeanShelfWaving(false),2600);return()=>{window.clearTimeout(start);window.clearTimeout(stop)}},[tab,loading]);
  useEffect(()=>{if(!file){setPreview('');return}const url=URL.createObjectURL(file);setPreview(url);return()=>URL.revokeObjectURL(url)},[file]);
  useEffect(()=>()=>{if(monthReport)URL.revokeObjectURL(monthReport.url)},[monthReport]);
  useEffect(()=>{const ctx=(document as any).modelContext;if(!ctx?.registerTool)return;const life=new AbortController();try{Promise.resolve(ctx.registerTool({name:'start_coffee_bean_collection',description:'打开新增咖啡豆表单；不会保存记录。',inputSchema:{type:'object',properties:{},additionalProperties:false},annotations:{readOnlyHint:false},execute(input:unknown){if(!input||typeof input!=='object'||Object.keys(input).length)throw new Error('Expected an empty object');const next={...fresh};beanInitialDraft.current=JSON.stringify(next);setEditing(null);setDraft(next);setFile(null);setFormError('');setBeanOpen(true);return {opened:true,saved:false}}},{signal:life.signal})).catch(()=>{})}catch{}return()=>life.abort()},[]);
- function startBean(b?:Bean,asCatalog=false){const next=b?{...fresh,...b,...editableBeanNames(b),...editableBeanInfo(b),bagColor:bagColorIndex(b,!!displayedArt(b))}:{...fresh,recordType:asCatalog?'catalog':'bean',bagColor:randomBagColor()};beanInitialDraft.current=JSON.stringify(next);setSaveToCatalog(!b);setPickerOpen(false);setEditing(b?.id||null);setDraft(next);setFile(null);setFormError('');setBeanOpen(true)}
- function startBrew(id?:string,forToday=false){setEditingBrew(null);const available=beans.filter(bean=>bean.status!=='已喝完'),last=brews.find(brew=>available.some(bean=>bean.id===brew.beanId)),preference=brewPreference(),kind=preference.kind==='milk'||preference.kind==='pourOver'?preference.kind:last?.kind||'pourOver',beanId=id&&available.some(bean=>bean.id===id)?id:(available.some(b=>b.id===preference.beanId)?preference.beanId:available.some(b=>b.id===last?.beanId)?last!.beanId:available[0]?.id)||'',next={...brewDraftFor(kind,brews),beanId,date:!forToday&&tab==='brews'&&brewView==='calendar'?dateKey(calendarDay):dateKey(new Date()),notes:'',rating:0};rememberBrewPreference(kind,beanId);brewInitialDraft.current=JSON.stringify(next);setBrewDraft(next);setFormError('');setBrewOpen(true)}
+ function startBean(b?:Bean,asCatalog=false){const next=b?{...fresh,...b,...editableBeanNames(b),...editableBeanInfo(b),bagColor:bagColorIndex(b,!!displayedArt(b))}:{...fresh,recordType:asCatalog?'catalog':'bean',bagColor:randomBagColor(),...(asCatalog?{roast:rememberedBean().roast}:rememberedBean())};beanInitialDraft.current=JSON.stringify(next);setSaveToCatalog(!b);setPickerOpen(false);setEditing(b?.id||null);setDraft(next);setFile(null);setFormError('');setBeanOpen(true)}
+ function startBrew(id?:string,forToday=false){setEditingBrew(null);const available=beans.filter(bean=>bean.status!=='已喝完'),last=brews.find(brew=>available.some(bean=>bean.id===brew.beanId)),preference=brewPreference(),kind=preference.kind==='milk'||preference.kind==='pourOver'?preference.kind:last?.kind||'pourOver',beanId=id&&available.some(bean=>bean.id===id)?id:(available.some(b=>b.id===preference.beanId)?preference.beanId:available.some(b=>b.id===last?.beanId)?last!.beanId:available[0]?.id)||'',next={...brewDraftFor(kind,brews,rememberedBrew(kind,beanId)),beanId,date:!forToday&&tab==='brews'&&brewView==='calendar'?dateKey(calendarDay):dateKey(new Date()),notes:'',rating:0};rememberBrewPreference(kind,beanId);brewInitialDraft.current=JSON.stringify(next);setBrewDraft(next);setFormError('');setBrewOpen(true)}
  function editBrew(b:Brew){const next={...b,kind:b.kind||'pourOver'};brewInitialDraft.current=JSON.stringify(next);setEditingBrew(b.id);setBrewDraft(next);setFormError('');setBrewOpen(true)}
- function changeBrewKind(kind:BrewKind){rememberBrewPreference(kind,brewDraft.beanId);if(kind===brewDraft.kind)return;setBrewDraft((draft:any)=>({...draft,...brewDraftFor(kind,brews)}))}
+ function changeBrewKind(kind:BrewKind){rememberBrewPreference(kind,brewDraft.beanId);if(kind===brewDraft.kind)return;setBrewDraft((draft:any)=>({...draft,...brewDraftFor(kind,brews,rememberedBrew(kind,draft.beanId))}))}
  async function addBrewPhoto(file?:File){if(!file)return;setBrewPhotoBusy(true);setFormError('');try{const sticker=await makeCoffeeSticker(file);setBrewPhotoEdit({source:sticker.photo,cutout:sticker.photoCutout})}catch(error){setFormError((error as Error).message)}finally{setBrewPhotoBusy(false)}}
- async function saveBean(e:FormEvent){e.preventDefault();if(!roastOptions.includes(draft.roast)){setFormError('先选一个烘焙度');return;}if(draft.recordType!=='catalog'&&draft.roastDate>dateKey(new Date())){setFormError('烘焙日期不能在未来');return;}setBusy(true);setFormError('');try{let key=draft.photo;if(file){const f=new FormData();f.set('photo',file);key=(await api('/api/photos',{method:'POST',body:f})).key;setDraft((d:any)=>({...d,photo:key}));setFile(null)}const previous=editing?beans.find(bean=>bean.id===editing):undefined;const data={...draft,...(draft.recordType==='catalog'&&!editing?{roastDate:'',status:'未开封',notes:''}:{}),roaster:draft.roaster.trim(),weight:draft.recordType==='catalog'||draft.weight===''||draft.weight==null?undefined:Number(draft.weight),stockAdjustment:draft.recordType==='catalog'?undefined:draft.stockAdjustment,finishedDate:draft.recordType==='catalog'||draft.status!=='已喝完'?'':draft.finishedDate||previous?.finishedDate||dateKey(new Date()),nameEn:draft.nameEn?.trim()||'',name:draft.name.trim()||draft.nameEn?.trim()||randomBeanName(language,[...beans,...catalog].map(b=>b.name)),photo:key};const saved=await api('/api/journal',{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'bean',id:editing,data,saveToCatalog:!editing&&saveToCatalog&&draft.recordType!=='catalog'&&!draft.catalogId})});if(!editing&&draft.recordType==='catalog')setAtlasView('discover');setBeanOpen(false);if(!editing)setTab(draft.recordType==='catalog'?'catalog':'beans');await refresh();toast.success(t(editing?'豆子资料已更新':draft.recordType==='catalog'?'已加入豆子合集':'已放进豆仓'))}catch(e){setFormError((e as Error).message)}finally{setBusy(false)}}
- async function saveBrew(e:FormEvent){e.preventDefault();if(!Number.isFinite(Number(brewDraft.dose))||Number(brewDraft.dose)<=0||Number(brewDraft.dose)>200){setFormError('请填写粉量（大于 0，最多 200 g）');return}setBusy(true);setFormError('');try{await api('/api/journal',{method:editingBrew?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'brew',id:editingBrew,data:brewPayload(brewDraft)})});setBrewOpen(false);const savedDate=new Date(brewDraft.date+'T12:00:00');setCalendarDay(savedDate);setCalendarMonth(savedDate);await refresh();toast.success(t(editingBrew?'咖啡记录已更新':'这杯咖啡，记下了'))}catch(e){setFormError((e as Error).message)}finally{setBusy(false)}}
+ async function saveBean(e:FormEvent){e.preventDefault();if(!roastOptions.includes(draft.roast)){setFormError('先选一个烘焙度');return;}if(draft.recordType!=='catalog'&&draft.roastDate>dateKey(new Date())){setFormError('烘焙日期不能在未来');return;}const restDays=draft.recordType==='catalog'?undefined:restValue(draft.restDays);if(restDays!==undefined&&!(Number.isInteger(restDays)&&restDays>=0&&restDays<=90)){setFormError('养豆天数请填 0–90 的整数');return;}setBusy(true);setFormError('');try{let key=draft.photo;if(file){const f=new FormData();f.set('photo',file);key=(await api('/api/photos',{method:'POST',body:f})).key;setDraft((d:any)=>({...d,photo:key}));setFile(null)}const previous=editing?beans.find(bean=>bean.id===editing):undefined;const data={...draft,...(draft.recordType==='catalog'&&!editing?{roastDate:'',status:'未开封',notes:''}:{}),roaster:draft.roaster.trim(),weight:draft.recordType==='catalog'||draft.weight===''||draft.weight==null?undefined:Number(draft.weight),stockAdjustment:draft.recordType==='catalog'?undefined:draft.stockAdjustment,restDays,finishedDate:draft.recordType==='catalog'||draft.status!=='已喝完'?'':draft.finishedDate||previous?.finishedDate||dateKey(new Date()),nameEn:draft.nameEn?.trim()||'',name:draft.name.trim()||draft.nameEn?.trim()||randomBeanName(language,[...beans,...catalog].map(b=>b.name)),photo:key};const saved=await api('/api/journal',{method:editing?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'bean',id:editing,data,saveToCatalog:!editing&&saveToCatalog&&draft.recordType!=='catalog'&&!draft.catalogId})});if(!editing&&draft.recordType!=='catalog')rememberBeanPreference(data.roast,data.weight,restDays);if(!editing&&draft.recordType==='catalog')setAtlasView('discover');setBeanOpen(false);if(!editing)setTab(draft.recordType==='catalog'?'catalog':'beans');await refresh();toast.success(t(editing?'豆子资料已更新':draft.recordType==='catalog'?'已加入豆子合集':'已放进豆仓'))}catch(e){setFormError((e as Error).message)}finally{setBusy(false)}}
+ async function saveBrew(e:FormEvent){e.preventDefault();if(!Number.isFinite(Number(brewDraft.dose))||Number(brewDraft.dose)<=0||Number(brewDraft.dose)>200){setFormError('请填写粉量（大于 0，最多 200 g）');return}setBusy(true);setFormError('');try{await api('/api/journal',{method:editingBrew?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'brew',id:editingBrew,data:brewPayload(brewDraft)})});if(!editingBrew)rememberBrewSettings(brewDraft.kind||'pourOver',brewDraft.beanId,Number(brewDraft.dose),(brewDraft.grind||'').trim());setBrewOpen(false);const savedDate=new Date(brewDraft.date+'T12:00:00');setCalendarDay(savedDate);setCalendarMonth(savedDate);await refresh();toast.success(t(editingBrew?'咖啡记录已更新':'这杯咖啡，记下了'))}catch(e){setFormError((e as Error).message)}finally{setBusy(false)}}
  async function remove(){if(!deleteId)return;setBusy(true);try{await api('/api/journal',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify(deleteId)});if(deleteId.kind==='bean')setDetail(null);if(deleteId.kind==='catalog'){setBeanOpen(false);setEditing(null)}if(deleteId.kind==='brew'){setBrewOpen(false);setEditingBrew(null)}setDeleteId(null);await refresh();toast.success(t('记录已删除'))}catch(e){toast.error(t((e as Error).message))}finally{setBusy(false)}}
- function chooseCatalog(b:Bean){const next={...fresh,...b,...editableBeanNames(b),...editableBeanInfo(b),weight:undefined,stockAdjustment:undefined,id:undefined,recordType:'bean',catalogId:b.id,bagColor:randomBagColor(),roastDate:'',status:'未开封',rating:0,repurchase:false,notes:''};beanInitialDraft.current=JSON.stringify(next);setEditing(null);setDraft(next);setSaveToCatalog(false);setPickerOpen(false);setFile(null);setFormError('');setBeanOpen(true)}
+ function chooseCatalog(b:Bean){const next={...fresh,...b,...editableBeanNames(b),...editableBeanInfo(b),weight:rememberedBean(b.roast).weight,restDays:rememberedBean(b.roast).restDays,stockAdjustment:undefined,id:undefined,recordType:'bean',catalogId:b.id,bagColor:randomBagColor(),roastDate:'',status:'未开封',rating:0,repurchase:false,notes:''};beanInitialDraft.current=JSON.stringify(next);setEditing(null);setDraft(next);setSaveToCatalog(false);setPickerOpen(false);setFile(null);setFormError('');setBeanOpen(true)}
  const catalogShown=catalog.filter(b=>matchesFilters(b,filters)&&[b.name,...Object.values(bilingualBean(b)),b.roaster,b.origin,b.flavor,b.variety,t(b.roast),t(b.process)].join(' ').toLowerCase().includes(catalogQuery.trim().toLowerCase()));
  const tastedShown=tasted.filter(x=>[label(x.bean),otherLabel(x.bean),x.bean.roaster,x.bean.flavor,x.bean.origin].join(' ').toLowerCase().includes(catalogQuery.trim().toLowerCase()));
  const memory=tasted.find(x=>x.id===tasteDetail);
@@ -128,7 +144,7 @@ function Journal(){
  async function openAnnualReport(){if(sharingMonth)return;const year=calendarMonth.getFullYear(),top=yearBeanCounts[0],text=monthlyReportText({language,month:String(year),cups:yearBrews.length,pourOvers:yearPourOvers,milks:yearMilks,beanCount:yearBeanCounts.length,topBean:top?{name:label(top.bean),count:top.count}:undefined});setSharingMonth(true);try{const blob=await createAnnualReportImage({language,year,cups:yearBrews.length,pourOvers:yearPourOvers,milks:yearMilks,days:yearStats.days,months:yearStats.months,drunkBags:reportBags(yearBrews),photos:photoStickerBrews.map(brew=>({id:brew.id,src:brew.photo!,cutout:brew.photoCutout}))}),name=`beanlet-${year}.png`;setMonthReport({blob,url:URL.createObjectURL(blob),name,text,title:`Beanlet · ${year}`})}catch{toast.error(t('分享失败，请再试一次'))}finally{setSharingMonth(false)}}
  async function shareMonthlyReport(){if(!monthReport)return;try{if((globalThis as any).Capacitor?.isNativePlatform?.()){const {shareNativeImage}=await import('@/lib/native-video');await shareNativeImage(monthReport.blob,monthReport.name,monthReport.title)}else{const file=new File([monthReport.blob],monthReport.name,{type:'image/png'}),shareData={title:monthReport.title,text:monthReport.text,files:[file]};if(navigator.share&&navigator.canShare?.(shareData))await navigator.share(shareData);else{const link=document.createElement('a');link.href=monthReport.url;link.download=monthReport.name;link.click();toast.success(t('月报图片已保存'))}}}catch(error){if((error as Error).name!=='AbortError')toast.error(t('分享失败，请再试一次'))}}
  async function toggleFinished(b:Bean){if(busy)return;setBusy(true);try{const finishing=b.status!=='已喝完';await api('/api/journal',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'bean',id:b.id,data:{...b,status:finishing?'已喝完':'正在喝',finishedDate:finishing?b.finishedDate||dateKey(new Date()):''}})});await refresh();toast.success(t(b.status==='已喝完'?'放回豆架了':'收进喝完的豆子了'))}catch(e){toast.error(t((e as Error).message))}finally{setBusy(false)}}
- function beanCard(b:Bean,group?:Bean[]){const stock=beanStock(b,brews),fade=stock?1-stock.ratio:0,coverFade=((14+fade*184)-66)/92;return <button className="bean-card" key={b.id} aria-label={label(b)+(group?` · ${group.length} ${t('包')}`:'')} onClick={()=>{setReturnToTaste(null);if(group){setTasteDetail(coffeeIdentity(b))}else setDetail(b.id)}}><div className='coffee-bag' style={{'--bag-fill':paletteFor(b).fill,'--bag-line':paletteFor(b).line,'--bag-side':paletteFor(b).side} as CSSProperties}>{group&&group.length>1&&<span className="finished-count"><span className="finished-times">×</span>{group.length}</span>}{b.roaster&&<span className="bag-brand-tag" title={b.roaster}><span>{b.roaster}</span></span>}<BagPaper ratio={stock?.ratio} sway={beanShelfWaving}/><span style={stock?{'--water-stop':`${coverFade*100}%`,maskImage:'linear-gradient(var(--water-angle,172.47deg),rgba(0,0,0,.18) var(--water-stop),#000 var(--water-stop))'} as CSSProperties:undefined} className={'coffee-bag-label label-shape-'+stickerShape(b.id)+(b.photo||displayedArt(b)?' has-picture':'')+(beanShelfWaving?' is-swaying':'')}><BeanVisual bean={b}/></span>{b.roastDate&&(!group||group.length===1)&&<span className="bag-date-tag" title={t('烘焙于')+' '+b.roastDate} aria-label={t('烘焙于')+' '+b.roastDate}><time dateTime={b.roastDate}>{b.roastDate.replaceAll('-','.')}</time></span>}<span className="bag-meta-row">{stock&&!group&&<span className="bag-remaining" aria-label={language==='en'?`${stock.remaining}g remaining`:`剩余 ${stock.remaining}g`}>{stock.remaining}<small>g</small></span>}</span>{isFavorite(b)&&<span className="bag-heart" aria-label={t("已收藏")}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.2 20.7C10.5 19.4 4.1 15.5 3.7 9.9 3.5 7.1 5.2 5.1 7.9 5c1.7-.1 3.3.8 4.2 2.2.8-1.6 2.3-2.7 4.2-2.8 2.7-.1 4.5 1.7 4.5 4.4.1 5.8-6.9 10.7-8.6 11.9Z"/></svg></span>}</div><div className="bean-info"><h3>{label(b)}</h3>{info(b,'flavor')&&<p className="shelf-name-secondary">{info(b,'flavor')}</p>}</div></button>}
+ function beanCard(b:Bean,group?:Bean[]){const phase=b.status==='已喝完'?undefined:shelfPhase(flavorWindow(b.roast,b.roastDate,today,b.roaster,b.restDays)),stock=beanStock(b,brews),fade=stock?1-stock.ratio:0,coverFade=((14+fade*184)-66)/92;return <button className="bean-card" key={b.id} aria-label={label(b)+(group?` · ${group.length} ${t('包')}`:'')} onClick={()=>{setReturnToTaste(null);if(group){setTasteDetail(coffeeIdentity(b))}else setDetail(b.id)}}><div className='coffee-bag' style={{'--bag-fill':paletteFor(b).fill,'--bag-line':paletteFor(b).line,'--bag-side':paletteFor(b).side} as CSSProperties}>{group&&group.length>1&&<span className="finished-count"><span className="finished-times">×</span>{group.length}</span>}{b.roaster&&<span className="bag-brand-tag" title={b.roaster}><span>{b.roaster}</span></span>}<BagPaper ratio={stock?.ratio} sway={beanShelfWaving}/><span style={stock?{'--water-stop':`${coverFade*100}%`,maskImage:'linear-gradient(var(--water-angle,172.47deg),rgba(0,0,0,.18) var(--water-stop),#000 var(--water-stop))'} as CSSProperties:undefined} className={'coffee-bag-label label-shape-'+stickerShape(b.id)+(b.photo||displayedArt(b)?' has-picture':'')+(beanShelfWaving?' is-swaying':'')}><BeanVisual bean={b}/></span>{b.roastDate&&(!group||group.length===1)&&<span className="bag-date-tag" title={t('烘焙于')+' '+b.roastDate} aria-label={t('烘焙于')+' '+b.roastDate}><time dateTime={b.roastDate}>{b.roastDate.replaceAll('-','.')}</time></span>}<span className="bag-meta-row">{stock&&!group&&<span className="bag-remaining" aria-label={language==='en'?`${stock.remaining}g remaining`:`剩余 ${stock.remaining}g`}>{stock.remaining}<small>g</small></span>}</span>{isFavorite(b)&&<span className="bag-heart" aria-label={t("已收藏")}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.2 20.7C10.5 19.4 4.1 15.5 3.7 9.9 3.5 7.1 5.2 5.1 7.9 5c1.7-.1 3.3.8 4.2 2.2.8-1.6 2.3-2.7 4.2-2.8 2.7-.1 4.5 1.7 4.5 4.4.1 5.8-6.9 10.7-8.6 11.9Z"/></svg></span>}</div><div className="bean-info"><h3>{label(b)}</h3>{info(b,'flavor')&&<p className="shelf-name-secondary">{info(b,'flavor')}</p>}{phase&&<span className={'bag-phase is-'+phase.phase}>{t(phase.label)}</span>}</div></button>}
 
  function brewCard(b:Brew,hideDate=false,inMemory=false){const hasDetails=!!(b.dose||b.grind||b.time||b.notes||b.rating||b.photo||(b.kind==='milk'?(b.yield||b.milkAmount||(b.milkType&&b.milkType!=='未记录')||(b.serving&&b.serving!=='未记录')):(b.water||b.temp)));return <div key={b.id} className="brew-swipe-row"><PressableRecord className={'brew-card'+(hasDetails?'':' brew-card-compact')+(inMemory?' memory-coffee-record':'')+(b.photo?' has-brew-photo':'')} label={label(beans.find(x=>x.id===b.beanId))+' · '+b.date+' · '+t('点击编辑记录')} onClick={()=>editBrew(b)}>{!inMemory&&<span className="brew-bean" style={{backgroundColor:paletteFor(beans.find(x=>x.id===b.beanId)||{id:b.beanId}).fill}} aria-hidden="true"><BeanVisual bean={beans.find(x=>x.id===b.beanId)}/></span>}{b.photo&&<span className={'brew-photo-sticker'+(b.photoCutout?' is-cutout':'')} aria-label={t('这杯咖啡的照片')}><img src={b.photo} alt=""/></span>}<div className="brew-body"><div className="row"><h3>{inMemory?<time dateTime={b.date}>{new Intl.DateTimeFormat(language==='en'?'en-US':'zh-CN',{year:'numeric',month:'short',day:'numeric'}).format(new Date(b.date+'T12:00:00'))}</time>:label(beans.find(x=>x.id===b.beanId))}</h3></div>{!hideDate&&!inMemory&&<span className="meta brew-record-date">{b.date}</span>}<div className="parameters">{b.dose!=null&&<span>{b.dose} {t('g 粉')}</span>}{b.kind==='milk'?<>{b.yield!=null&&<span>{t('出液')} {b.yield} g</span>}{b.milkAmount!=null&&<span>{t('奶量')} {b.milkAmount} ml</span>}{b.milkType&&b.milkType!=='未记录'&&<span>{t(b.milkType)}</span>}{b.serving&&b.serving!=='未记录'&&<span>{t(b.serving)}</span>}</>:<>{b.water!=null&&<span>{b.water} {t('ml 水')}</span>}{b.temp!=null&&<span>{b.temp} °C</span>}{!!b.dose&&!!b.water&&<span>1 : {(b.water/b.dose).toFixed(1)}</span>}</>}</div>{(b.grind||b.time)&&<p className="meta brew-method">{[b.grind&&t(`研磨 ${b.grind}`),b.time&&t(`用时 ${b.time}`)].filter(Boolean).join(' · ')}</p>}{b.notes&&<p className="notes">{b.notes}</p>}{b.rating>0&&<Rating value={b.rating}/>}</div></PressableRecord></div>}
  const [widgetLink,setWidgetLink]=useState<string|null>(null);
@@ -954,11 +970,33 @@ function Journal(){
          </RadioGroup>
          <p className="meta">{t("语言偏好保存在这台设备上")}</p>
          <div className="backup-actions">
-           <p className="backup-note">
-             {t(
-               "豆子、照片和咖啡记录仅保存在当前浏览器。清理浏览器数据前请导出备份。",
-             )}
-           </p>
+           {cloudSyncSupported() ? (
+             <div className="cloud-sync">
+               <p className="backup-note">
+                 {t(cloudLabels[cloud.status])}
+                 {cloud.status === "synced" && (
+                   <>
+                     {" · "}
+                     <time dateTime={new Date(cloud.syncedAt).toISOString()}>
+                       {new Date(cloud.syncedAt).toLocaleTimeString(language === "en" ? "en-US" : "zh-CN", { hour: "2-digit", minute: "2-digit" })}
+                     </time>
+                   </>
+                 )}
+               </p>
+               <p className="backup-note">
+                 {t("登录同一个 Apple 账户的设备会自动同步豆子、照片和咖啡记录。")}
+               </p>
+               <button className="secondary" disabled={cloud.status === "syncing"} onClick={() => syncNow()}>
+                 {t("立即同步")}
+               </button>
+             </div>
+           ) : (
+             <p className="backup-note">
+               {t(
+                 "豆子、照片和咖啡记录仅保存在当前浏览器。清理浏览器数据前请导出备份。",
+               )}
+             </p>
+           )}
            <button
              className="secondary"
              disabled={busy}
@@ -1124,7 +1162,15 @@ function Journal(){
                  label={t("烘焙度 · 必选")}
                  value={draft.roast}
                  options={roastOptions}
-                 onChange={(s) => d("roast", s)}
+                 onChange={(s) =>
+                   editing
+                     ? d("roast", s)
+                     : setDraft((current: any) => ({
+                         ...current,
+                         roast: s,
+                         restDays: rememberedBean(s).restDays ?? "",
+                       }))
+                 }
                />
                {draft.recordType !== "catalog" && (
                  <label className="field full">
@@ -1174,6 +1220,26 @@ function Journal(){
                </div>
              )}
              {draft.recordType !== "catalog" && draft.roast && (
+               <label className="field rest-days-field">
+                 {t("养豆天数（可选）")}
+                 <input
+                   type="number"
+                   min="0"
+                   max="90"
+                   step="1"
+                   inputMode="numeric"
+                   value={draft.restDays ?? ""}
+                   placeholder={t(`建议 ${roastGuide(draft.roast, draft.roaster)?.rest ?? 0} 天`)}
+                   onChange={(e) =>
+                     d(
+                       "restDays",
+                       e.target.value === "" ? "" : Number(e.target.value),
+                     )
+                   }
+                 />
+               </label>
+             )}
+             {draft.recordType !== "catalog" && draft.roast && (
                <div className="draft-guide">
                  <span>
                    {t(
@@ -1182,6 +1248,7 @@ function Journal(){
                        draft.roastDate,
                        dateKey(new Date()),
                        draft.roaster,
+                       restValue(draft.restDays),
                      ).label,
                    )}
                  </span>
@@ -1192,6 +1259,7 @@ function Journal(){
                        draft.roastDate,
                        dateKey(new Date()),
                        draft.roaster,
+                       restValue(draft.restDays),
                      ).dates,
                    )}
                  </small>
@@ -1470,8 +1538,13 @@ function Journal(){
                <Select
                  value={brewDraft.beanId}
                  onValueChange={(s) => {
-                   bd("beanId", s);
-                   rememberBrewPreference(brewDraft.kind || "pourOver", s);
+                   const kind = brewDraft.kind || "pourOver";
+                   setBrewDraft((draft: any) => ({
+                     ...draft,
+                     beanId: s,
+                     grind: editingBrew ? draft.grind : rememberedBrew(kind, s).grind ?? draft.grind,
+                   }));
+                   rememberBrewPreference(kind, s);
                  }}
                >
                  <SelectTrigger
@@ -1537,6 +1610,15 @@ function Journal(){
                    placeholder={t("填写咖啡粉克数")}
                  />
                </label>
+               <label className="field full">
+                 {t("研磨度")}
+                 <input
+                   maxLength={100}
+                   value={brewDraft.grind || ""}
+                   onChange={(e) => bd("grind", e.target.value)}
+                   placeholder={t("例如：C40 24 格")}
+                 />
+               </label>
              </div>
              {brewDraft.kind === "pourOver" && !brewWorkspace && (
                <PourTimer
@@ -1548,7 +1630,7 @@ function Journal(){
                      water: result.water,
                      temp: result.temp ?? draft.temp,
                      time: result.time,
-                     grind: result.grind,
+                     grind: draft.grind || result.grind,
                    }))
                  }
                />
@@ -1599,7 +1681,7 @@ function Journal(){
                      water: result.water,
                      temp: result.temp ?? draft.temp,
                      time: result.time,
-                     grind: result.grind,
+                     grind: draft.grind || result.grind,
                    }))
                  }
                  />

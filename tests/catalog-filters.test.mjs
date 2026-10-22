@@ -7,7 +7,7 @@ assert.equal(countryOf(''),'未记录');
 assert.equal(processOf('Anaerobic honey'),'蜜处理');
 assert.equal(processOf('Double anaerobic thermal shock'),'发酵处理');
 assert.equal(processOf('Natural, dark room drying'),'日晒');
-assert.equal(builtInCatalog.filter(b=>matchesFilters(b,emptyFilters)).length,40);
+assert.equal(builtInCatalog.filter(b=>matchesFilters(b,emptyFilters)).length,56);
 const filtered=builtInCatalog.filter(b=>matchesFilters(b,{brand:'Hydrangea',roast:'浅烘焙',origin:'中国',process:'蜜处理'}));
 assert.equal(filtered.length,1);
 assert.match(bilingualBean(filtered[0]).en,/Gaosanlin/);
@@ -21,7 +21,8 @@ assert.equal(builtInCatalog.filter(b=>b.roaster==='Black & White Coffee Roasters
 assert.equal(builtInCatalog.filter(b=>b.roaster==='Heart Coffee Roasters').length,3);
 assert.equal(builtInCatalog.filter(b=>b.roaster==='Counter Culture Coffee').length,8);
 assert.equal(builtInCatalog.filter(b=>b.roaster==='George Howell Coffee').length,5);
-for(const b of builtInCatalog)assert.ok(originalArt(b),`${b.name} should have a bundled watercolor cover`);
+// Peet's and Blue Bottle covers are still to be painted (see design/bean-art-brief.md).
+for(const b of builtInCatalog.filter(b=>!/^(peets|blue-bottle)-/.test(b.id)))assert.ok(originalArt(b),`${b.name} should have a bundled watercolor cover`);
 assert.equal(originalArt(builtInCatalog.find(b=>b.id==='onyx-monarch')),'./watercolor-art/onyx-monarch.jpg');
 assert.equal(bilingualBean({...builtInCatalog[0],name:'我的自定义名'}).en,'我的自定义名');
 console.log('Catalog: bilingual names, custom names, combined filters, reset, empty results passed');
@@ -58,3 +59,6 @@ for(const b of builtInCatalog){
 }
 assert.equal(beanInfo({...letty,flavor:'Custom tasting notes'},'flavor','zh'),'Custom tasting notes');
 assert.equal(beanInfo({roaster:'Other',flavor:'茉莉'},'flavor','zh'),'茉莉');
+const {existsSync}=await import('node:fs');
+for(const b of builtInCatalog){const art=originalArt(b);if(art)assert.ok(existsSync(new URL('../public/'+art.slice(2),import.meta.url)),'missing cover '+art);else assert.match(b.id,/^(peets|blue-bottle)-/)}
+console.log('Covers: every built-in cover file exists; unpainted ones fall back to stickers');

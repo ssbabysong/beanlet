@@ -17,3 +17,8 @@ assert.equal(brewDraftFor('pourOver',[]).dose,15);
 assert.equal(brewDraftFor('milk',[]).dose,16);
 assert.equal(brewDraftFor('pourOver',[{...old,dose:22}]).dose,15);
 assert.equal(brewDraftFor('milk',[{...old,kind:'milk',dose:20}]).dose,16);
+assert.equal(brewDraftFor('pourOver',[],{dose:22,grind:'C40 24 格'}).dose,22);
+assert.equal(brewDraftFor('pourOver',[],{dose:22,grind:'C40 24 格'}).grind,'C40 24 格');
+assert.equal(brewDraftFor('milk',[],{dose:0}).dose,16);
+assert.equal(brewDraftFor('milk',[],{}).grind,'');
+console.log('Remembered dose and grind passed');

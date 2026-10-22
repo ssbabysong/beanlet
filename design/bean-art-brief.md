@@ -1,7 +1,7 @@
 # Beanlet 图鉴插画：给 Codex 的说明
 
 ## 任务
-Beanlet 图鉴里的 40 款咖啡豆现已使用每款独立的**原创淡水彩插画**；旧的烘焙商商品图已从项目中移除。
+Beanlet 图鉴里的咖啡豆现已使用每款独立的**原创淡水彩插画**；旧的烘焙商商品图已从项目中移除。
 
 ## 版权要求（最重要）
 - **不要参考、临摹或改画任何烘焙商的包装、标签、商品照片**，也不要把原图转成水彩。构图、图案、角色、字体、logo 一律不能出现。
@@ -338,3 +338,133 @@ Use case: illustration. Asset: one square illustration for a gentle iOS coffee j
 - 风味：Maple syrup, orange, milk chocolate
 - 画面建议：用风味里的 Maple syrup、orange、milk chocolate 组成一小组静物，可以带一两颗新鲜咖啡果或一枝咖啡叶；背景可轻轻点出 Costa Rica 的风物（山、植物或天空的颜色），点到为止。
 - 色调参考：#8D4619 #F5E9D9
+
+## 2026-10-22 新增：Peet's 与 Blue Bottle（16 款）
+
+### Major Dickason's
+- id：`peets-major-dickasons`
+- 烘焙商：Peet's Coffee；烘焙度：深烘焙
+- 产地：Americas and Indo-Pacific；处理法：Blend
+- 风味：Earth, spice, everything
+- 画面建议：用风味里的 Earth、spice、everything 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色
+
+### Big Bang
+- id：`peets-big-bang`
+- 烘焙商：Peet's Coffee；烘焙度：中烘焙
+- 产地：Americas and Africa/Arabia；处理法：Blend
+- 风味：Fruit cup, graham crust, milk chocolate
+- 画面建议：用风味里的 Fruit cup、graham crust、milk chocolate 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色
+
+### House Blend
+- id：`peets-house-blend`
+- 烘焙商：Peet's Coffee；烘焙度：深烘焙
+- 产地：Latin America；处理法：Blend
+- 风味：Citrus, spice, toast
+- 画面建议：用风味里的 Citrus、spice、toast 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色
+
+### French Roast
+- id：`peets-french-roast`
+- 烘焙商：Peet's Coffee；烘焙度：深烘焙
+- 产地：Americas；处理法：Blend
+- 风味：Dark chocolate, burnt sugar, smoke
+- 画面建议：用风味里的 Dark chocolate、burnt sugar、smoke 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色
+
+### Café Domingo
+- id：`peets-cafe-domingo`
+- 烘焙商：Peet's Coffee；烘焙度：中烘焙
+- 产地：Three Latin American coffees；处理法：Blend
+- 风味：Toffee, nougat, toast
+- 画面建议：用风味里的 Toffee、nougat、toast 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色
+
+### Luminosa
+- id：`peets-luminosa`
+- 烘焙商：Peet's Coffee；烘焙度：浅烘焙
+- 产地：Colombia and Ethiopia；处理法：Blend
+- 风味：Stone fruit, passion flower, cacao
+- 画面建议：用风味里的 Stone fruit、passion flower、cacao 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色
+
+### Sun Catcher
+- id：`peets-sun-catcher`
+- 烘焙商：Peet's Coffee；烘焙度：浅烘焙
+- 产地：Brazil and Kenya；处理法：Blend
+- 风味：Strawberry jam, honeysuckle, citrus
+- 画面建议：用风味里的 Strawberry jam、honeysuckle、citrus 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色
+
+### Off the Grid
+- id：`peets-off-the-grid`
+- 烘焙商：Peet's Coffee；烘焙度：中浅烘焙
+- 产地：Colombia and El Salvador；处理法：Blend
+- 风味：Pear, almond butter, milk chocolate
+- 画面建议：用风味里的 Pear、almond butter、milk chocolate 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色
+
+### Hayes Valley Espresso
+- id：`blue-bottle-hayes-valley-espresso`
+- 烘焙商：Blue Bottle Coffee；烘焙度：深烘焙
+- 产地：Seasonal origins；处理法：Espresso blend
+- 风味：Baking chocolate, orange zest, brown sugar
+- 画面建议：用风味里的 Baking chocolate、orange zest、brown sugar 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色
+
+### Giant Steps
+- id：`blue-bottle-giant-steps`
+- 烘焙商：Blue Bottle Coffee；烘焙度：深烘焙
+- 产地：Seasonal origins；处理法：Blend
+- 风味：Cocoa, toasted marshmallow, graham cracker
+- 画面建议：用风味里的 Cocoa、toasted marshmallow、graham cracker 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色
+
+### Bella Donovan
+- id：`blue-bottle-bella-donovan`
+- 烘焙商：Blue Bottle Coffee；烘焙度：深烘焙
+- 产地：Includes Ethiopia；处理法：Organic blend with a natural coffee
+- 风味：Raspberry, chocolate, molasses
+- 画面建议：用风味里的 Raspberry、chocolate、molasses 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色
+
+### Three Africas
+- id：`blue-bottle-three-africas`
+- 烘焙商：Blue Bottle Coffee；烘焙度：中烘焙
+- 产地：African origins；处理法：Blend
+- 风味：Golden raisin, winey blueberry, lemon zest
+- 画面建议：用风味里的 Golden raisin、winey blueberry、lemon zest 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色
+
+### Beta Blend
+- id：`blue-bottle-beta-blend`
+- 烘焙商：Blue Bottle Coffee；烘焙度：浅烘焙
+- 产地：Seasonal origins；处理法：Blend
+- 风味：Candied orange, milk chocolate, white peach
+- 画面建议：用风味里的 Candied orange、milk chocolate、white peach 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色
+
+### 17ft Ceiling Espresso
+- id：`blue-bottle-17ft-ceiling`
+- 烘焙商：Blue Bottle Coffee；烘焙度：深烘焙
+- 产地：Seasonal origins；处理法：Espresso blend
+- 风味：Caramel, almond, dried cherry
+- 画面建议：用风味里的 Caramel、almond、dried cherry 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色
+
+### Night Light Decaf
+- id：`blue-bottle-night-light-decaf`
+- 烘焙商：Blue Bottle Coffee；烘焙度：中烘焙
+- 产地：Seasonal origins；处理法：Decaf
+- 风味：Crème brûlée, vanilla, key lime
+- 画面建议：用风味里的 Crème brûlée、vanilla、key lime 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色
+
+### Tokyo Kissa
+- id：`blue-bottle-tokyo-kissa`
+- 烘焙商：Blue Bottle Coffee；烘焙度：深烘焙
+- 产地：Seasonal origins；处理法：Blend
+- 风味：Bittersweet cocoa, toasted marshmallow, vanilla
+- 画面建议：用风味里的 Bittersweet cocoa、toasted marshmallow、vanilla 组成一小组静物；产地风物点到为止。
+- 色调参考：无，按风味配色

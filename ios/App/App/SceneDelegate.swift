@@ -75,6 +75,7 @@ class BeanletBridgeViewController: CAPBridgeViewController {
     override func capacitorDidLoad() {
         bridge?.registerPluginInstance(BeanletStickerPlugin())
         bridge?.registerPluginInstance(BeanletWidgetPlugin())
+        bridge?.registerPluginInstance(BeanletCloudPlugin())
         bridge?.registerPluginInstance(NativeTabsPlugin())
     }
 }
