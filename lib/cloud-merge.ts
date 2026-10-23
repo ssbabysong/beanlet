@@ -54,3 +54,25 @@ export function mergeStates<T extends Syncable>(local:T,remote:Syncable):T{
  out.brews=out.brews.filter((b:{beanId:string})=>beanIds.has(b.beanId));
  return out;
 }
+
+/** One record as it travels to and from CloudKit. `payload` is the record's JSON; deleted records have none. */
+export type CloudItem={key:string;stamp:number;deleted:boolean;payload?:string};
+
+/** Records whose latest change hasn't been handed to CloudKit yet. Records saved before sync existed count as very old. */
+export function outgoing(s:Syncable,sent:Record<string,number>):CloudItem[]{
+ const out:CloudItem[]=[];
+ for(const [key,{value}] of entries(s)){const stamp=s.clock?.[key]??1;if(sent[key]!==stamp)out.push({key,stamp,deleted:false,payload:JSON.stringify(value)})}
+ for(const [key,stamp] of Object.entries(s.removed||{}))if(sent[key]!==stamp)out.push({key,stamp,deleted:true});
+ return out;
+}
+
+/** Turns records from CloudKit into a partial journal for mergeStates; `valid` rejects anything malformed. */
+export function incoming(items:CloudItem[],valid:(collection:string,value:unknown)=>unknown):Syncable{
+ const s:any={beans:[],catalog:[],brews:[],tasted:[],favorites:[],hiddenCatalog:[],clock:{},removed:{}};
+ for(const item of items){
+  const name=item.key.slice(0,item.key.indexOf(':'));if(!(name in s)||name==='clock'||name==='removed')continue;
+  if(item.deleted){s.removed[item.key]=item.stamp;continue}
+  try{const value=valid(name,JSON.parse(item.payload||''));if(value===undefined)continue;s[name].push(value);s.clock[item.key]=item.stamp}catch{}
+ }
+ return s;
+}

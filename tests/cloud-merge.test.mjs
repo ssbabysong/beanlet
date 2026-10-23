@@ -38,3 +38,13 @@ const shuffled={...back,beans:[...back.beans].reverse().map(b=>({name:b.name,id:
 assert.ok(sameState(back,shuffled));
 assert.ok(sameState(mergeStates(back,shuffled),back));
 assert.ok(!sameState(back,{...back,favorites:['y']}));
+
+const {outgoing,incoming}=await import('../lib/cloud-merge.ts');
+const out=outgoing(back,{});
+assert.deepEqual(out.filter(x=>x.deleted).map(x=>x.key).sort(),Object.keys(back.removed).sort());
+assert.equal(JSON.parse(out.find(x=>x.key==='beans:b').payload).name,'B');
+assert.deepEqual(outgoing(back,Object.fromEntries(out.map(x=>[x.key,x.stamp]))),[]);
+const partial=incoming(out,(_,v)=>v);
+assert.ok(sameState(mergeStates({...base},partial),{...partial}));
+assert.equal(incoming([{key:'beans:z',stamp:1,deleted:false,payload:'nope'},{key:'clock:x',stamp:1,deleted:true}],(_,v)=>v).beans.length,0);
+console.log('Cloud items: outgoing changes, incoming partial journals and malformed records passed');

@@ -2,14 +2,49 @@ import UIKit
 import Capacitor
 import Vision
 import CoreImage
+import ImageIO
+import UniformTypeIdentifiers
 
 @objc(BeanletStickerPlugin)
 class BeanletStickerPlugin: CAPPlugin, CAPBridgedPlugin {
     let identifier = "BeanletStickerPlugin"
     let jsName = "BeanletSticker"
     let pluginMethods: [CAPPluginMethod] = [
-        CAPPluginMethod(name: "cutout", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "cutout", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "compress", returnType: CAPPluginReturnPromise)
     ]
+
+    /// Re-encodes a photo as HEIC, which keeps a sticker's transparency at a tenth of the PNG's size.
+    @objc func compress(_ call: CAPPluginCall) {
+        guard let dataURL = call.getString("dataUrl"),
+              let comma = dataURL.firstIndex(of: ","),
+              let data = Data(base64Encoded: String(dataURL[dataURL.index(after: comma)...])),
+              let source = CGImageSourceCreateWithData(data as CFData, nil) else {
+            call.reject("无法读取这张照片")
+            return
+        }
+        let maxSide = call.getInt("maxSide") ?? 1024
+        DispatchQueue.global(qos: .userInitiated).async {
+            let options: [CFString: Any] = [
+                kCGImageSourceCreateThumbnailFromImageAlways: true,
+                kCGImageSourceCreateThumbnailWithTransform: true,
+                kCGImageSourceThumbnailMaxPixelSize: maxSide
+            ]
+            let output = NSMutableData()
+            guard let image = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary),
+                  let destination = CGImageDestinationCreateWithData(output, UTType.heic.identifier as CFString, 1, nil) else {
+                call.reject("照片压缩失败")
+                return
+            }
+            CGImageDestinationAddImage(destination, image, [kCGImageDestinationLossyCompressionQuality: 0.75] as CFDictionary)
+            guard CGImageDestinationFinalize(destination) else {
+                call.reject("照片压缩失败")
+                return
+            }
+            let result = "data:image/heic;base64," + (output as Data).base64EncodedString()
+            DispatchQueue.main.async { call.resolve(["dataUrl": result]) }
+        }
+    }
 
     @objc func cutout(_ call: CAPPluginCall) {
         guard #available(iOS 17.0, *) else {

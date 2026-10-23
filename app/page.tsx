@@ -9,7 +9,7 @@ import {PourTimer} from '@/components/pour-timer';
 import {StockSlider} from '@/components/stock-slider';
 import {beanFinishedDate,beanStock,consumedBagFills} from '@/lib/bean-stock';
 import {randomBeanName} from '@/lib/bean-names';
-import {localApi as api,exportBackup,importBackup} from '@/lib/local-store';
+import {localApi as api,exportBackup,importBackup,compactStoredPhotos} from '@/lib/local-store';
 import { ArrowLeft,Coffee,Plus,BarChart3,Star,Camera,ChevronDown,ChevronLeft,ChevronRight,Heart,Pencil,Trash2,Droplets,Timer,ArrowUpRight,Share2,X } from 'lucide-react';
 import { Dialog,DialogContent,DialogTitle,DialogDescription } from '@/components/ui/dialog';
 import { Sheet,SheetContent,SheetTitle,SheetDescription } from '@/components/ui/sheet';
@@ -44,6 +44,7 @@ import {useStickerPilePhysics} from '@/components/use-sticker-pile-physics';
 import {buildWidgetSnapshot,parseWidgetLink} from '@/lib/widget-snapshot';
 import {onWidgetLink,syncWidgets} from '@/lib/native-widget';
 import {runDevSeed} from '@/lib/dev-seed';
+import {compactPhoto} from '@/lib/photo-compress';
 import {cloudChangedEvent,cloudStatus,cloudSyncSupported,onCloudStatus,startCloudSync,syncNow,type CloudStatus} from '@/lib/cloud-sync';
 import {hasNativeTabs,onNativeTabs,syncNativeBar,syncNativeTabs} from '@/lib/native-tabs';
 import {ResponsiveContainer,BarChart,Bar,XAxis,YAxis,Tooltip,PieChart,Pie,Cell} from 'recharts';
@@ -97,7 +98,7 @@ function Journal(){
  async function refresh(){try{const data=await api('/api/journal');setBeans(data.beans);setCatalog(data.catalog);setBrews(data.brews);setTasted(data.tasted||[]);if(!atlasInitialized.current){setAtlasView(data.tasted?.length?'tasted':'discover');atlasInitialized.current=true;}setFavorites(data.favorites||[]);setError('')}catch(e){setError((e as Error).message)}finally{setLoading(false)}}
  useEffect(()=>{runDevSeed().catch(()=>false).finally(refresh)},[]);
  const [cloud,setCloud]=useState(cloudStatus());
- useEffect(()=>{const changed=()=>{refresh()};window.addEventListener(cloudChangedEvent,changed);const off=onCloudStatus(()=>setCloud(cloudStatus()));startCloudSync();return()=>{window.removeEventListener(cloudChangedEvent,changed);off()}},[]);
+ useEffect(()=>{const changed=()=>{refresh()};window.addEventListener(cloudChangedEvent,changed);const off=onCloudStatus(()=>setCloud(cloudStatus()));compactStoredPhotos(compactPhoto).then(changed=>{if(changed)refresh()},()=>{}).finally(startCloudSync);return()=>{window.removeEventListener(cloudChangedEvent,changed);off()}},[]);
  useEffect(()=>{if(tab!=='beans'||loading){setBeanShelfWaving(false);return}setBeanShelfWaving(false);const start=window.setTimeout(()=>setBeanShelfWaving(true),60),stop=window.setTimeout(()=>setBeanShelfWaving(false),2600);return()=>{window.clearTimeout(start);window.clearTimeout(stop)}},[tab,loading]);
  useEffect(()=>{if(!file){setPreview('');return}const url=URL.createObjectURL(file);setPreview(url);return()=>URL.revokeObjectURL(url)},[file]);
  useEffect(()=>()=>{if(monthReport)URL.revokeObjectURL(monthReport.url)},[monthReport]);

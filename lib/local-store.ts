@@ -3,9 +3,9 @@ import {z} from 'zod';
 import {usedGrams} from './bean-stock';
 import {builtInCatalog} from './catalog';
 import {roastOptions,civilDay} from './coffee-guide';
-import {stampChanges,mergeStates,sameState} from './cloud-merge';
-const beanSchema=z.object({id:z.string().min(1),name:z.string().max(500),nameEn:z.string().max(500).optional(),weight:z.number().positive().max(100000).optional(),stockAdjustment:z.number().min(-100000000).max(100000000).optional(),roaster:z.string().max(500),origin:z.string().max(500),process:z.string().max(500),roast:z.string().max(50),flavor:z.string().max(500),status:z.enum(['未开封','正在喝','已喝完']),rating:z.number().min(0).max(5),repurchase:z.boolean(),photo:z.string().max(8_000_000).refine(v=>!v||/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(v),'Invalid photo'),roastDate:z.string().refine(v=>!v||civilDay(v)!==null),finishedDate:z.string().refine(v=>!v||civilDay(v)!==null).optional(),notes:z.string().max(4000),recordType:z.enum(['bean','catalog']).optional(),icon:z.string().max(30).optional(),catalogId:z.string().max(200).optional(),sourceUrl:z.string().max(500).refine(v=>!v||v.startsWith('https://')).optional(),sourceDate:z.string().optional(),variety:z.string().optional(),roastNote:z.string().optional(),useOriginalArt:z.boolean().optional(),bagColor:z.number().int().min(0).max(7).optional(),restDays:z.number().int().min(0).max(90).optional()});
-const brewSchema=z.object({id:z.string().min(1),beanId:z.string(),date:z.string().refine(v=>civilDay(v)!==null),kind:z.enum(['pourOver','milk']).default('pourOver'),dose:z.number().positive().max(200).optional(),water:z.number().positive().max(5000).optional(),temp:z.number().min(1).max(100).optional(),yield:z.number().positive().max(1000).optional(),milkAmount:z.number().positive().max(2000).optional(),milkType:z.enum(['未记录','牛奶','燕麦奶','其他']).optional(),serving:z.enum(['未记录','热','冰']).optional(),grind:z.string().max(100),time:z.string().max(50),notes:z.string().max(4000),rating:z.number().min(0).max(5),photo:z.string().max(8_000_000).refine(v=>!v||/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(v),'Invalid photo').optional(),photoCutout:z.boolean().optional()});
+import {stampChanges,mergeStates,sameState,outgoing,incoming,type CloudItem} from './cloud-merge';
+const beanSchema=z.object({id:z.string().min(1),name:z.string().max(500),nameEn:z.string().max(500).optional(),weight:z.number().positive().max(100000).optional(),stockAdjustment:z.number().min(-100000000).max(100000000).optional(),roaster:z.string().max(500),origin:z.string().max(500),process:z.string().max(500),roast:z.string().max(50),flavor:z.string().max(500),status:z.enum(['未开封','正在喝','已喝完']),rating:z.number().min(0).max(5),repurchase:z.boolean(),photo:z.string().max(8_000_000).refine(v=>!v||/^data:image\/(png|jpeg|webp|heic);base64,[A-Za-z0-9+/=]+$/.test(v),'Invalid photo'),roastDate:z.string().refine(v=>!v||civilDay(v)!==null),finishedDate:z.string().refine(v=>!v||civilDay(v)!==null).optional(),notes:z.string().max(4000),recordType:z.enum(['bean','catalog']).optional(),icon:z.string().max(30).optional(),catalogId:z.string().max(200).optional(),sourceUrl:z.string().max(500).refine(v=>!v||v.startsWith('https://')).optional(),sourceDate:z.string().optional(),variety:z.string().optional(),roastNote:z.string().optional(),useOriginalArt:z.boolean().optional(),bagColor:z.number().int().min(0).max(7).optional(),restDays:z.number().int().min(0).max(90).optional()});
+const brewSchema=z.object({id:z.string().min(1),beanId:z.string(),date:z.string().refine(v=>civilDay(v)!==null),kind:z.enum(['pourOver','milk']).default('pourOver'),dose:z.number().positive().max(200).optional(),water:z.number().positive().max(5000).optional(),temp:z.number().min(1).max(100).optional(),yield:z.number().positive().max(1000).optional(),milkAmount:z.number().positive().max(2000).optional(),milkType:z.enum(['未记录','牛奶','燕麦奶','其他']).optional(),serving:z.enum(['未记录','热','冰']).optional(),grind:z.string().max(100),time:z.string().max(50),notes:z.string().max(4000),rating:z.number().min(0).max(5),photo:z.string().max(8_000_000).refine(v=>!v||/^data:image\/(png|jpeg|webp|heic);base64,[A-Za-z0-9+/=]+$/.test(v),'Invalid photo').optional(),photoCutout:z.boolean().optional()});
 const tasteSchema=z.object({id:z.string().min(1),bean:beanSchema,firstDate:z.string().refine(v=>!v||civilDay(v)!==null),manual:z.boolean()}).refine(v=>v.id===coffeeIdentity(v.bean),'Coffee identity mismatch');
 export const backupSchema=z.object({format:z.literal('beanlet'),version:z.literal(1),starterCleanupVersion:z.literal(1).optional(),hiddenCatalog:z.array(z.string().min(1)).max(10000).default([]),favorites:z.array(z.string().min(1)).max(10000).default([]),tasted:z.array(tasteSchema).max(10000).default([]),beans:z.array(beanSchema).max(10000),catalog:z.array(beanSchema).max(10000),brews:z.array(brewSchema).max(100000),clock:z.record(z.string(),z.number()).optional(),removed:z.record(z.string(),z.number()).optional()}).superRefine((s,ctx)=>{const ids=new Set(s.beans.map(b=>b.id));if(ids.size!==s.beans.length||new Set(s.catalog.map(b=>b.id)).size!==s.catalog.length||new Set(s.brews.map(b=>b.id)).size!==s.brews.length||new Set(s.tasted.map(b=>b.id)).size!==s.tasted.length)ctx.addIssue({code:'custom',message:'Duplicate IDs'});if(s.brews.some(b=>!ids.has(b.beanId)))ctx.addIssue({code:'custom',message:'Missing coffee for brew'});});
 type State=z.infer<typeof backupSchema>;
@@ -37,16 +37,38 @@ let onChange:()=>void=()=>{};
 export function setChangeListener(fn:()=>void){onChange=fn}
 async function write(s:State,stamp=true){const d=await db();return new Promise<void>((resolve,reject)=>{const tx=d.transaction('journal','readwrite');const store=tx.objectStore('journal');if(stamp){const r=store.get('data');r.onsuccess=()=>store.put(stampChanges(r.result,s),'data')}else store.put(s,'data');tx.oncomplete=()=>{d.close();if(stamp)onChange();resolve()};tx.onerror=()=>{d.close();reject(new Error('保存失败，请检查浏览器存储空间'))};tx.onabort=()=>{d.close();reject(new Error('保存失败，请检查浏览器存储空间'))}})}
 let pending=Promise.resolve();
-/** Merges the iCloud copies into this device's journal. `contents` is null when a copy can't be read safely, so nothing is uploaded over it. */
-export async function mergeCloud(copies:string[]){return mutate(async s=>{
- let merged:State=s,readable=true;const remote:State[]=[];
- for(const text of copies){try{const copy=backupSchema.parse(JSON.parse(text));remote.push(copy);merged=mergeStates(merged,copy)}catch{readable=false}}
+const sentKey='cloud-sent';
+async function sentMap():Promise<Record<string,number>>{const d=await db();return new Promise((resolve,reject)=>{const tx=d.transaction('journal','readonly');const r=tx.objectStore('journal').get(sentKey);tx.oncomplete=()=>{d.close();resolve(r.result||{})};tx.onerror=()=>{d.close();reject(tx.error)}})}
+async function saveSent(fn:(sent:Record<string,number>)=>void){const d=await db();return new Promise<void>((resolve,reject)=>{const tx=d.transaction('journal','readwrite');const store=tx.objectStore('journal');const r=store.get(sentKey);r.onsuccess=()=>{const sent=r.result||{};fn(sent);store.put(sent,sentKey)};tx.oncomplete=()=>{d.close();resolve()};tx.onerror=()=>{d.close();reject(tx.error)}})}
+/** Records changed since they were last handed to CloudKit. */
+export async function cloudOutbox(){return mutate(async s=>outgoing(s,await sentMap()))}
+export async function markCloudSent(items:CloudItem[]){await saveSent(sent=>{for(const item of items)sent[item.key]=item.stamp})}
+/** After an iCloud account change everything goes up again. */
+export async function resetCloudSent(){await saveSent(sent=>{for(const key of Object.keys(sent))delete sent[key]})}
+const itemSchemas:Record<string,z.ZodTypeAny>={beans:beanSchema,catalog:beanSchema,brews:brewSchema,tasted:tasteSchema,favorites:z.string().min(1),hiddenCatalog:z.string().min(1)};
+/** Merges records from CloudKit; the newer change of each record wins. */
+export async function applyCloudItems(items:CloudItem[]){return mutate(async s=>{
+ const merged=mergeStates(s,incoming(items,(name,value)=>{const r=itemSchemas[name].safeParse(value);return r.success?r.data:undefined}));
  const changed=!sameState(merged,s);if(changed)await write(merged,false);
- const upload=readable&&(remote.length!==1||!sameState(merged,remote[0]));
- return {changed,contents:upload?JSON.stringify(merged):null};
+ // What arrived is already in the cloud; only send it back if this device's copy is newer.
+ const settled=items.filter(item=>(item.deleted?merged.removed?.[item.key]:merged.clock?.[item.key])===item.stamp);
+ if(settled.length)await markCloudSent(settled);
+ return {changed};
+})}
+const compactedKey='photos-compacted';
+/** Shrinks photos saved before they were compressed, once per device, so they sync quickly. */
+export async function compactStoredPhotos(compact:(photo:string,cutout:boolean)=>Promise<string>){return mutate(async s=>{
+ const d=await db(),done=await new Promise<unknown>(resolve=>{const r=d.transaction('journal','readonly').objectStore('journal').get(compactedKey);r.onsuccess=()=>{d.close();resolve(r.result)};r.onerror=()=>{d.close();resolve(undefined)}});
+ if(Number(done)>=2)return false; // 1 was a PNG pass that saved little.
+ const shrink=async<T extends {photo?:string}>(items:T[],cutout:(item:T)=>boolean)=>{let changed=false;const out:T[]=[];for(const item of items){if(item.photo?.startsWith('data:')&&item.photo.length>300_000){try{const photo=await compact(item.photo,cutout(item));if(photo!==item.photo){out.push({...item,photo});changed=true;continue}}catch{}}out.push(item)}return changed?out:items};
+ const beans=await shrink(s.beans,()=>false),catalog=await shrink(s.catalog,()=>false),brews=await shrink(s.brews,b=>!!b.photoCutout);
+ const changed=beans!==s.beans||catalog!==s.catalog||brews!==s.brews;
+ if(changed)await write({...s,beans,catalog,brews});
+ const e=await db();await new Promise<void>(resolve=>{const tx=e.transaction('journal','readwrite');tx.objectStore('journal').put(2,compactedKey);tx.oncomplete=tx.onerror=()=>{e.close();resolve()}});
+ return changed;
 })}
 function mutate<T>(fn:(s:State)=>Promise<T>){const task=pending.then(async()=>fn(await read()));pending=task.then(()=>{},()=>{});return task}
-function readPhoto(file:File){if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>5*1024*1024)throw new Error('照片请使用 5 MB 内的 JPG、PNG 或 WebP');return new Promise<string>((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result));r.onerror=()=>reject(new Error('照片读取失败'));r.readAsDataURL(file)})}
+function readPhoto(file:File){if(!['image/png','image/jpeg','image/webp','image/heic'].includes(file.type)||file.size>5*1024*1024)throw new Error('照片请使用 5 MB 内的 JPG、PNG 或 WebP');return new Promise<string>((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result));r.onerror=()=>reject(new Error('照片读取失败'));r.readAsDataURL(file)})}
 export async function localApi(url:string,options?:RequestInit):Promise<any>{
  if(url==='/api/photos'){const file=(options?.body as FormData).get('photo');if(!(file instanceof File))throw new Error('照片读取失败');return {key:await readPhoto(file)}}
  if(!options?.method||options.method==='GET'){await pending;const s=await read();return {...s,catalog:mergedCatalog(s).filter(b=>!s.hiddenCatalog.includes(b.id))}}

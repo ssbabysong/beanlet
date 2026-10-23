@@ -2,6 +2,7 @@ import {Eraser,Move,RotateCcw,Undo2} from 'lucide-react';
 import {useEffect,useRef,useState,type PointerEvent} from 'react';
 import {transformCrop,transformSticker,type CropPoint} from '@/lib/photo-gesture';
 import {alphaBounds} from '@/lib/image-bounds';
+import {compactPhotoFile,photoSize,stickerSize} from '@/lib/photo-compress';
 import {Dialog,DialogContent,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 import {useI18n} from '@/lib/i18n';
 
@@ -52,10 +53,10 @@ export function PhotoEditor({source,onCancel,onSave,mode='photo'}:{source:File|s
     if(!img.current||!size.w)return;
     setBusy(true);setError('');
     try{
-      const canvas=document.createElement('canvas');draw(canvas,1024);const result=sticker?fittedSticker(canvas,1024):canvas;
+      const output=sticker?stickerSize:photoSize,canvas=document.createElement('canvas');draw(canvas,output);const result=sticker?fittedSticker(canvas,output):canvas;
       const type=sticker?'image/png':'image/jpeg';
       const blob=await new Promise<Blob>((resolve,reject)=>result.toBlob(b=>b?resolve(b):reject(Error()),type,.86));
-      onSave(new File([blob],sticker?'coffee-sticker.png':'bean-photo.jpg',{type}));
+      onSave(await compactPhotoFile(new File([blob],sticker?'coffee-sticker.png':'bean-photo.jpg',{type}),sticker));
     }catch{setError(en?'Could not save this photo. Please try another.':'照片处理失败，请换一张试试。')}finally{setBusy(false)}
   }
   const unchanged=crop.zoom===1&&crop.angle===0&&crop.cx===.5&&crop.cy===.5&&!eraseStrokes.length;

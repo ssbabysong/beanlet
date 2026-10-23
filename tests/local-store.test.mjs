@@ -9,7 +9,7 @@ source=source.replace("'./tasted'",JSON.stringify(new URL('../lib/tasted.ts',imp
 source=source.replace("'./cloud-merge'",JSON.stringify(new URL('../lib/cloud-merge.ts',import.meta.url).href));
 source=source.replace("'zod'",JSON.stringify(new URL('../node_modules/zod/index.js',import.meta.url).href)).replace("'./catalog'",JSON.stringify(new URL('../lib/catalog.ts',import.meta.url).href)).replace("'./coffee-guide'",JSON.stringify(new URL('../lib/coffee-guide.ts',import.meta.url).href));
 const js=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;
-const {localApi,importBackup,exportBackup,backupSchema,migrateStarters,mergeCloud,setChangeListener}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
+const {localApi,importBackup,exportBackup,backupSchema,migrateStarters,setChangeListener,cloudOutbox,markCloudSent,applyCloudItems,resetCloudSent,compactStoredPhotos}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
 const request=(method,body)=>localApi('/api/journal',{method,body:JSON.stringify(body)});
 let initial=await localApi('/api/journal');assert.equal(initial.beans.length,0);assert.equal(initial.catalog.length,56);assert.equal((await localApi('/api/journal')).beans.length,0);
 const starters=initial.catalog.map(b=>({...b,id:'starter-'+b.id,catalogId:b.id,recordType:'bean',status:'未开封',useOriginalArt:true}));
@@ -181,21 +181,44 @@ console.log('Catalog sync: shared fields, photo removal, bag isolation, memories
 
 let saves=0;setChangeListener(()=>saves++);
 const cloudBean={name:'云端豆',roaster:'',origin:'',process:'未记录',roast:'浅烘焙',flavor:'',status:'未开封',rating:0,repurchase:false,photo:'',roastDate:'',notes:''};
+// Everything goes up the first time, including records saved before sync existed.
+let outbox=await cloudOutbox();
+const everything=(await localApi('/api/journal'));
+assert.ok(outbox.length>=everything.beans.length+everything.brews.length);
+await markCloudSent(outbox);assert.deepEqual(await cloudOutbox(),[]);
+// A new bag is stamped, counts as a local save and is the only thing waiting to go up.
 const {id:cloudId}=await request('POST',{kind:'bean',data:cloudBean});
 assert.equal(saves,1);
-let stored=await localApi('/api/journal');assert.ok(stored.clock['beans:'+cloudId]>0);
-const otherDevice=JSON.parse((await mergeCloud([])).contents);
-assert.ok(otherDevice.beans.some(b=>b.id===cloudId));
-// Another device deletes the bag and adds one of its own; merging brings both changes here without counting as a local save.
-const later=Date.now()+1000,padId='from-ipad';
-otherDevice.beans=[{...cloudBean,id:padId,name:'iPad 的豆'},...otherDevice.beans.filter(b=>b.id!==cloudId)];
-otherDevice.clock={...otherDevice.clock,['beans:'+padId]:later};delete otherDevice.clock['beans:'+cloudId];
-otherDevice.removed={...otherDevice.removed,['beans:'+cloudId]:later};
-const pulled=await mergeCloud([JSON.stringify(otherDevice)]);
-assert.ok(pulled.changed);assert.equal(saves,1);
+outbox=await cloudOutbox();assert.deepEqual(outbox.map(x=>x.key),['beans:'+cloudId]);
+assert.equal(JSON.parse(outbox[0].payload).name,'云端豆');
+await markCloudSent(outbox);
+// Another device deletes it and adds its own bag; both arrive without counting as local saves or echoing back.
+const later=Date.now()+1000;
+const arrivals=[{key:'beans:'+cloudId,stamp:later,deleted:true},{key:'beans:from-ipad',stamp:later,deleted:false,payload:JSON.stringify({...cloudBean,id:'from-ipad',name:'iPad 的豆'})},{key:'brews:bad',stamp:later,deleted:false,payload:'{"broken":true}'}];
+assert.equal((await applyCloudItems(arrivals)).changed,true);
+assert.equal(saves,1);
+let stored=await localApi('/api/journal');
+assert.ok(stored.beans.some(b=>b.id==='from-ipad'));assert.ok(!stored.beans.some(b=>b.id===cloudId));assert.ok(!stored.brews.some(b=>b.id==='bad'));
+assert.deepEqual(await cloudOutbox(),[]);
+// An older copy from the cloud doesn't overwrite a newer local edit, which stays queued to go up.
+await request('PUT',{kind:'bean',id:'from-ipad',data:{...cloudBean,id:'from-ipad',name:'本机改名'}});
+assert.equal((await applyCloudItems([{...arrivals[1],stamp:later-5000}])).changed,false);
+assert.equal((await localApi('/api/journal')).beans.find(b=>b.id==='from-ipad').name,'本机改名');
+assert.deepEqual((await cloudOutbox()).map(x=>x.key),['beans:from-ipad']);
+// After switching iCloud accounts everything is sent again.
+await resetCloudSent();assert.ok((await cloudOutbox()).length>=stored.beans.length);
+console.log('iCloud: first upload, stamped saves, remote edits and deletions, newer local edits and account resets passed');
+
+// Large photos saved before compression shrink once, as an ordinary save that goes up to iCloud; small ones are left alone.
+const big='data:image/png;base64,'+'A'.repeat(400_000),small='data:image/jpeg;base64,c21hbGw=';
+const {id:bigBean}=await request('POST',{kind:'bean',data:{...base,photo:big}});
+const {id:smallBean}=await request('POST',{kind:'bean',data:{...base,photo:small}});
+await markCloudSent(await cloudOutbox());
+const shrunk=[];
+assert.equal(await compactStoredPhotos(async(photo,cutout)=>{shrunk.push(cutout);return small}),true);
+assert.deepEqual(shrunk,[false]);
 stored=await localApi('/api/journal');
-assert.ok(stored.beans.some(b=>b.id===padId));assert.ok(!stored.beans.some(b=>b.id===cloudId));
-// An unreadable copy is never overwritten.
-assert.equal((await mergeCloud(['not json'])).contents,null);
-console.log('iCloud: saves are stamped, remote edits and deletions merge in, unreadable copies are left alone');
-const settled=await mergeCloud([pulled.contents]);assert.equal(settled.changed,false);assert.equal(settled.contents,null);
+assert.equal(stored.beans.find(b=>b.id===bigBean).photo,small);assert.equal(stored.beans.find(b=>b.id===smallBean).photo,small);
+assert.deepEqual((await cloudOutbox()).map(x=>x.key),['beans:'+bigBean]);
+assert.equal(await compactStoredPhotos(async()=>{throw Error('runs once')}),false);
+console.log('Photo compaction: large photos shrink once and sync, small ones untouched passed');

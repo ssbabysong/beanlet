@@ -1,7 +1,5 @@
-import {Capacitor,registerPlugin} from '@capacitor/core';
-
-type StickerPlugin={cutout(options:{dataUrl:string}):Promise<{dataUrl:string}>};
-const nativeSticker=registerPlugin<StickerPlugin>('BeanletSticker');
+import {Capacitor} from '@capacitor/core';
+import {nativeSticker} from './photo-compress';
 
 function loadImage(source:string){
  return new Promise<HTMLImageElement>((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=()=>reject(new Error('无法读取照片'));image.src=source});
