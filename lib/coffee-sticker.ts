@@ -25,3 +25,16 @@ export async function makeCoffeeSticker(file:File){
  }
  return {photo:dataUrl,photoCutout:false};
 }
+
+// A bag sticker is cut down to the bag itself, so it can stand on the shelf's floor and carry its tags at its own edges.
+export async function trimSticker(file:File){
+ const {alphaBounds}=await import('./image-bounds');
+ const image=await loadImage(await fileDataUrl(file)),canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;
+ const context=canvas.getContext('2d',{willReadFrequently:true})!;context.drawImage(image,0,0);
+ const bounds=alphaBounds(context.getImageData(0,0,canvas.width,canvas.height).data,canvas.width,canvas.height);
+ if(!bounds||(bounds.width===canvas.width&&bounds.height===canvas.height))return file;
+ const pad=4,out=document.createElement('canvas');out.width=bounds.width+pad*2;out.height=bounds.height+pad*2;
+ out.getContext('2d')!.drawImage(canvas,bounds.x,bounds.y,bounds.width,bounds.height,pad,pad,bounds.width,bounds.height);
+ const blob=await new Promise<Blob>((resolve,reject)=>out.toBlob(b=>b?resolve(b):reject(new Error('照片处理失败')),'image/png'));
+ return new File([blob],file.name,{type:'image/png'});
+}

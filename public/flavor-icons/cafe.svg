@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <!-- A take-away cup with a paper sleeve: the 探店 (café) sticker. -->
+  <ellipse cx="60" cy="108" rx="28" ry="4.5" fill="#646a7b" opacity=".10"/>
+  <path d="M51 14c-3 5 3 7 0 12M62 11c-3 6 3 8 0 14" stroke="#b8a8cf" stroke-width="2.6" opacity=".85"/>
+  <path d="M33.5 41.5 41 101.5c.4 3 2.6 4.6 5.4 4.6h27.3c2.9 0 5-1.7 5.4-4.6l7.4-60z" fill="#fbf6ef" stroke="#7d7591" stroke-width="2.6"/>
+  <path d="M36.5 59.5 83.6 59 80.8 83.2 39.4 83.6z" fill="#dcc3a6" stroke="#7d7591" stroke-width="2.4"/>
+  <path d="M45 66.5h29M46.5 76h26" stroke="#fbf6ef" stroke-width="2.2" opacity=".75"/>
+  <circle cx="60" cy="71.3" r="6.2" fill="#f4ecf8" stroke="#7d7591" stroke-width="2"/>
+  <path d="M57.5 71.5c1.3-2.6 3.8-2.6 5 0" stroke="#9d8bbb" stroke-width="1.8"/>
+  <path d="M30 41.3c0-2.6 1.7-4 4.4-4h51.4c2.7 0 4.3 1.4 4.3 4v1.7H30z" fill="#c9c4e6" stroke="#7d7591" stroke-width="2.6"/>
+  <path d="M35.5 37.3 38.6 30c.8-1.8 2-2.6 4-2.6h34.8c2 0 3.2.8 4 2.6l3 7.3z" fill="#e3e0f5" stroke="#7d7591" stroke-width="2.6"/>
+  <path d="M66 30.4h8" stroke="#7d7591" stroke-width="2.4"/>
+</svg>

@@ -14,6 +14,8 @@ struct WidgetCoffee: Codable, Hashable {
     var total: Double?
     var ratio: Double?
     var thumb: String
+    /// The bag's own photo, cut out: drawn whole instead of the paper pouch.
+    var cutout: Bool? = nil
 }
 
 struct WidgetDay: Codable, Hashable {

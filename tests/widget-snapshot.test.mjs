@@ -13,6 +13,10 @@ assert.equal(snapshot.shelf[1].remaining,null);
 assert.equal(snapshot.shelf[1].icon,'brownie');
 assert.equal(snapshot.shelf[1].thumb,thumbKey('data:image/png;base64,AA'));
 assert.deepEqual(Object.values(thumbs),['data:image/png;base64,AA']);
+// A plain photo stays a label on the paper pouch; a cut-out bag photo is flagged so the widget draws the real bag.
+assert.equal(snapshot.shelf[1].cutout,undefined);
+assert.equal(buildWidgetSnapshot({...input,beans:beans.map(b=>b.id==='b'?{...b,photoCutout:true}:b)}).snapshot.shelf[1].cutout,true);
+assert.equal(buildWidgetSnapshot({...input,beans:beans.map(b=>b.id==='a'?{...b,photoCutout:true}:b)}).snapshot.shelf[0].cutout,undefined);
 assert.equal(snapshot.brewBean.id,'b');
 assert.equal(snapshot.brewKind,'milk');
 assert.equal(snapshot.days['2026-10-08'].c,2);

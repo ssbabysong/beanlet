@@ -41,8 +41,6 @@
 	<string>Take a photo of your coffee bag to use as its picture.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Choose a photo of your coffee bag.</string>
-	<key>NSMotionUsageDescription</key>
-	<string>Give your phone a gentle shake to make the coffee stickers tumble and stack.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

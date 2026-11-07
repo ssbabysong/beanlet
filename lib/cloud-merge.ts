@@ -51,7 +51,7 @@ export function mergeStates<T extends Syncable>(local:T,remote:Syncable):T{
  for(const name of [...lists,...sets])out[name]=[];
  for(const {key,value} of kept){const name=key.slice(0,key.indexOf(':'));out[name].push(value)}
  const beanIds=new Set(out.beans.map((b:Item)=>b.id));
- out.brews=out.brews.filter((b:{beanId:string})=>beanIds.has(b.beanId));
+ out.brews=out.brews.filter((b:{beanId:string;kind?:string})=>b.kind==='cafe'||beanIds.has(b.beanId));
  return out;
 }
 

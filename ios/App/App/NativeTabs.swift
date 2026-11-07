@@ -171,8 +171,9 @@ final class TabSlot: UIViewController {
         navigationItem.rightBarButtonItems = TabSlot.items.reversed().map { b in
             let tap = UIAction { _ in NativeTabsPlugin.shared?.notifyListeners("tap", data: ["id": b.id]) }
             if b.prominent {
-                // iOS convention for confirming an editor: a ✓ in the app's tint (the title stays as the accessibility label).
-                let check = UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold))
+                // iOS convention for confirming an editor: a ✓ in the app's tint (the title stays as the accessibility label);
+                // a prominent action that names its own symbol (Edit's pencil) shows that instead.
+                let check = UIImage(systemName: b.symbol.isEmpty ? "checkmark" : b.symbol, withConfiguration: UIImage.SymbolConfiguration(weight: .semibold))
                 let item = UIBarButtonItem(image: check, primaryAction: tap)
                 if #available(iOS 26.0, *) { item.style = .prominent } else { item.style = .done }
                 item.tintColor = TabsController.ink // the app's blue-purple instead of system blue

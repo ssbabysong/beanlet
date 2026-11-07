@@ -6,6 +6,9 @@ const bean=(id,name)=>({id,name});
 let phone=stampChanges(base,{...base,beans:[bean('a','A')]},100);
 let pad=stampChanges(base,{...base,beans:[bean('b','B')],favorites:['x']},110);
 let merged=mergeStates(phone,pad);
+// A café coffee belongs to no bag, so the orphan-brew cleanup must keep it.
+{const withCafe=stampChanges(base,{...base,brews:[{id:'c1',beanId:'',kind:'cafe',place:'Manner',date:'2026-11-02'},{id:'o1',beanId:'gone',kind:'pourOver',date:'2026-11-02'}]},120);
+assert.deepEqual(mergeStates(withCafe,base).brews.map(b=>b.id),['c1']);}
 assert.deepEqual(merged.beans.map(b=>b.id),['b','a']);
 assert.deepEqual(merged.favorites,['x']);
 assert.deepEqual(mergeStates(pad,phone).beans.map(b=>b.id).sort(),['a','b']);

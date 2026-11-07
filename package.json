@@ -9,7 +9,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "node --experimental-strip-types tests/coffee-guide.test.mjs && node --experimental-strip-types tests/catalog-filters.test.mjs && node --experimental-strip-types tests/local-store.test.mjs && node --experimental-strip-types tests/bean-names.test.mjs && node --experimental-strip-types tests/tasted.test.mjs && node --experimental-strip-types tests/brew-types.test.mjs && node --experimental-strip-types tests/bean-stock.test.mjs && node --experimental-strip-types tests/swipe-navigation.test.mjs && node --experimental-strip-types tests/photo-gesture.test.mjs && node --experimental-strip-types tests/pour-recipes.test.mjs && node --experimental-strip-types tests/monthly-stats.test.mjs && node --experimental-strip-types tests/sticker-layout.test.mjs && node --experimental-strip-types tests/widget-snapshot.test.mjs && node --experimental-strip-types tests/cloud-merge.test.mjs",
+    "test": "node --experimental-strip-types tests/coffee-guide.test.mjs && node --experimental-strip-types tests/catalog-filters.test.mjs && node --experimental-strip-types tests/local-store.test.mjs && node --experimental-strip-types tests/bean-names.test.mjs && node --experimental-strip-types tests/tasted.test.mjs && node --experimental-strip-types tests/brew-types.test.mjs && node --experimental-strip-types tests/bean-stock.test.mjs && node --experimental-strip-types tests/swipe-navigation.test.mjs && node --experimental-strip-types tests/photo-gesture.test.mjs && node --experimental-strip-types tests/pour-recipes.test.mjs && node --experimental-strip-types tests/monthly-stats.test.mjs && node --experimental-strip-types tests/sticker-layout.test.mjs && node --experimental-strip-types tests/widget-snapshot.test.mjs && node --experimental-strip-types tests/cloud-merge.test.mjs && node --experimental-strip-types tests/atlas.test.mjs && node --experimental-strip-types tests/page-curl.test.mjs && node --experimental-strip-types tests/photo-date.test.mjs",
     "ios:sync": "tsc --noEmit && vite build --outDir ../dist-ios && cap sync ios",
     "ios:open": "cap open ios",
     "ios:run": "npm run ios:sync && cap run ios"
@@ -37,7 +37,6 @@
     "react-dom": "19.2.6",
     "react-hook-form": "^7.85.0",
     "react-resizable-panels": "^4.12.2",
-    "recharts": "^3.8.0",
     "sonner": "^2.0.8",
     "tailwind-merge": "3.6.0",
     "vaul": "^1.1.2",

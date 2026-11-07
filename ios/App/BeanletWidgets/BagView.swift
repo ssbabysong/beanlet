@@ -58,6 +58,15 @@ struct BagView: View {
     let coffee: WidgetCoffee
 
     var body: some View {
+        if coffee.cutout == true, let image = WidgetStore.thumbnail(coffee.thumb) {
+            RealBag(image: image, ratio: coffee.ratio.map { min(1, max(0, $0)) } ?? 1)
+                .aspectRatio(160 / 200, contentMode: .fit)
+        } else {
+            pouch
+        }
+    }
+
+    @ViewBuilder private var pouch: some View {
         let fill = Color(hex: coffee.fill), line = Color(hex: coffee.line), side = Color(hex: coffee.side)
         let ratio = coffee.ratio.map { min(1, max(0, $0)) }
         let partial = ratio.map { $0 > 0 && $0 < 1 } ?? false
@@ -97,6 +106,26 @@ struct BagView: View {
         } else {
             StickerImage(icon: coffee.icon).padding(1)
         }
+    }
+}
+
+/// A photographed, cut-out bag shown whole, standing on the shelf's floor. As in the app, what's been drunk fades to grey
+/// from the top: a faint grey copy underneath, the full-colour bag above it clipped to what's left.
+private struct RealBag: View {
+    let image: UIImage
+    let ratio: Double
+
+    var body: some View {
+        let bag = Image(uiImage: image).resizable()
+        ZStack {
+            bag.saturation(0).opacity(ratio < 1 ? 0.3 : 0)
+            bag.mask(GeometryReader { g in
+                Rectangle().frame(height: g.size.height * ratio).frame(maxHeight: .infinity, alignment: .bottom)
+            })
+        }
+        .aspectRatio(image.size.width / max(1, image.size.height), contentMode: .fit)
+        .shadow(color: .black.opacity(0.12), radius: 1.5, y: 1)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
     }
 }
 

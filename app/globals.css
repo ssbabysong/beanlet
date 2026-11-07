@@ -679,7 +679,7 @@ img,svg{-webkit-user-drag:none}
 .calendar-panel{touch-action:pan-y}
 .heading.heading-hidden{display:none}.review-period-label{margin:0;text-align:center;color:#657192;font-size:16px;font-weight:500;letter-spacing:.4px}
 .stats-period-switch{gap:4px;padding:4px;border-radius:14px;touch-action:manipulation}.stats-period-switch button{min-width:68px;min-height:38px;padding:7px 18px;border-radius:11px;font-size:12px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-.month-sticker-stage{contain:layout paint;content-visibility:auto}.month-sticker-stage.is-moving .month-sticker-collage figure:nth-child(n+37){animation:none}
+
 
 .month-insights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.month-insights>div{display:flex;min-width:0;min-height:74px;flex-direction:column;align-items:center;justify-content:center;padding:10px 6px;background:#eceef6;border-radius:16px 19px 15px 18px;color:#7d86a3;text-align:center}.month-insights>div:nth-child(2){background:#eef2ef}.month-insights>div:nth-child(3){background:#f2edf4}.month-insights strong{font-family:ui-rounded,"SF Pro Rounded",sans-serif;font-size:20px;font-weight:500;line-height:1.1}.month-insights span{margin-top:7px;font-size:9px;line-height:1.35}.month-analysis-grid{display:grid;grid-template-columns:minmax(130px,.8fr) minmax(0,1.55fr);gap:10px}.month-kind-card{order:-1}.month-chart-card{min-width:0;padding:16px;background:#ffffffce;border-radius:23px;color:#727c9a}.month-chart-card>header{display:flex;align-items:baseline;justify-content:space-between;gap:8px}.month-chart-card h3{margin:0;font-size:13px;font-weight:500}.month-chart-card header>span{color:#a0a5b7;font-size:9px;white-space:nowrap}.month-chart{height:178px;margin-top:8px}.month-kind-chart{display:flex;min-height:178px;flex-direction:column;align-items:center;justify-content:center}.month-donut{position:relative;width:106px;height:102px}.month-donut>span{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#9a9fb1;font-size:8px;pointer-events:none}.month-donut>span strong{color:#747f9f;font-family:ui-rounded,"SF Pro Rounded",sans-serif;font-size:19px;font-weight:500;line-height:1}.month-kind-legend{display:flex;width:100%;justify-content:center;gap:12px}.month-kind-legend>span{display:grid;grid-template-columns:7px auto auto;align-items:center;gap:4px;color:#8b92a8;font-size:9px}.month-kind-legend i{width:7px;height:7px;border-radius:50%}.month-kind-legend strong{font-weight:500;color:#747e9a}.recharts-wrapper,.recharts-surface{-webkit-tap-highlight-color:transparent;outline:none}
 @media(max-width:540px){.month-analysis-grid{grid-template-columns:minmax(105px,.75fr) minmax(0,1.35fr);gap:7px}.month-chart-card{padding:12px 8px}.month-chart-card h3{font-size:11px}.month-chart-card header>span{font-size:8px}.month-chart{height:145px}.month-kind-chart{min-height:145px;flex-direction:column;gap:0}.month-donut{width:90px;height:88px}.month-kind-legend{width:100%;flex-direction:column;align-items:center;gap:4px}.month-kind-legend>span{grid-template-columns:6px auto auto;gap:3px;font-size:8px}}
@@ -694,41 +694,41 @@ img,svg{-webkit-user-drag:none}
 .month-stat-cells{grid-template-columns:repeat(2,minmax(0,1fr))}
 
 /* A loose wall of every photographed coffee replaces the metric cards. */
-.month-sticker-wall{padding:2px 3px 8px}.month-sticker-wall>header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:0 4px 6px}.month-sticker-wall h3{margin:0;color:#737d9b;font-size:14px;font-weight:500}.month-sticker-wall header p{margin:0;color:#989eaf;font-size:10px;white-space:nowrap}.month-sticker-wall header p strong{color:#737d9b;font-size:13px;font-weight:500}.month-sticker-collage{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;min-height:116px;padding:8px 5px 12px}.month-sticker-collage figure{position:relative;width:82px;height:78px;margin:-5px -3px;padding:5px;overflow:hidden;background:#fff;border-radius:43% 57% 47% 53% / 57% 42% 58% 43%;box-shadow:0 5px 12px #65708c1f;transform:rotate(-6deg)}.month-sticker-collage figure:nth-child(3n+2){width:74px;height:84px;border-radius:56% 44% 59% 41% / 43% 58% 42% 57%;transform:rotate(7deg) translateY(5px)}.month-sticker-collage figure:nth-child(3n){width:87px;height:74px;border-radius:39% 61% 45% 55% / 60% 41% 59% 40%;transform:rotate(-2deg) translateY(-4px)}.month-sticker-collage figure:nth-child(5n){transform:rotate(9deg) translateY(3px)}.month-sticker-collage img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}.month-sticker-collage figure.is-cutout{padding:0;background:transparent;overflow:visible;box-shadow:none}.month-sticker-collage figure.is-cutout img{object-fit:contain;border-radius:0;filter:drop-shadow(0 5px 4px #656c802c)}.month-sticker-empty{display:flex;min-height:112px;flex-direction:column;align-items:center;justify-content:center;color:#9ba1b3;font-size:11px}.month-sticker-empty .sticker{width:60px;margin-bottom:4px;opacity:.72;transform:rotate(-6deg)}
-@media(max-width:390px){.month-sticker-collage figure{width:72px;height:69px}.month-sticker-collage figure:nth-child(3n+2){width:66px;height:75px}.month-sticker-collage figure:nth-child(3n){width:77px;height:66px}.month-sticker-wall>header{align-items:center}.month-sticker-wall h3{font-size:13px}}
+.month-sticker-wall{padding:2px 3px 8px}.month-sticker-wall>header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:0 4px 6px}.month-sticker-wall h3{margin:0;color:#737d9b;font-size:14px;font-weight:500}.month-sticker-wall header p{margin:0;color:#989eaf;font-size:10px;white-space:nowrap}.month-sticker-wall header p strong{color:#737d9b;font-size:13px;font-weight:500}.month-sticker-empty{display:flex;min-height:112px;flex-direction:column;align-items:center;justify-content:center;color:#9ba1b3;font-size:11px}.month-sticker-empty .sticker{width:60px;margin-bottom:4px;opacity:.72;transform:rotate(-6deg)}
+@media(max-width:390px){.month-sticker-wall>header{align-items:center}.month-sticker-wall h3{font-size:13px}}
 
 /* Coffee wall: loose, overlapping snapshots with no dashboard copy. */
-.month-sticker-wall{padding-top:4px}.month-sticker-wall>header{justify-content:flex-start;padding:0 7px 3px}.month-sticker-wall h3{font-size:16px;letter-spacing:.04em}.month-sticker-collage{min-height:145px;padding:17px 18px 22px;overflow:visible}.month-sticker-collage figure{width:96px;height:90px;margin:-11px -10px;padding:6px;box-shadow:0 8px 18px #59627e29;transform:rotate(-8deg) translateY(3px)}.month-sticker-collage figure:nth-child(3n+2){width:84px;height:99px;margin:-13px -11px;border-radius:57% 43% 54% 46% / 44% 59% 41% 56%;transform:rotate(10deg) translate(-2px,10px)}.month-sticker-collage figure:nth-child(3n){width:103px;height:84px;margin:-10px -13px;transform:rotate(-3deg) translate(3px,-7px)}.month-sticker-collage figure:nth-child(4n){z-index:2;transform:rotate(7deg) translate(-3px,5px)}.month-sticker-collage figure:nth-child(5n){z-index:3;transform:rotate(-11deg) translate(5px,-3px)}.month-sticker-empty{min-height:128px}.month-sticker-empty .sticker{width:72px;margin:0;opacity:.62}
-@media(max-width:390px){.month-sticker-collage{padding-inline:13px}.month-sticker-collage figure{width:86px;height:80px;margin:-10px -10px}.month-sticker-collage figure:nth-child(3n+2){width:76px;height:89px;margin:-12px -10px}.month-sticker-collage figure:nth-child(3n){width:92px;height:75px;margin:-9px -12px}.month-sticker-wall h3{font-size:15px}}
+.month-sticker-wall{padding-top:4px}.month-sticker-wall>header{justify-content:flex-start;padding:0 7px 3px}.month-sticker-wall h3{font-size:16px;letter-spacing:.04em}.month-sticker-empty{min-height:128px}.month-sticker-empty .sticker{width:72px;margin:0;opacity:.62}
+@media(max-width:390px){.month-sticker-wall h3{font-size:15px}}
 
 /* A white, free-form cluster rather than a labeled row. */
-.month-sticker-wall{min-height:174px;padding:14px 12px 16px;background:#ffffffd9;border-radius:27px 30px 25px 29px;overflow:hidden}.month-sticker-wall>header{display:none}.month-sticker-collage{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-flow:dense;grid-auto-rows:22px;align-items:center;justify-items:center;min-height:150px;padding:8px 9px 13px}.month-sticker-collage figure,.month-sticker-collage figure:nth-child(3n+2),.month-sticker-collage figure:nth-child(3n){grid-column:span 4;grid-row:span 5;width:118px;height:108px;margin:-16px -21px;padding:7px}.month-sticker-collage figure{z-index:1;transform:rotate(-9deg) translate(7px,7px)}.month-sticker-collage figure:nth-child(3n+2){grid-column:span 5;width:128px;height:118px;z-index:3;transform:rotate(11deg) translate(-8px,17px)}.month-sticker-collage figure:nth-child(3n){width:112px;height:126px;z-index:2;transform:rotate(-4deg) translate(5px,-12px)}.month-sticker-collage figure:nth-child(4n){grid-column:span 5;width:134px;height:104px;z-index:4;transform:rotate(7deg) translate(-14px,5px)}.month-sticker-collage figure:nth-child(5n){grid-column:span 4;width:105px;height:120px;z-index:5;transform:rotate(-12deg) translate(13px,-4px)}.month-sticker-collage:has(figure:only-child){display:flex;align-items:center;justify-content:center}.month-sticker-collage:has(figure:only-child) figure{width:138px;height:130px;margin:0;transform:rotate(-7deg)}.month-sticker-empty{min-height:142px}.month-sticker-empty .sticker{width:82px}
-@media(max-width:390px){.month-sticker-wall{padding-inline:8px}.month-sticker-collage{grid-auto-rows:20px;padding-inline:5px}.month-sticker-collage figure,.month-sticker-collage figure:nth-child(3n+2),.month-sticker-collage figure:nth-child(3n){width:108px;height:100px;margin:-15px -19px}.month-sticker-collage figure:nth-child(3n+2){width:118px;height:108px}.month-sticker-collage figure:nth-child(3n){width:103px;height:116px}.month-sticker-collage figure:nth-child(4n){width:124px;height:97px}.month-sticker-collage figure:nth-child(5n){width:98px;height:111px}.month-sticker-collage:has(figure:only-child) figure{width:132px;height:125px}}
-.month-sticker-collage figure.is-cutout{padding:0}
+.month-sticker-wall{min-height:174px;padding:14px 12px 16px;background:#ffffffd9;border-radius:27px 30px 25px 29px;overflow:hidden}.month-sticker-wall>header{display:none}.month-sticker-empty{min-height:142px}.month-sticker-empty .sticker{width:82px}
+@media(max-width:390px){.month-sticker-wall{padding-inline:8px}}
+
 
 /* Keep the month photos as one compact pile with no containing panel. */
-.month-sticker-wall{min-height:0;padding:7px 2px 14px;background:none;border-radius:0;overflow:visible}.month-sticker-collage{display:flex;flex-wrap:wrap;align-items:center;align-content:center;justify-content:center;min-height:0;padding:20px 25px 23px;overflow:visible}.month-sticker-collage figure,.month-sticker-collage figure:nth-child(3n+2),.month-sticker-collage figure:nth-child(3n),.month-sticker-collage figure:nth-child(4n),.month-sticker-collage figure:nth-child(5n){flex:0 0 auto;width:119px;height:111px;margin:-21px -18px}.month-sticker-collage figure{z-index:1;transform:rotate(-9deg) translate(9px,5px)}.month-sticker-collage figure:nth-child(3n+2){width:130px;height:119px;z-index:3;transform:rotate(11deg) translate(-11px,10px)}.month-sticker-collage figure:nth-child(3n){width:113px;height:126px;z-index:2;transform:rotate(-4deg) translate(8px,-9px)}.month-sticker-collage figure:nth-child(4n){width:136px;height:106px;z-index:4;transform:rotate(7deg) translate(-15px,4px)}.month-sticker-collage figure:nth-child(5n){width:106px;height:121px;z-index:5;transform:rotate(-12deg) translate(14px,-5px)}.month-sticker-collage:has(figure:only-child){padding-block:8px 13px}.month-sticker-collage:has(figure:only-child) figure{width:140px;height:132px;margin:0}
-@media(max-width:390px){.month-sticker-collage{padding:18px 19px 21px}.month-sticker-collage figure,.month-sticker-collage figure:nth-child(3n+2),.month-sticker-collage figure:nth-child(3n),.month-sticker-collage figure:nth-child(4n),.month-sticker-collage figure:nth-child(5n){width:111px;height:104px;margin:-20px -17px}.month-sticker-collage figure:nth-child(3n+2){width:121px;height:112px}.month-sticker-collage figure:nth-child(3n){width:105px;height:118px}.month-sticker-collage figure:nth-child(4n){width:127px;height:99px}.month-sticker-collage figure:nth-child(5n){width:100px;height:113px}}
+.month-sticker-wall{min-height:0;padding:7px 2px 14px;background:none;border-radius:0;overflow:visible}
+
 
 /* Stable scatter layout shared with the Reel renderer. */
-.month-sticker-wall{position:relative;padding:2px 0 8px}.month-sticker-collage,.month-sticker-collage:has(figure:only-child){position:relative;display:block;width:100%;min-height:0;aspect-ratio:1.48;padding:0;overflow:visible}.month-sticker-collage figure,.month-sticker-collage figure:nth-child(3n+2),.month-sticker-collage figure:nth-child(3n),.month-sticker-collage figure:nth-child(4n),.month-sticker-collage figure:nth-child(5n),.month-sticker-collage:has(figure:only-child) figure{position:absolute;left:var(--sticker-x);top:var(--sticker-y);z-index:var(--sticker-z);width:var(--sticker-size);height:auto;aspect-ratio:1;margin:0;padding:5px;transform:translate(-50%,-50%) rotate(var(--sticker-rotation));transform-origin:center}.month-sticker-collage figure.is-cutout{padding:0}.reel-entry{position:absolute;z-index:20;right:4px;top:2px;display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:#ffffffd9;color:#7580a1;box-shadow:0 4px 12px #626c8a1c}.reel-entry:active{transform:scale(.95)}
+.month-sticker-wall{position:relative;padding:2px 0 8px}.reel-entry{position:absolute;z-index:20;right:4px;top:2px;display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:#ffffffd9;color:#7580a1;box-shadow:0 4px 12px #626c8a1c}.reel-entry:active{transform:scale(.95)}
 .reel-dialog[data-slot=dialog-content]{display:flex!important;flex-direction:column;width:min(94vw,420px)!important;height:min(92dvh,790px);max-height:calc(100dvh - var(--safe-top) - var(--safe-bottom) - 18px)!important;padding:17px!important;background:#f5f4f8!important;border-radius:28px!important;overflow:hidden}.reel-dialog-heading{display:grid;grid-template-columns:40px 1fr 40px;align-items:center}.reel-dialog-heading h2{text-align:center;color:#626c89;font-size:17px}.reel-dialog>[data-slot=dialog-description]{margin:-5px 0 3px;text-align:center;color:#969cac;font-size:10px}.reel-canvas{display:block;min-height:0;max-height:calc(100dvh - var(--safe-top) - var(--safe-bottom) - 190px);width:auto;max-width:100%;aspect-ratio:9/16;margin:auto;border-radius:22px;box-shadow:0 9px 26px #545d7724;background:#eeeae5}.reel-actions{display:grid;grid-template-columns:1fr 1.35fr;gap:9px;padding-top:5px}.reel-actions button{min-height:45px;justify-content:center;font-size:13px}.reel-dialog .form-error{margin:0;text-align:center;font-size:11px}
 
 /* The monthly wall is staggered but never overlaps; Reel keeps the compact pile. */
-.month-sticker-collage,.month-sticker-collage:has(figure:only-child){display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:center;justify-items:center;gap:18px 9px;aspect-ratio:auto;padding:8px 12px 16px}.month-sticker-collage figure,.month-sticker-collage figure:nth-child(3n+2),.month-sticker-collage figure:nth-child(3n),.month-sticker-collage figure:nth-child(4n),.month-sticker-collage figure:nth-child(5n),.month-sticker-collage:has(figure:only-child) figure{position:relative;left:auto;top:auto;z-index:auto;width:min(100%,102px);height:auto;aspect-ratio:1;margin:0;padding:5px;transform:rotate(-5deg) translateY(-4px)}.month-sticker-collage figure:nth-child(3n+2){width:min(94%,98px);transform:rotate(6deg) translateY(8px)}.month-sticker-collage figure:nth-child(3n){width:min(100%,106px);transform:rotate(-2deg) translateY(1px)}.month-sticker-collage figure:nth-child(4n){transform:rotate(4deg) translateY(-7px)}.month-sticker-collage figure:nth-child(5n){transform:rotate(-7deg) translateY(6px)}.month-sticker-collage figure.is-cutout{padding:0}.month-sticker-collage:has(figure:only-child){grid-template-columns:1fr}.month-sticker-collage:has(figure:only-child) figure{width:132px;transform:rotate(-5deg)}.month-sticker-collage:has(figure:nth-child(2):last-child){grid-template-columns:repeat(2,112px);justify-content:center}
+
 
 /* Pack the non-overlapping monthly stickers into one compact group. */
-.month-sticker-collage,.month-sticker-collage:has(figure:only-child){gap:5px 2px;padding:3px 5px 7px}.month-sticker-collage figure,.month-sticker-collage figure:nth-child(3n+2),.month-sticker-collage figure:nth-child(3n),.month-sticker-collage figure:nth-child(4n),.month-sticker-collage figure:nth-child(5n){width:min(100%,108px)}.month-sticker-collage figure:nth-child(3n+2){width:min(98%,105px);transform:rotate(5deg) translateY(4px)}.month-sticker-collage figure:nth-child(3n){width:min(100%,110px);transform:rotate(-2deg)}.month-sticker-collage figure:nth-child(4n){transform:rotate(4deg) translateY(-3px)}.month-sticker-collage figure:nth-child(5n){transform:rotate(-6deg) translateY(3px)}
+
 
 /* Four horizontal lanes keep large collections tiled across the screen. */
-.month-sticker-collage,.month-sticker-collage:has(figure:only-child){grid-template-columns:repeat(4,minmax(0,1fr));gap:4px 3px;padding:4px 3px 8px}.month-sticker-collage figure,.month-sticker-collage figure:nth-child(3n+2),.month-sticker-collage figure:nth-child(3n),.month-sticker-collage figure:nth-child(4n),.month-sticker-collage figure:nth-child(5n){width:min(100%,84px)}.month-sticker-collage figure:nth-child(4n+1){transform:rotate(-5deg) translateY(-3px)}.month-sticker-collage figure:nth-child(4n+2){transform:rotate(4deg) translateY(4px)}.month-sticker-collage figure:nth-child(4n+3){transform:rotate(-2deg) translateY(-1px)}.month-sticker-collage figure:nth-child(4n){transform:rotate(5deg) translateY(3px)}.month-sticker-collage:has(figure:only-child){grid-template-columns:1fr}.month-sticker-collage:has(figure:only-child) figure{width:132px}.month-sticker-collage:has(figure:nth-child(2):last-child){grid-template-columns:repeat(2,90px)}
-.month-sticker-collage{grid-auto-rows:auto}
-.month-sticker-collage figure{grid-column:auto!important;grid-row:auto!important}
+
+
+
 
 /* A stable, tightly packed scatter: varied sizes and baselines without overlapping. */
-.month-sticker-collage,.month-sticker-collage:has(figure:only-child){display:flex;flex-wrap:wrap;align-items:center;align-content:flex-start;justify-content:center;column-gap:2px;row-gap:10px;padding:7px 2px 9px}
-.month-sticker-collage figure,.month-sticker-collage figure:nth-child(3n+2),.month-sticker-collage figure:nth-child(3n),.month-sticker-collage figure:nth-child(4n),.month-sticker-collage figure:nth-child(5n),.month-sticker-collage:has(figure:only-child) figure{position:relative;left:auto;top:auto;z-index:auto;flex:0 0 var(--wall-sticker-size);width:var(--wall-sticker-size);height:auto;aspect-ratio:1;margin:0;padding:0;transform:translateY(var(--wall-sticker-lift)) rotate(var(--wall-sticker-rotation));transform-origin:center}
-.month-sticker-collage:has(figure:only-child) figure{flex-basis:min(38%,140px);width:min(38%,140px)}
+
+
+
 
 /* Compact coffee-library rows; deletion now lives in the editor. */
 .catalog-list{gap:6px}
@@ -745,7 +745,7 @@ img,svg{-webkit-user-drag:none}
 
 .month-share-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 2px}.month-share-button{display:flex;align-items:center;justify-content:center;gap:7px;min-height:47px;padding:10px 14px;border:0;border-radius:16px;background:#ebeef6;color:#6f7997;font-size:13px}.month-share-button:last-child{background:#e7e3ef;color:#796d91}.month-share-button:active{transform:scale(.98)}
 .monthly-report-dialog[data-slot=dialog-content]{display:flex!important;flex-direction:column;width:min(94vw,430px)!important;height:min(94dvh,820px);max-height:calc(100dvh - var(--safe-top) - var(--safe-bottom) - 14px)!important;padding:16px!important;background:#f5f4f8!important;border-radius:28px!important;overflow:hidden}.monthly-report-preview{display:block;min-height:0;max-height:calc(100dvh - var(--safe-top) - var(--safe-bottom) - 150px);width:auto;max-width:100%;aspect-ratio:9/16;object-fit:contain;margin:auto;border-radius:20px;box-shadow:0 9px 26px #545d7724;background:#f4f0ed}.monthly-report-share{flex:0 0 auto;min-height:47px;justify-content:center;margin-top:2px}
-.month-sticker-stage{position:relative;display:block;width:100%;height:var(--pile-height,174px);min-height:160px;margin:0;padding:0;border:0;border-radius:28px;background:radial-gradient(circle at 22% 16%,#faf8f4 0 10%,transparent 31%),linear-gradient(155deg,#eeeaf2 0%,#e9e7f0 58%,#ede9e4 100%);box-shadow:inset 0 0 0 1px #ffffff78,0 8px 25px #5f688012;overflow:hidden;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.month-sticker-stage .month-sticker-collage,.month-sticker-stage .month-sticker-collage:has(figure:only-child){position:absolute;inset:0;display:block;width:100%;height:100%;min-height:0;padding:0;overflow:hidden;aspect-ratio:auto}.month-sticker-stage .month-sticker-collage figure,.month-sticker-stage .month-sticker-collage figure:nth-child(3n+2),.month-sticker-stage .month-sticker-collage figure:nth-child(3n),.month-sticker-stage .month-sticker-collage figure:nth-child(4n),.month-sticker-stage .month-sticker-collage figure:nth-child(5n),.month-sticker-stage .month-sticker-collage:has(figure:only-child) figure{position:absolute;left:50%;top:50%;z-index:auto;display:block;width:var(--sticker-size);height:auto;aspect-ratio:1;margin:0;padding:5px;overflow:hidden;border-radius:43% 57% 47% 53%/57% 42% 58% 43%;background:#fff;box-shadow:0 6px 15px #59627e24;transform:translate(var(--motion-x,0),var(--motion-y,0)) rotate(calc(var(--sticker-rotation) + var(--motion-turn,0deg)));transform-origin:center;will-change:transform}.month-sticker-stage .month-sticker-collage figure:nth-child(2n){border-radius:56% 44% 59% 41%/43% 58% 42% 57%}.month-sticker-stage .month-sticker-collage figure img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit;pointer-events:none}.month-sticker-stage .month-sticker-collage figure.is-cutout{padding:0;background:transparent;overflow:visible;box-shadow:none}.month-sticker-stage .month-sticker-collage figure.is-cutout img{object-fit:contain;border-radius:0;filter:drop-shadow(0 6px 5px #59627e2c)}.month-sticker-stage.is-moving .month-sticker-collage figure{animation:sticker-fly-and-settle 1.08s cubic-bezier(.2,.72,.22,1) both;animation-delay:var(--sticker-delay)}@keyframes sticker-fly-and-settle{0%{transform:translate(var(--motion-x,0),calc(var(--motion-y,0px) - 120px)) rotate(calc(var(--sticker-rotation) + var(--motion-turn,0deg)));opacity:0}20%{opacity:.88}100%{transform:translate(var(--motion-x,0),var(--motion-y,0)) rotate(calc(var(--sticker-rotation) + var(--motion-turn,0deg)));opacity:1}}@media(max-width:390px){.month-sticker-stage{min-height:156px;border-radius:25px}}@media(prefers-reduced-motion:reduce){.month-sticker-stage.is-moving .month-sticker-collage figure{animation:none}}
+
 
 /* A full package is one bag consumed; the last package carries the fractional fill. */
 .stats-bag-row{display:grid;grid-template-columns:24px minmax(72px,122px) minmax(0,1fr);align-items:center;gap:7px;min-height:43px;padding:0}.stats-bag-rank{color:#a3a7b5;font-family:serif;font-size:12px;font-style:italic}.stats-bag-name{min-width:0;overflow:hidden;padding:4px 0;border:0;background:transparent;color:#66718f;font:inherit;font-size:12px;line-height:1.25;text-align:left;white-space:nowrap;text-overflow:ellipsis}.stats-bag-name:active{color:#9b7890}.stats-bag-list{display:flex;min-width:0;align-items:center;gap:1px;overflow:hidden}.stats-mini-bag{position:relative;display:block;flex:0 0 25px;width:25px;height:37px;transform:rotate(-2deg)}.stats-mini-bag:nth-child(even){transform:rotate(2deg) translateY(1px)}.stats-mini-bag .coffee-bag-body{position:absolute;inset:0}.stats-mini-label{position:absolute;left:26%;top:36%;display:grid;width:54%;height:39%;place-items:center;overflow:hidden;border-radius:50%;background:#fffaf0}.stats-mini-label .sticker,.stats-mini-label .bean-thumb,.stats-mini-label .original-art{width:100%;height:100%;object-fit:cover;transform:none}.stats-bag-more{flex:none;margin-left:4px;color:#858da3;font-size:11px;white-space:nowrap}@media(max-width:390px){.stats-bag-row{grid-template-columns:20px minmax(62px,92px) minmax(0,1fr);gap:5px}.stats-mini-bag{flex-basis:22px;width:22px;height:33px}.stats-bag-name{font-size:11px}.stats-bag-more{font-size:10px}}
@@ -784,7 +784,8 @@ img,svg{-webkit-user-drag:none}
 /* iOS app: the system tab bar and navigation bar replace the web capsule and header buttons (lib/native-tabs.ts).
    Safe areas now include those bars, and on iPhone Duo the status-bar column on the right, so the page stays inside them. */
 .native-tabs .main-tabs,.native-tabs .bottom-menu-backdrop,.native-tabs .heading .add-button,.native-tabs .personal-entry{display:none!important}
-.native-tabs body{padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);box-sizing:border-box}
+/* !important so the dialog scroll lock (body[data-scroll-locked]{padding-left:0;padding-right:0}) can't drop the safe area and shift the page sideways. */
+.native-tabs body,.native-tabs body[data-scroll-locked]{padding-left:env(safe-area-inset-left,0px)!important;padding-right:env(safe-area-inset-right,0px)!important;box-sizing:border-box}
 .native-tabs main{padding-bottom:calc(36px + env(safe-area-inset-bottom,0px))}
 
 /* Unfolded iPhone Duo: “记一杯” becomes one full-screen workspace — form on the left, the pour timer (or the photo, for milk drinks) on the right. */
@@ -821,7 +822,6 @@ img,svg{-webkit-user-drag:none}
 .native-tabs .brew-workspace-side>.brew-photo-field>.brew-photo-buttons>label:first-child{flex-direction:column;gap:12px;min-height:0;border:2px dashed #c9cde2;border-radius:24px;background:#f9f9fd;color:#7480a8;font-size:17px}
 .native-tabs .brew-workspace-side>.brew-photo-field>.brew-photo-buttons>label:first-child svg{width:40px;height:40px;stroke-width:1.4}
 .native-tabs .brew-workspace-side>.brew-photo-field>.brew-photo-preview{flex:1;min-height:0}
-.native-tabs .brew-workspace-side>.brew-photo-field>.brew-photo-preview>img{max-height:calc(100% - 64px);object-fit:contain}
 }
 
 /* App: editors open as their own full-screen page (back at the top left, save at the bottom), like the bean details page. */
@@ -849,3 +849,606 @@ img,svg{-webkit-user-drag:none}
 .native-tabs .editor.form-editor .form-submit .save{display:none}
 .native-tabs .editor.form-editor .form-submit:not(:has(.error,.delete-entry,.source-link)){display:none}
 .native-tabs .editor.form-editor .form-scroll{padding-bottom:calc(24px + var(--safe-bottom))}
+
+/* Unfolded iPhone Duo: the calendar sits on the left and the chosen day's coffees on the right, instead of one calendar filling the screen. */
+@media(min-width:720px){
+.native-tabs .calendar-layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px;align-items:start}
+.native-tabs .calendar-side{min-width:0}
+.native-tabs .calendar-day{position:sticky;top:12px;min-width:0;max-height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));overflow-y:auto;background:#ffffffa8;border-radius:28px;padding:4px 16px 16px}
+.native-tabs .calendar-day .day-heading{padding:16px 4px 10px}
+.native-tabs .calendar-day .brew-list{grid-template-columns:1fr;gap:12px}
+.native-tabs .calendar-panel{padding:14px 10px 8px}
+.native-tabs .brew-calendar .rdp-month{gap:10px}
+.native-tabs .brew-calendar .rdp-day{height:62px;padding:2px 1px}
+.native-tabs .brew-calendar .rdp-day button{height:58px;gap:2px;padding:4px 0;border-radius:13px!important}
+.native-tabs .calendar-day .day-empty{min-height:220px;flex-direction:column}
+}
+/* Unfolded: the month at a glance — cups, how they were brewed, and every photo of the month — above the chosen day. */
+@media(min-width:720px){
+.native-tabs .calendar-month-glance{padding:14px 0 6px;border-bottom:1px solid #e9ebf3;margin-bottom:4px}
+}
+
+/* 探店: coffee bought out — a take-away cup sticker, warm paper tones, and one-tap chips for cafés and drinks. */
+.sticker-cafe{background-image:url('../public/flavor-icons/cafe.svg');background-size:contain;background-position:center;background-repeat:no-repeat}
+.brew-kind-picker:has(button:nth-child(3)){grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.brew-kind-picker:has(button:nth-child(3)) button{gap:6px;padding:7px 4px;white-space:nowrap}
+.brew-kind-picker:has(button:nth-child(3)) .sticker{width:40px;flex:none}
+.cafe-fields{display:flex;flex-direction:column;gap:14px;margin-bottom:6px}
+.cafe-fields>.field>span{font-size:14px;color:#65656a}
+.cafe-chips{display:flex;flex-wrap:wrap;gap:7px}
+.cafe-chips button{min-height:34px;padding:6px 13px;border:0;border-radius:999px;background:#f2f1f6;color:#6f7a9a;font-size:13px}
+.cafe-chips button[aria-pressed=true]{background:#eadfce;color:#7e664b;box-shadow:inset 0 0 0 1.5px #d2b896}
+.cafe-chips+input{margin-top:2px}
+.cafe-serving button{flex:1;min-height:44px}
+.cafe-badge{background-color:#f1e7dc!important}
+.cafe-badge .sticker{width:100%;height:100%}
+.cafe-tag{background:#f1e7dc!important;color:#8d7356!important}
+.brew-calendar .day-bean.day-cafe{background-color:#fbf6ef}
+.brew-calendar .day-bean.day-cafe .sticker{width:100%;height:100%}
+.stats-place-row{display:grid;grid-template-columns:24px 30px minmax(0,1fr) auto;align-items:center;gap:8px;padding:7px 0}
+.stats-place-row .sticker{width:30px;height:30px}
+.stats-place-name{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#66729a;font-size:14px}
+.stats-place-count{color:#a08568;font-size:12px;font-variant-numeric:tabular-nums}
+.month-place-table{margin-top:14px}
+
+/* Calendar: a day with a photo shows that one photo, filling the cell and overhanging it a little like a sticker;
+   every other day shows its date large and centred, on its coffee's colour when a cup was logged without a photo. */
+.brew-calendar .rdp-day button{justify-content:center}
+.brew-calendar .rdp-day .day-number{font-size:19px!important;line-height:1!important;min-height:0;font-weight:500;font-variant-numeric:tabular-nums}
+.brew-calendar .rdp-day button[data-has-coffee=true] .day-number{color:#56617f}
+.brew-calendar .rdp-day:has(button[data-has-photo=true]){position:relative;z-index:1}
+.brew-calendar .rdp-day:has(button[data-selected-single=true]){z-index:2}
+.brew-calendar .rdp-day button[data-has-photo=true]{position:relative;overflow:visible;padding:0!important;gap:0;background:transparent!important}
+.brew-calendar .rdp-day button[data-has-photo=true][data-selected-single=true]{box-shadow:none!important;outline:2px solid #9a97bc;outline-offset:1px;background:#eae8f8!important}
+.brew-calendar .rdp-day button[data-has-photo=true] .day-beans{position:absolute;inset:-2px;min-height:0;width:auto;display:block;container-type:size}
+/* centring kept inside transform: vite's CSS minifier drops a separate `translate` next to `transform` */
+.brew-calendar .rdp-day button[data-has-photo=true] .day-bean{--sticker:min(100cqw,100cqh);position:absolute;left:50%;top:50%;width:var(--sticker)!important;height:var(--sticker)!important;margin:0;transform:translate(-50%,-50%) rotate(-4deg)}
+.brew-calendar .rdp-day button[data-has-photo=true] .day-coffee-photo img{border-width:2.5px}
+
+/* 豆仓: the way into 豆子合集, now a page inside 豆仓 rather than a tab of its own. */
+.catalog-entry-card{display:flex;align-items:center;gap:14px;width:100%;margin:30px 0 8px;padding:12px 16px 12px 12px;border:0;border-radius:22px;background:#ffffffc9;color:#66729a;text-align:left;box-shadow:0 4px 14px #646a7b12}
+.catalog-entry-card:active{transform:scale(.99)}
+.catalog-entry-stickers{display:flex;flex:none;padding-left:6px}
+.catalog-entry-stickers>span{display:grid;place-items:center;width:44px;height:44px;margin-left:-8px;overflow:hidden;border:3px solid #fff;border-radius:46% 54% 41% 59% / 57% 42% 58% 43%;box-shadow:0 2px 6px #646a7b1f}
+.catalog-entry-stickers>span:nth-child(2){transform:rotate(6deg)}.catalog-entry-stickers>span:nth-child(3){transform:rotate(-5deg)}
+.catalog-entry-stickers img{width:100%;height:100%;object-fit:cover}.catalog-entry-stickers .sticker{width:80%;height:80%}
+.catalog-entry-copy{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.catalog-entry-copy strong{font-size:16px;color:#5f6b91;font-weight:500}
+.catalog-entry-copy small{font-size:12px;color:#99a0b5}
+/* App: the system back button replaces these web back links (on the Duo it sits in the column). */
+.native-tabs .review-page-nav{display:none!important}
+/* Unfolded Duo: the month / year recap side by side — the photo sticker pile fills the left, the charts, favourite coffees,
+   cafés and share buttons stack on the right. Without photos it stays one column. */
+@media(min-width:720px){
+/* The pile is only as tall as its photos need (the page sets --pile-height from the count), a little taller than on a phone
+   since the column is narrower; a month with few photos no longer leaves an empty band above them. */
+
+}
+
+/* 图鉴 stickers: a cup is a two-sided card that turns over when tapped; a coffee is lit once tried, faded until then. */
+.atlas-cup{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;position:relative;transition:z-index 0s .3s}
+.atlas-cup.is-flipped{z-index:3;transition:none}
+.atlas-card{position:relative;width:100%;aspect-ratio:1;transform:rotate(var(--tilt));transform-style:preserve-3d;-webkit-transform-style:preserve-3d;transition:transform .5s cubic-bezier(.3,.7,.3,1);cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none}
+.atlas-cup.is-flipped .atlas-card{transform:rotate(0deg) rotateY(180deg) scale(1.35)}
+/* Each face also hides itself half-way through the turn: WebKit doesn't always honour backface-visibility. */
+.atlas-face{position:absolute;inset:0;display:grid;place-items:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(0deg) translateZ(1px);transition:opacity 0s linear .25s}
+.atlas-face.is-back{transform:rotateY(180deg) translateZ(1px);opacity:0}
+.atlas-cup.is-flipped .atlas-face.is-back{opacity:1}.atlas-cup.is-flipped .atlas-face.is-front{opacity:0}
+.atlas-face>img.is-photo{width:100%;height:100%;object-fit:cover;box-sizing:border-box;border:4px solid #fff;border-radius:22px;box-shadow:0 5px 14px #646a7b29}
+.atlas-face>img.is-cutout{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 4px 5px #646a7b33)}
+.atlas-art{display:grid;place-items:center;width:88%;height:88%;overflow:hidden;border-radius:var(--picture-edge,46% 54% 41% 59% / 57% 42% 58% 43%);box-shadow:0 0 0 4px #fff,0 5px 12px #646a7b24}
+.atlas-art img{width:100%!important;height:100%!important;object-fit:cover!important;border-radius:0!important}
+.atlas-art .sticker{width:76%;height:76%}
+.atlas-face.is-back{box-sizing:border-box;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;padding:10%;border-radius:18px;background:#fff;box-shadow:0 8px 20px #646a7b33;text-align:left;color:#5f6884;overflow:hidden}
+.atlas-face.is-back strong{font-size:10px;line-height:1.3;color:#4f5878;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.atlas-face.is-back small{font-size:7.5px;color:#8a92ab;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.atlas-face.is-back p{margin:2px 0 0;font-size:7.5px;line-height:1.4;color:#6c7491;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.atlas-stars{font-size:8px;letter-spacing:1px;color:#e0b65a}.atlas-stars i{font-style:normal;color:#e4e1ea}
+.atlas-edit{margin-top:auto;padding:2px 8px;border:0;border-radius:999px;background:#eceaf6;color:#6f7a9a;font-size:8px}
+.atlas-cup time{font-size:11px;color:#9aa1b6;font-variant-numeric:tabular-nums;letter-spacing:.03em;transition:opacity .2s}
+.atlas-cup.is-flipped time{opacity:0}
+.atlas-bean{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;padding:0;border:0;background:none;color:#5f6884}
+.atlas-bean .atlas-art{width:64px;height:64px}
+.atlas-bean:not(.is-tried) .atlas-art{filter:grayscale(1);opacity:.32;box-shadow:0 0 0 3px #ffffffb3}
+.atlas-bean:not(.is-tried) strong{color:#b5bacb}
+.atlas-bean:active,.atlas-recent-row button:active{transform:scale(.96)}
+@media(prefers-reduced-motion:reduce){.atlas-card,.atlas-face{transition:none}}
+
+html:not(.native-tabs) .journal-shell{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+.flip-book{position:absolute;inset:0}
+.flip-page,.flip-leaf{position:absolute;top:0;bottom:0;left:0;width:100%}
+.flip-book.is-spread .flip-page.is-left,.flip-book.is-spread .flip-leaf.is-left{left:0;width:50%}
+.flip-book.is-spread .flip-page.is-right,.flip-book.is-spread .flip-leaf.is-right{left:50%;width:50%}
+/* Each layer of a turning page is its own stacking group, so nothing underneath rises through the sheet being turned. */
+.flip-slot{display:contents}
+.flip-stage .flip-page,.flip-stage>.flip-leaf,.flip-stage .flip-leaf.is-face,.flip-stage>.flip-flap-shadow{isolation:isolate}
+.flip-stage .flip-page{z-index:0}.flip-stage>.flip-leaf{z-index:1}.flip-stage .flip-leaf.is-face{z-index:2}.flip-stage>.flip-flap-shadow{z-index:4}
+.flip-revealed{position:absolute;inset:0;pointer-events:none}
+.flip-flap-shadow{position:absolute;inset:0;pointer-events:none;filter:drop-shadow(0 0 10px rgba(46,50,78,.22)) drop-shadow(0 2px 3px rgba(46,50,78,.12))}
+.flip-flap{position:absolute;top:0;left:0;width:100%;height:100%;transform-origin:0 0;will-change:transform,clip-path}
+.flip-book.is-spread .flip-flap{left:50%;width:50%}
+.flip-flap-shade{position:absolute;inset:0;pointer-events:none}
+
+/* 图鉴 journal — polaroids on a linen wall. The paper runs under the status bar, the home indicator and the Duo's side
+   column, edge to edge; only the content keeps clear of them. No controls over the page: the contents page links to each
+   section and to the latest page, and a faint counter shows where you are. Pages turn under the finger. */
+.journal-shell{position:fixed;z-index:20;inset:0;background:#efece6;--safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);--safe-l:env(safe-area-inset-left,0px);--safe-r:env(safe-area-inset-right,0px)}
+html:not(.native-tabs) .journal-shell{--safe-b:calc(96px + env(safe-area-inset-bottom,0px))}
+.flip-stage{position:absolute;inset:0;touch-action:none;user-select:none;-webkit-user-select:none;overflow:hidden}
+.flip-paper-back,.flip-blank{position:absolute;inset:0;background:#e8e4dc}
+.atlas-ticket{display:none}
+.flip-counter{position:absolute;z-index:7;right:calc(var(--safe-r) + 16px);bottom:calc(var(--safe-b) + 8px);font-size:11px;letter-spacing:.08em;color:#00000059;font-variant-numeric:tabular-nums;pointer-events:none}
+/* Paper: linen, edge to edge; content inset by the safe areas on whichever sides touch the screen edge. */
+.journal-page{position:absolute;inset:0;box-sizing:border-box;display:flex;flex-direction:column;gap:12px;padding:calc(var(--safe-t) + 22px) calc(var(--safe-r) + 20px) calc(var(--safe-b) + 28px) calc(var(--safe-l) + 20px);overflow:hidden;color:#2b2b2b;background:repeating-linear-gradient(0deg,#0000 0 3px,#00000006 3px 4px),linear-gradient(90deg,#0000000d,transparent 18px),#efece6}
+.flip-book.is-spread :is(.flip-page,.flip-leaf).is-left .journal-page,.flip-book.is-spread .flip-flap.is-right .journal-page{padding-right:28px;background:repeating-linear-gradient(0deg,#0000 0 3px,#00000006 3px 4px),linear-gradient(270deg,#0000000d,transparent 18px),#efece6}
+.flip-book.is-spread :is(.flip-page,.flip-leaf).is-right .journal-page,.flip-book.is-spread .flip-flap.is-left .journal-page{padding-left:28px}
+
+.journal-page>*{position:relative}
+.journal-page.is-cover,.journal-page.is-contents{align-items:center;justify-content:center;text-align:center}
+.journal-cover{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
+
+
+
+
+.journal-cover span{font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive;font-size:20px;color:#6a6a6a;letter-spacing:.1em}
+
+.journal-totals{margin:-4px 0 6px;font-size:12px;color:#888}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.journal-empty{margin:auto 0;text-align:center;color:#999;font-family:"Marker Felt",var(--font-illustration),cursive}
+/* Body: segments (a month or a roaster) share the page, each under a handwritten label. */
+.journal-body{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px;container-type:size}
+.journal-segment{display:flex;flex-direction:column;gap:6px;min-height:0}
+.journal-label{align-self:flex-start;display:inline-flex;align-items:baseline;gap:6px;font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive;font-size:20px;color:#4a4a4a}
+.journal-label small{font-size:12px;color:#999}
+/* Polaroids: a white print with a deeper bottom border, a strip of tape, the date (or name) handwritten under the photo. */
+.journal-grid.is-polaroids{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 16px;justify-items:center}
+.is-polaroids .atlas-cup,.is-polaroids .atlas-bean{position:relative;display:block;width:min(44cqw,calc(33cqh - 40px));padding:8px 8px 32px;box-sizing:border-box;background:#fff;box-shadow:0 6px 16px #00000024;transform:rotate(var(--tilt,0deg))}
+.is-polaroids>:nth-child(4n+1){--tilt:-4deg}.is-polaroids>:nth-child(4n+2){--tilt:3deg}.is-polaroids>:nth-child(4n+3){--tilt:2deg}.is-polaroids>:nth-child(4n+4){--tilt:-3deg}
+.is-polaroids .atlas-cup::before,.is-polaroids .atlas-bean::before{content:"";position:absolute;z-index:2;top:-9px;left:50%;width:56px;height:18px;margin-left:-28px;background:#f1d7a2b3;transform:rotate(-3deg)}
+.is-polaroids .atlas-card{--tilt:0deg;width:100%}
+.is-polaroids .atlas-face>img{position:absolute;inset:0;width:100%;height:100%}
+.is-polaroids .atlas-face>img.is-photo{border:0;border-radius:0;box-shadow:none;object-fit:cover}
+.is-polaroids .atlas-face>img.is-cutout{background:#f3efe7;padding:6%;box-sizing:border-box;filter:none;object-fit:contain}
+.is-polaroids .atlas-art{position:absolute;inset:0;width:100%;height:100%;border-radius:0;box-shadow:none}
+.is-polaroids .atlas-bean .atlas-art{position:relative;inset:auto;display:grid;aspect-ratio:1;height:auto}
+.is-polaroids .atlas-cup time,.is-polaroids .atlas-bean strong{position:absolute;left:8px;right:8px;bottom:7px;text-align:center;font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive;font-size:15px;font-weight:400;color:#555;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.is-polaroids .atlas-bean strong{font-size:12px;bottom:9px}
+.is-polaroids .atlas-bean:not(.is-tried){opacity:.55}
+.is-polaroids .atlas-bean:not(.is-tried) .atlas-art{filter:grayscale(1);opacity:.6}
+/* A turned-over polaroid shows its back across the whole print. */
+.is-polaroids .atlas-cup.is-flipped .atlas-card{transform:rotateY(180deg) scale(1.15)}
+
+/* The recap's journal. Its cover: the period's best two or three photos fanned out as polaroids on linen, with a title;
+   tapping opens every photo of the period as a polaroid wall, edge to edge. */
+.month-journal-fan{position:relative;flex:none;width:156px;height:128px}
+.month-journal-fan figure{position:absolute;left:calc(var(--i) * 34px);top:calc(18px + var(--i) * 3px);width:88px;margin:0;transform:rotate(calc((var(--i) - (var(--n) - 1) / 2) * 9deg))}
+.fan-photo{display:block;aspect-ratio:1;overflow:hidden;background:#f3efe7}
+.fan-photo img{display:block;width:100%;height:100%;object-fit:cover}
+.is-cutout .fan-photo img{object-fit:contain;padding:6%;box-sizing:border-box}
+.month-journal-copy{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+.month-journal-copy strong{font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive;font-size:22px;font-weight:400;color:#3a3a3a}
+.month-journal-copy small{font-size:12px;color:#8a8a8a}
+/* Unfolded Duo: the cover fills the recap's left column. */
+/* The open journal: a full-screen linen wall of polaroids, scrolling, the tab bar left in place. */
+
+
+
+
+
+
+
+
+
+
+
+/* Year journals. The open book covers the screen over whichever tab opened it (the tab bar stays); a small "月份" button
+   returns to the month index; the web version also gets a close button (the app uses the system back button). */
+.journal-close{position:absolute;z-index:8;top:calc(var(--safe-t) + 10px);right:calc(var(--safe-r) + 12px);display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:#ffffffc9;color:#555;box-shadow:0 2px 8px #0000001a}
+.native-tabs .journal-close{display:none}
+.journal-cover .journal-cover-year{font:700 96px/1 "Didot","Bodoni 72",Georgia,serif;color:#2b2b2b;letter-spacing:.02em}
+/* Month index: twelve handwritten tiles; empty months are faint. */
+.journal-page.is-index{justify-content:center}
+
+
+
+
+
+
+
+
+/* The year's statistics, set on the linen page in the recap's own cards. */
+.journal-page.is-stats{justify-content:flex-start}
+.journal-stats{display:flex;flex-direction:column;gap:12px;width:100%;min-height:0}
+.journal-stats h3{margin:0;font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive;font-size:24px;font-weight:400;color:#3a3a3a}
+.journal-stats .month-stats{display:grid;gap:12px}
+/* 图鉴: a shelf of year journals, then the coffee atlas by roaster. */
+.journal-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:28px}
+.journal-book{display:flex;align-items:center;gap:18px;padding:16px 18px 16px 12px;border:0;border-radius:24px;background:repeating-linear-gradient(0deg,#0000 0 3px,#00000006 3px 4px),#efece6;color:#3a3a3a;text-align:left;box-shadow:0 4px 14px #646a7b12}
+.journal-book:active{transform:scale(.99)}
+.journal-book-copy{display:flex;flex-direction:column;gap:2px}
+.journal-book-copy strong{font:700 40px/1 "Didot","Bodoni 72",Georgia,serif;color:#2b2b2b}
+.journal-book-copy small{font-size:12px;color:#8a8a8a}
+.journal-book .month-journal-fan:empty{width:0}
+.atlas-beans>header{display:flex;align-items:baseline;gap:10px;margin:0 4px 12px}
+.atlas-beans>header h2{margin:0;font-size:18px;font-weight:500;color:#5f6b91}
+.atlas-beans>header span{font-size:12px;color:#99a0b5}
+.atlas-roaster{margin-bottom:14px;padding:14px 12px;border-radius:22px;background:#ffffffc9;box-shadow:0 4px 14px #646a7b0f}
+.atlas-roaster h3{display:flex;align-items:baseline;gap:8px;margin:0 4px 10px;font-size:15px;font-weight:500;color:#5f6b91}
+.atlas-roaster h3 small{font-size:12px;color:#99a0b5;font-weight:400}
+.atlas-roaster-row{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 4px;scrollbar-width:none}
+.atlas-roaster-row::-webkit-scrollbar{display:none}
+.atlas-roaster-row .atlas-bean{flex:none;width:78px}
+/* In a journal page the year's charts stack, so each has the page's width. */
+.journal-stats .month-analysis-grid{grid-template-columns:minmax(0,1fr)}
+.journal-stats .month-kind-card .month-kind-chart{justify-content:center}
+/* Vintage paper for the year journal: the age is in the texture, not the colour — off-white stock that has been crumpled
+   and smoothed out again (soft creases lit from the top left), a fine grain, and the shadow of the spine. */
+.journal-shell{--grain:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3 0 0 0 0 .28 0 0 0 0 .25 0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");--crumple:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='900' height='900'><filter id='c' x='0' y='0'><feTurbulence type='fractalNoise' baseFrequency='0.006 0.009' numOctaves='5' seed='11' stitchTiles='stitch'/><feDiffuseLighting lighting-color='%23fff' surfaceScale='3.2'><feDistantLight azimuth='225' elevation='40'/></feDiffuseLighting><feColorMatrix values='0 0 0 0 .32 0 0 0 0 .3 0 0 0 0 .27 -.3 -.3 -.3 0 .84'/></filter><rect width='100%' height='100%' filter='url(%23c)'/></svg>");background:#e9e6df}
+.journal-page,.flip-book.is-spread :is(.flip-page,.flip-leaf).is-left .journal-page,.flip-book.is-spread .flip-flap.is-right .journal-page{color:#34312b;background:var(--grain),var(--crumple) 0 0/900px 900px,linear-gradient(90deg,#00000014,transparent 22px),#f5f2eb}
+.flip-book.is-spread :is(.flip-page,.flip-leaf).is-left .journal-page,.flip-book.is-spread .flip-flap.is-right .journal-page{background:var(--grain),var(--crumple) 450px 160px/900px 900px,linear-gradient(270deg,#00000014,transparent 22px),#f5f2eb}
+.flip-paper-back,.flip-blank{background:var(--grain),var(--crumple) 0 0/900px 900px,#eeeae2}
+.is-polaroids .atlas-cup,.is-polaroids .atlas-bean{background:#fdfcf8;box-shadow:0 6px 14px #0000002b,inset 0 0 0 1px #00000008}
+.is-polaroids .atlas-cup::before,.is-polaroids .atlas-bean::before{background:#e6d6b0a6}
+.is-polaroids .atlas-face>img.is-cutout{background:#f2efe8}
+.is-polaroids .atlas-cup time{font-size:11px;bottom:9px;color:#55504a;letter-spacing:.04em}
+.is-polaroids .atlas-bean strong{font-size:10px}
+.journal-label,.journal-dots-page h2,.journal-stats h3{color:#3d3a34}
+.journal-cover .journal-cover-year{color:#34312b}
+.journal-stats .month-chart-card,.journal-stats .month-bean-table{background:#fdfcf8e0}
+/* First page: the year's dots — a row per month, a dot per day, coffee-brown and darker for more cups. */
+.journal-page.is-dots{justify-content:center}
+.journal-dots-page{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+.journal-dots-page h2{margin:0;font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive;font-size:28px;font-weight:400}
+.journal-dots{display:flex;flex-direction:column;gap:5px;width:100%;margin-top:12px}
+.journal-dots-days{display:grid;grid-template-columns:repeat(31,minmax(0,1fr));gap:2px}
+.journal-dots-days i,.journal-dots-key i{display:block;aspect-ratio:1;border-radius:50%;background:#0000000f}
+.journal-dots-days i[data-level="1"],.journal-dots-key i[data-level="1"]{background:#d3c1a1}
+.journal-dots-days i[data-level="2"],.journal-dots-key i[data-level="2"]{background:#ad8a5f}
+.journal-dots-days i[data-level="3"],.journal-dots-key i[data-level="3"]{background:#86623c}
+.journal-dots-days i[data-level="4"],.journal-dots-key i[data-level="4"]{background:#5c3f24}
+.journal-dots-key{display:flex;align-items:center;gap:4px;margin:10px 0 0;font-size:11px;color:#8a857b}
+.journal-dots-key i{width:9px}
+
+/* A month opens its journal pages with its statistics: methods beside the daily cups, then favourites and cafés;
+   sharing sits beside the month's name. */
+.journal-month-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.journal-stats.is-month .month-analysis-grid{grid-template-columns:minmax(0,1fr)}
+.journal-stats.is-month .month-stats{gap:10px}
+.journal-stats.is-month .month-place-table{margin-top:0}
+/* The calendar month's journal entry, under its cups: three polaroids fanned beside its name. */
+.journal-stats.is-month .month-chart-card h3,.journal-stats.is-month .month-bean-table h3{font-size:18px}
+.journal-stats.is-month .month-chart-card{padding:12px 14px}
+.journal-stats.is-month .month-chart-card h3{white-space:nowrap}
+.journal-stats.is-month .month-kind-card header>span{display:none}
+.journal-stats.is-month .month-kind-chart{min-height:0;gap:6px}
+.journal-stats.is-month .month-kind-legend{flex-direction:column;align-items:flex-start;width:max-content;margin:0 auto;gap:3px}
+.journal-stats.is-month .month-kind-legend>span{white-space:nowrap}
+.flip-book .journal-page.is-month-stats{padding-bottom:calc(var(--safe-b) + 46px)}
+.journal-stats.is-month .month-bean-table{padding-block:12px}
+.journal-stats.is-month .stats-bag-row{min-height:36px}
+.journal-stats.is-month .stats-place-row{padding:3px 0}
+.journal-stats.is-month .month-donut{width:86px;height:84px}
+.journal-stats.is-month .month-chart-card header{margin-bottom:4px}
+.journal-stats.is-month .month-bean-table h3{margin-bottom:2px}
+/* A journal page of a month's cups: six stickers stuck on loosely — each a little bigger or smaller, nudged off the
+   grid and turned its own way — with the date pencilled underneath. */
+.is-stickers .atlas-art{width:92%;height:92%}
+.is-stickers .atlas-cup time{font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive;font-size:12px;color:#6b665c;transform:rotate(calc(var(--tilt) * -.6))}
+/* The month and year covers: two or three of the best photos fanned out as stickers. */
+.month-journal-fan figure{padding:0;background:none;box-shadow:none}
+.fan-photo{border:3px solid #fff;border-radius:18px;box-sizing:border-box;background:#f3efe7;box-shadow:0 5px 12px #646a7b2e}
+.is-cutout .fan-photo{border:0;border-radius:0;background:none;box-shadow:none;overflow:visible}
+.is-cutout .fan-photo img{padding:0;filter:drop-shadow(0 4px 5px #646a7b40)}
+
+/* The calendar's month, in one piece: its best stickers fanned out, its cups by kind; opens the month in the journal. */
+.month-glance{display:flex;align-items:center;gap:14px;width:100%;padding:10px 14px 10px 10px;border:0;border-radius:22px;background:#eef0f8;color:#6f7a9a;text-align:left}
+.month-glance:active:not(:disabled){transform:scale(.99)}
+.calendar-side>.month-glance{margin:-4px 0 12px}
+.month-glance .month-journal-fan{width:112px;height:84px}
+.month-glance .month-journal-fan figure{width:62px;left:calc(var(--i) * 24px);top:calc(10px + var(--i) * 2px)}
+.month-glance-total{display:flex;flex-direction:column;align-items:center;justify-content:center;width:72px;height:72px}
+.month-glance-total strong{font-size:32px;line-height:1;color:#5f6b91;font-variant-numeric:tabular-nums}
+.month-glance-total small{font-size:11px;color:#949cb4}
+.month-glance-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.month-glance-title{display:flex;align-items:baseline;gap:4px;font-size:13px;color:#7d86a3}
+.month-glance-title b{margin-left:6px;font-size:20px;font-weight:500;color:#5f6b91;font-variant-numeric:tabular-nums}
+.month-glance-cells{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.month-glance-cells>span{display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 2px;border-radius:12px;background:#fff9;font-size:11px;color:#8a92ab;white-space:nowrap}
+.month-glance-cells strong{font-size:16px;font-weight:500;color:#66729a;font-variant-numeric:tabular-nums}
+.month-glance-arrow{flex:none;color:#a0a7b9}
+/* Journal stickers: big, loosely stuck — each a little bigger or smaller, nudged off the grid and turned its own way. */
+.journal-grid.is-stickers{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:0 4px;place-items:center}
+.is-stickers .atlas-cup{width:calc(min(49cqw,33.3cqh - 22px) * var(--s,1));transform:translate(var(--dx,0),var(--dy,0))}
+.is-stickers>:nth-child(6n+1){--s:1;--dx:-4%;--dy:2%}
+.is-stickers>:nth-child(6n+2){--s:.9;--dx:6%;--dy:-2%}
+.is-stickers>:nth-child(6n+3){--s:.92;--dx:6%;--dy:1%}
+.is-stickers>:nth-child(6n+4){--s:1;--dx:-4%;--dy:2%}
+.is-stickers>:nth-child(6n+5){--s:.96;--dx:-5%;--dy:-1%}
+.is-stickers>:nth-child(6n+6){--s:.88;--dx:5%;--dy:-2%}
+/* A month's statistics written straight on the paper: no white cards, warm ink, a pencil rule between sections. */
+.journal-stats{color:#4a463f}
+.journal-stats .month-chart-card,.journal-stats .month-bean-table,.journal-stats.is-month .month-chart-card,.journal-stats.is-month .month-bean-table{background:none;box-shadow:none;border-radius:0;padding:10px 2px 4px;border-top:1.5px dashed #6b5c4a40}
+.journal-stats .month-analysis-grid{gap:18px}
+.journal-stats .month-donut span,.journal-stats .month-donut strong,.journal-stats .month-kind-legend,.journal-stats .month-kind-legend strong,.journal-stats .stats-bag-name,.journal-stats .stats-place-row,.journal-stats .stats-place-row *{color:#4a463f}
+.journal-stats .stats-bag-rank{color:#a39a8b}
+/* On the unfolded Duo the bean shelf holds four bags to a row. */
+@media(min-width:720px){.native-tabs .bean-shelf .cards{grid-template-columns:repeat(4,minmax(0,1fr));max-width:none}}
+.journal-stats .month-kind-legend span{color:#4a463f}
+
+/* The year's dots: each month's row is one button — its name a tab, an arrow at the end — that turns to the month. */
+.journal-dots-row{display:grid;grid-template-columns:44px minmax(0,1fr) 14px;align-items:center;gap:6px;width:100%;padding:3px 4px;border:0;border-radius:10px;background:none;color:#4a463f;text-align:left}
+.journal-dots-row:not(:disabled):active{background:#6b5c4a14}
+.journal-dots-month{justify-self:start;padding:1px 8px;border-radius:999px;background:#6b5c4a14;font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive;font-size:13px}
+.journal-dots-go{color:#8a7a66}
+.journal-dots-row:disabled .journal-dots-month{background:none;color:#b3ada2}
+.journal-dots-row:disabled .journal-dots-go{visibility:hidden}
+.journal-dots{gap:2px}
+.journal-dots-hint{margin:8px 0 0;font-size:11px;color:#8a857b}
+.journal-shell .flip-book:not(.is-spread) .journal-page,.journal-shell .flip-book.is-spread :is(.flip-page,.flip-leaf).is-left .journal-page,.journal-shell .flip-book.is-spread .flip-flap.is-right .journal-page{padding-left:calc(var(--safe-l) + 34px)}
+/* A month's methods: ring and legend side by side across the page. */
+.journal-stats.is-month .month-kind-chart{flex-direction:row;justify-content:flex-start;gap:28px;padding-left:12px}
+.journal-stats.is-month .month-kind-legend{margin:0;flex-direction:row;gap:16px}
+.journal-stats.is-month .month-donut{width:96px;height:96px}
+/* The year at the back: the methods ring and legend side by side, then a tall month-by-month chart; the lists on the next page. */
+.journal-stats.is-year{gap:14px}
+.journal-stats.is-year .month-kind-card header>span{display:none}
+.journal-stats.is-year .month-kind-chart{min-height:0;flex-direction:row;justify-content:flex-start;gap:28px;padding-left:12px}
+.journal-stats.is-year .month-kind-legend{margin:0;flex-direction:column;align-items:flex-start;width:max-content;gap:6px}
+.journal-stats.is-year .month-donut{width:118px;height:118px}
+.journal-stats.is-year .month-chart{height:min(260px,34cqh)}
+.journal-stats.is-year .month-chart-card,.journal-stats.is-year .month-bean-table{padding:12px 2px 6px}
+.journal-stats.is-year .month-chart-card h3,.journal-stats.is-year .month-bean-table h3{font-size:18px}
+.journal-stats.is-year .month-place-table{margin-top:0}
+
+/* Charts drawn in CSS: the methods ring is a conic gradient with its centre cut out; the months are plain bars. */
+.month-donut-ring{position:absolute;inset:0;border-radius:50%;-webkit-mask:radial-gradient(circle,#0000 0 52%,#000 53%);mask:radial-gradient(circle,#0000 0 52%,#000 53%)}
+.journal-stats .month-donut{aspect-ratio:1}
+.journal-stats .month-chart{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));align-items:end;gap:6px;padding:16px 4px 0}
+.month-bar{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;padding-bottom:16px;box-sizing:border-box}
+.month-bar>i{display:block;width:min(16px,70%);min-height:2px;border-radius:5px 5px 1px 1px;background:#b8976d}
+.month-bar>small{font-size:9px;color:#8a7a66;margin-bottom:2px}
+.month-bar>b{position:absolute;bottom:0;font-size:9px;font-weight:400;color:#8a857b}
+/* A coffee's photo shows large when its record is opened: the sticker centred, the photo actions underneath. */
+.brew-photo-preview{flex-direction:column;align-items:center;gap:12px;padding-top:8px}
+.brew-photo-preview>img,.brew-photo-preview.is-cutout>img{width:min(78%,260px);height:auto;max-height:300px;aspect-ratio:1;object-fit:cover}
+.brew-photo-preview.is-cutout>img{object-fit:contain}
+.brew-photo-preview>div{display:flex;align-items:center;justify-content:center;gap:8px}
+.native-tabs .brew-workspace-side>.brew-photo-field>.brew-photo-preview{justify-content:center}
+.native-tabs .brew-workspace-side>.brew-photo-field>.brew-photo-preview>img{width:min(86%,420px);max-height:calc(100% - 70px)}
+/* A quiet rail of months at the foot of the left margin. Folded it is just the open month under a dotted trail;
+   touched, the other stops unroll upward. The ink mark slides between stops, and the folded label rolls in from where the book came from. */
+.journal-rail{position:absolute;z-index:8;left:calc(var(--safe-l) + 0px);bottom:calc(var(--safe-b) + 14px);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:min(320px,60%);padding:0 4px}
+.journal-rail-list{position:relative;display:flex;flex-direction:column;width:26px}
+.journal-rail button{position:relative;z-index:1;display:grid;place-items:center;width:100%;height:22px;padding:0;border:0;border-radius:999px;background:none;color:#9a9284;font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive;font-size:11px;font-variant-numeric:tabular-nums;overflow:hidden;transition:height .24s ease,opacity .2s ease,margin .24s ease,color .25s ease}
+.journal-rail button.is-word{font-family:inherit;font-size:9px;letter-spacing:.05em}
+.journal-rail button.is-year{margin-bottom:4px}
+.journal-rail button:disabled{color:#bdb4a5}
+.journal-rail button[aria-current=true]{color:#fdfcf8}
+.journal-rail-mark{position:absolute;left:0;right:0;top:0;height:22px;border-radius:999px;background:#6b4f35d9;transform:translateY(var(--rail-y));transition:transform .38s cubic-bezier(.3,1.35,.5,1),opacity .2s ease .12s}
+.journal-rail:not(.is-open) button{height:0;margin:0!important;opacity:0;pointer-events:none}
+.journal-rail:not(.is-open) .journal-rail-mark{opacity:0;transition:transform .38s cubic-bezier(.3,1.35,.5,1),opacity .1s ease}
+.journal-rail-now{display:grid;width:26px;height:22px;border-radius:999px;background:#6b4f3599;color:#fdfcf8;font:11px "Marker Felt","Chalkboard SE",var(--font-illustration),cursive;font-variant-numeric:tabular-nums;overflow:hidden;transition:height .24s ease,opacity .2s ease}
+.journal-rail-now>b{display:grid;place-items:center;font-weight:400;animation:rail-roll .34s cubic-bezier(.3,1.3,.5,1)}
+.journal-rail-now>b.is-word{font-family:var(--font-sans,inherit);font-size:9px;letter-spacing:.05em}
+.journal-rail.is-open .journal-rail-now{height:0;opacity:0}
+@keyframes rail-roll{from{transform:translateY(var(--rail-from));opacity:0}}
+.journal-rail:not(.is-open)::before{content:"";width:3px;height:26px;margin-bottom:5px;background:radial-gradient(circle,#9a9284 1.2px,#0000 1.6px) 0 0/3px 7px repeat-y;opacity:.8;-webkit-mask:linear-gradient(#0000,#000);mask:linear-gradient(#0000,#000)}
+/* A real bag lifted out of its photo stands on the shelf in place of the drawn one: a white sticker edge, a strip of tape,
+   and the drunk part faded to a pale ghost above a tilted line, the way the drawn bag drains. */
+.bean-shelf .coffee-bag.is-real{container-type:size;--bw:calc(100cqw - 16px);--bh:calc(100cqh - 12px);--h:min(var(--bh),var(--bw) / var(--r,.75));--w:min(var(--bw),var(--bh) * var(--r,.75));--top:calc(100cqh - 4px - var(--h));--outline:drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)}
+.real-bag{position:absolute;inset:8px 8px 4px;display:block}
+.real-bag>img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center bottom;filter:var(--outline) drop-shadow(0 4px 5px #5a4a3a30)}
+.real-bag>.real-bag-empty{filter:grayscale(1) opacity(.3) var(--outline)}
+.real-bag>.real-bag-full{--y:calc(var(--bh) - var(--h) + var(--drunk) * var(--h));clip-path:polygon(0 calc(var(--y) + 7px),100% calc(var(--y) - 7px),100% 100%,0 100%)}
+.real-bag-tape{position:absolute;z-index:2;top:calc(var(--bh) - var(--h) - 6px);left:50%;width:36px;height:14px;transform:translateX(-50%) rotate(-5deg);background:#efe3c8cc;box-shadow:0 1px 2px #0000001a;clip-path:polygon(0 8%,6% 0,100% 0,96% 50%,100% 100%,4% 100%,0 60%)}
+.bean-thumb.is-cutout,.upload img.is-cutout,.bean-detail-thumbnail img.is-cutout{object-fit:contain!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:none!important;filter:drop-shadow(1px 0 0 #fff) drop-shadow(-1px 0 0 #fff) drop-shadow(0 1px 0 #fff) drop-shadow(0 -1px 0 #fff) drop-shadow(0 2px 3px #0000001f)}
+.bean-detail-thumbnail.is-cutout{background:none;overflow:visible;border-radius:0;padding:3px!important}
+/* The drawn bag's tags hang on the real one: the roaster tag at its shoulder, the date and grams near its foot. */
+.bean-shelf .coffee-bag.is-real .bag-brand-tag{top:calc(var(--top) + 14px);left:calc(50% + var(--w) / 2 - 14px)}
+.bean-shelf .coffee-bag.is-real .bag-date-tag{left:calc(50% - var(--w) / 2 + 2px);bottom:18px}
+.bean-shelf .coffee-bag.is-real .bag-meta-row{top:auto;bottom:14px;left:calc(50% - var(--w) / 2 + 8px);right:calc(50% - var(--w) / 2 + 4px)}
+.bean-shelf .coffee-bag.is-real .bag-heart{left:auto;top:calc(var(--top) + 6px);right:calc(50% - var(--w) / 2 + 4px)}
+
+.bean-shelf .coffee-bag.is-real .bag-remaining{padding:1px 4px;border-radius:6px;background:#fffaf0e0;color:#6f6656}
+/* The bean book: roasters indexed on the first page, then each roaster's coffees as stickers, four to a page. */
+.bean-index-list{display:flex;flex-direction:column;margin-top:14px;width:100%;overflow:auto}
+.bean-index-row{display:grid;grid-template-columns:minmax(0,1fr) auto 22px 14px;align-items:center;gap:10px;padding:10px 4px;border:0;border-bottom:1.5px dashed #6b5c4a2e;background:none;color:#4a463f;font:inherit;text-align:left}
+.bean-index-name{font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive;font-size:15px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.bean-index-dots{display:flex;gap:3px}
+.bean-index-dots i{width:9px;height:9px;border-radius:50%;box-shadow:inset 0 0 0 1px #0000000f}
+.bean-index-row>b{font-weight:400;font-size:12px;color:#8a7a66;text-align:right}
+.bean-index-row>svg{color:#b3a894}
+.journal-grid.bean-entries{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:6px 8px;place-items:center;min-height:0}
+.bean-entry{display:flex;flex-direction:column;align-items:center;gap:3px;max-width:100%;padding:0;border:0;background:none;color:#4a463f;font:inherit;transform:rotate(var(--tilt,0deg))}
+.bean-entry:active{transform:rotate(var(--tilt,0deg)) scale(.97)}
+.bean-entry-art{display:grid;place-items:center;width:min(34cqw,26cqh);aspect-ratio:1;border:3px solid #fff;border-radius:var(--picture-edge,24px);box-shadow:0 4px 10px #5a4a3a24;overflow:hidden;box-sizing:border-box}
+.bean-entry-art .bean-thumb,.bean-entry-art .sticker{width:86%;height:86%;object-fit:contain}
+.bean-entry-art.is-real{border:0;box-shadow:none;background:none;overflow:visible}
+.bean-entry-art.is-real .bean-thumb{width:100%;height:100%}
+.bean-entry strong{max-width:42cqw;margin-top:6px;font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive;font-size:13px;font-weight:400;line-height:1.3;text-align:center;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bean-entry small{font-size:10px;color:#8a7a66}
+.bean-entry .atlas-stars{font-size:10px}
+.bean-book-end{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#8a7a66;font-size:13px;width:100%}
+.fan-photo .sticker,.fan-photo .bean-thumb{display:block;width:100%;height:100%;object-fit:contain;padding:6%;box-sizing:border-box;border-radius:0}
+.journal-book.is-beans .journal-book-copy strong{font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive;font-weight:400;font-size:30px}
+.journal-book-copy small{white-space:nowrap}
+/* In the bean book each coffee is its bag, drawn or real, shrunk to fit four to a page. */
+.bean-entry-bag{display:block;zoom:.82}
+.bean-entry-bag .coffee-bag{margin:0}
+@media(max-width:700px){.bean-entry-bag{zoom:.9}}
+.bean-entry strong{margin-top:2px}
+/* A saved cup pops up as a polaroid over the dimmed page: the photo, then in handwriting what it was, when, the key numbers,
+   stars and the note; 编辑 sits under it. On the unfolded Duo the polaroid takes the left screen and every number the right. */
+.brew-pop{position:fixed;inset:0;z-index:45;display:grid;place-items:center;padding:calc(var(--safe-top) + 16px) calc(env(safe-area-inset-right,0px) + 16px) calc(var(--safe-bottom) + 16px) calc(env(safe-area-inset-left,0px) + 16px);background:#2a2620a6;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:brew-pop-fade .2s ease}
+@keyframes brew-pop-fade{from{opacity:0}}
+@keyframes brew-pop-in{from{opacity:0;transform:translateY(24px) scale(.9) rotate(4deg)}}
+.brew-polaroid{width:min(84vw,330px,calc((100dvh - 260px) * .9));margin:0;padding:14px 14px 18px;background:#fffdf8;box-shadow:0 16px 40px #0000004d,0 1px 3px #0000002a;transform:rotate(-1.5deg)}
+.brew-polaroid-photo{display:grid;place-items:center;aspect-ratio:1;overflow:hidden;background:#ece8df}
+.brew-polaroid-photo>img{width:100%;height:100%;object-fit:cover}
+.brew-polaroid.is-cutout .brew-polaroid-photo>img{object-fit:contain;padding:8%;box-sizing:border-box;filter:drop-shadow(0 6px 10px #5a4a3a30)}
+.brew-polaroid-photo .sticker,.brew-polaroid-photo .bean-thumb{width:72%;height:72%;object-fit:contain}
+.brew-polaroid figcaption{display:flex;flex-direction:column;align-items:center;gap:3px;padding-top:12px;text-align:center;color:#4a463f;font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive}
+.brew-polaroid strong{font-size:19px;font-weight:400;line-height:1.3}
+.brew-polaroid-date{font-size:12px;color:#8a7a66}
+.brew-polaroid-key{font-size:13px;color:#6b5c4a;font-variant-numeric:tabular-nums}
+.brew-polaroid .atlas-stars{font-size:13px}
+.brew-polaroid figcaption p{margin:6px 0 0;font-size:14px;line-height:1.55;color:#5b5648;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap}
+.brew-pop-close{display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:#ffffffd9;color:#5b5648}
+.brew-preview-edit{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:140px;min-height:44px;padding:0 22px;border-radius:999px}
+/* A bag photo opens large over the page; a cut-out bag keeps its sticker edge. Tap anywhere to close. */
+.bean-detail-thumbnail.is-zoomable{padding:0;border:0;cursor:zoom-in}
+.photo-zoom{z-index:60;cursor:zoom-out;pointer-events:auto}
+.photo-zoom>img{max-width:min(92vw,560px);max-height:82dvh;border:6px solid #fff;border-radius:18px;box-shadow:0 16px 40px #0000004d;animation:brew-pop-in .34s cubic-bezier(.3,1.35,.5,1)}
+.photo-zoom>img.is-cutout{border:0;border-radius:0;box-shadow:none;filter:drop-shadow(4px 0 0 #fff) drop-shadow(-4px 0 0 #fff) drop-shadow(0 4px 0 #fff) drop-shadow(0 -4px 0 #fff) drop-shadow(0 14px 22px #0000004d)}
+/* The year on one page: ring and legend side by side, then its coffees and cafés, kept compact to fit. */
+.journal-stats.is-year{gap:6px}
+.journal-stats.is-year .month-stats{gap:6px}
+.journal-stats.is-year .month-analysis-grid{grid-template-columns:minmax(0,1fr)}
+.journal-stats.is-year .month-donut{width:92px;height:92px}
+.journal-stats.is-year .month-chart-card,.journal-stats.is-year .month-bean-table{padding:8px 2px 2px}
+.journal-stats.is-year .month-chart-card h3,.journal-stats.is-year .month-bean-table h3{font-size:16px}
+.journal-stats.is-year .stats-bag-row{min-height:36px}
+.journal-stats.is-year .stats-place-row{min-height:34px;padding-block:2px}
+.bean-fan-bag :is(.bag-brand-tag,.bag-date-tag,.bag-meta-row,.bag-remaining,.bag-heart){display:none}
+/* The bean book on the shelf: its three best bags standing together, a little fanned. */
+.bean-book-fan{position:relative;flex:none;width:156px;height:128px}
+.bean-book-fan:empty{width:0}
+.bean-fan-bag{position:absolute;bottom:0;left:calc(var(--i) * 40px);width:76px;height:112px;transform:rotate(calc((var(--i) - (var(--n) - 1) / 2) * 7deg));transform-origin:50% 100%;pointer-events:none}
+.bean-fan-bag:nth-child(2){z-index:1}
+.bean-fan-bag .coffee-bag{width:100%;height:100%}
+/* The month's entry: its name and cups, a thin bar split by how they were made, and a one-line legend under it. */
+.month-glance-body{gap:7px}
+.month-glance-title{font-size:14px}
+.month-glance-bar{display:flex;gap:2px;height:7px;border-radius:999px;overflow:hidden;background:#fff9}
+.month-glance-bar i{display:block;min-width:4px}
+.month-glance-cells{display:flex;flex-wrap:nowrap;justify-content:space-between;gap:8px}
+.month-glance-cells>span{flex-direction:row;align-items:center;gap:4px;padding:0;border-radius:0;background:none;font-size:11px}
+.month-glance-cells>span>i{flex:none;width:7px;height:7px;border-radius:50%}
+.month-glance-cells strong{font-size:13px;margin-left:1px}
+/* Each page carries its own small number, centred at the foot; the book-wide counter goes. */
+.journal-shell .flip-counter{display:none}
+.journal-folio{position:absolute;left:0;right:0;bottom:calc(var(--safe-b) + 8px);text-align:center;font-size:10px;letter-spacing:.06em;color:#00000047;font-variant-numeric:tabular-nums;pointer-events:none}
+.journal-dots-month{background:none!important;padding-inline:0}
+/* A month opens on a page of its own: the month in big type, its cups in one line, and the cafés visited. */
+.journal-page.is-month-open{justify-content:center}
+.journal-month-open{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;text-align:center}
+.journal-month-big{font:700 120px/1 "Didot","Bodoni 72",Georgia,serif;color:#34312b;letter-spacing:.02em}
+.journal-month-unit{font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive;font-size:22px;color:#6a6a6a;letter-spacing:.1em}
+.journal-month-open .journal-totals{margin:10px 0 0}
+.journal-month-places{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:28px;padding-top:14px;border-top:1.5px dashed #6b5c4a40;min-width:min(260px,80%)}
+.journal-month-places h3{margin:0 0 4px;font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive;font-size:15px;font-weight:400;color:#6a6a6a}
+.journal-month-places>span{display:flex;align-items:center;gap:8px;font-size:14px;color:#4a463f}
+.journal-month-places>span .sticker{width:24px;height:24px}
+.journal-month-places small{font-size:11px;color:#8a857b}
+/* Only the highlighted month on the rail says "月"; the rest are bare numbers. */
+.journal-rail button>.journal-rail-unit{display:none;font-size:inherit}
+.journal-rail button[aria-current=true]>.journal-rail-unit{display:inline}
+.journal-rail-unit{font-size:inherit}
+/* The last page: just "End". */
+.journal-page.is-end{justify-content:center;align-items:center}
+.journal-end span{font:italic 400 44px/1 "Didot","Bodoni 72",Georgia,serif;color:#4a4238;letter-spacing:.04em}
+.journal-end span::before,.journal-end span::after{content:"";display:inline-block;width:28px;height:1px;margin:0 14px;vertical-align:middle;background:#4a423866}
+
+/* The year page: how the cups were made stands beside the coffees, the cafés underneath across the page. */
+.journal-stats.is-year .month-stats{display:grid;grid-template-columns:minmax(118px,.55fr) minmax(0,1.45fr);column-gap:16px;row-gap:6px;align-items:start}
+.journal-stats.is-year .month-place-table{grid-column:1/-1}
+.journal-stats.is-year .month-kind-chart{flex-direction:column;align-items:center;gap:10px;padding-left:0}
+.journal-stats.is-year .month-kind-legend{flex-direction:column;align-items:flex-start;gap:4px}
+.journal-stats.is-year .month-donut{width:86px;height:86px}
+/* An open cup sits between the one before and the one after: swipe, use the arrows or tap a side cup to move; tap the blank to go back. */
+.brew-pop{outline:none;touch-action:pan-y}
+@keyframes brew-pop-from-right{from{opacity:.3;transform:translateX(38%) scale(.86) rotate(3deg)}}
+@keyframes brew-pop-from-left{from{opacity:.3;transform:translateX(-38%) scale(.86) rotate(-3deg)}}
+.native-tabs .brew-preview-edit{display:none}
+/* "11月" on the rail stays on one line. */
+.journal-rail button,.journal-rail-now>b{grid-auto-flow:column;justify-content:center;align-items:center;white-space:nowrap}
+/* The month's journal entry looks like the journal itself: ruled warm paper, ink-brown words. */
+.month-glance{background:repeating-linear-gradient(0deg,#0000 0 3px,#00000006 3px 4px),#efece6;box-shadow:0 4px 14px #646a7b12;color:#6b5c4a}
+.month-glance-title{color:#8a7a66;font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive}
+.month-glance-title b{color:#3a3530;font-family:"Didot","Bodoni 72",Georgia,serif;font-weight:700;font-size:22px}
+.month-glance-bar{background:#00000010}
+.month-glance-cells>span{color:#8a7a66}
+.month-glance-cells strong{color:#4a463f}
+.month-glance-arrow{color:#a89a86}
+.month-glance-total strong{color:#3a3530}.month-glance-total small{color:#8a7a66}
+/* Moving between cups: the row slides from where the neighbour sat to the centre; the first open still pops in. */
+/* On a phone the neighbours wait just off-screen, so a drag brings the next cup in under the finger. */
+
+/* The open cup and its neighbours: five slots on one stage, cards glide between them. */
+.brew-pop{grid-template-rows:1fr auto;touch-action:none;-webkit-user-select:none;user-select:none}
+.brew-pop-stage{position:relative;width:100%;height:100%;min-height:0;--pw:min(84vw,330px,calc((100dvh - 260px) * .9));--d:calc(var(--pw) + 8vw);animation:brew-pop-in .38s cubic-bezier(.3,1.35,.5,1)}
+.brew-polaroid.is-slot{position:absolute;left:50%;top:50%;width:var(--pw);box-sizing:border-box;translate:-50% -50%;transition:transform .42s cubic-bezier(.22,1,.36,1),filter .42s,opacity .42s}
+.brew-polaroid.slot-p0{z-index:2;transform:rotate(-1.5deg)}
+.brew-polaroid.slot-m1{transform:translateX(calc(var(--d) * -1)) rotate(-4deg)}
+.brew-polaroid.slot-p1{transform:translateX(var(--d)) rotate(4deg)}
+.brew-polaroid.slot-m2{transform:translateX(calc(var(--d) * -2)) rotate(-4deg);opacity:0}
+.brew-polaroid.slot-p2{transform:translateX(calc(var(--d) * 2)) rotate(4deg);opacity:0}
+.brew-polaroid.is-slot:not(.slot-p0){cursor:pointer}
+.brew-polaroid.is-slot:not(.slot-p0) figcaption p{opacity:0}
+.brew-pop>.brew-preview-edit{justify-self:center;margin-top:14px}
+@media(min-width:720px){
+ .brew-pop-stage{--pw:min(34vw,330px,calc((100dvh - 190px) * .82));--d:calc(var(--pw) * .82 + 4vw)}
+ .brew-polaroid.slot-m1{transform:translateX(calc(var(--d) * -1)) scale(.7) rotate(-4deg);filter:brightness(.78) saturate(.75)}
+ .brew-polaroid.slot-p1{transform:translateX(var(--d)) scale(.7) rotate(4deg);filter:brightness(.78) saturate(.75)}
+ .brew-polaroid.slot-m2{transform:translateX(calc(var(--d) * -2)) scale(.6) rotate(-4deg)}
+ .brew-polaroid.slot-p2{transform:translateX(calc(var(--d) * 2)) scale(.6) rotate(4deg)}
+}
+/* Page numbers in the book's serif (the cover's Didot), larger and darker so they read at a glance. */
+.journal-folio{font:italic 400 15px/1 "Didot","Bodoni 72",Georgia,serif;letter-spacing:.04em;color:#4a4238b3}
+/* "+n" for a day with more than one cup: a tiny tag in the cell's top-right corner, outside the round sticker. */
+.brew-calendar .rdp-day button{position:relative;overflow:visible}
+.day-more{position:absolute;z-index:3;top:-4px;right:-5px;min-width:16px;height:15px;padding:0 4px;box-sizing:border-box;display:grid;place-items:center;border-radius:999px;background:#fffdf8;box-shadow:0 1px 3px #4a463f33;color:#6b5c4a;font:600 9px/1 var(--font-sans,system-ui);font-variant-numeric:tabular-nums;pointer-events:none}
+.day-more{height:16px;min-width:18px;font-size:10px}
+.brew-calendar .rdp-day:last-child .day-more{right:-1px}
+/* The year page: how the cups were made beside the cafés visited, the coffees across the page underneath. */
+.journal-stats.is-year .month-stats{grid-template-areas:"kind place" "bean bean"}
+.journal-stats.is-year .month-analysis-grid{grid-area:kind}
+.journal-stats.is-year .month-bean-table:not(.month-place-table){grid-area:bean}
+.journal-stats.is-year .month-place-table{grid-area:place;grid-column:auto;align-self:start}
+.journal-stats.is-year .month-place-table .stats-place-row{min-height:30px}
+/* On the unfolded Duo, a bean's page goes back from the native menu column, so its own back button steps aside. */
+.native-tabs .detail-nav .detail-back{visibility:hidden;pointer-events:none}
+/* A sticker's back has its front's outline, with the cup's key facts written on it. */
+.atlas-face.is-back{padding:0;border-radius:0;background:none;box-shadow:none;overflow:visible;align-items:center;justify-content:center}
+.atlas-back-shape{position:absolute;inset:0;box-sizing:border-box}
+.atlas-back-shape.is-photo{border:4px solid #fff;border-radius:22px;background-size:cover;background-position:center;box-shadow:0 8px 20px #646a7b33}
+.atlas-back-shape.is-art{inset:6%;border-radius:var(--picture-edge,46% 54% 41% 59% / 57% 42% 58% 43%);background:color-mix(in srgb,var(--fill) 38%,#fffdf8);box-shadow:0 0 0 4px #fff,0 8px 20px #646a7b2e}
+.atlas-back-shape.is-cutout{background:color-mix(in srgb,var(--fill) 30%,#fffdf8);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center}
+.atlas-face.is-back.is-cutout{filter:drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff) drop-shadow(0 -1.5px 0 #fff) drop-shadow(0 6px 10px #646a7b33)}
+.atlas-back-text{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;max-width:76%;max-height:80%;overflow:hidden;text-align:center;color:#4a463f;font-family:"Marker Felt","Chalkboard SE",var(--font-illustration),cursive}
+.atlas-back-text strong{font-size:10px;font-weight:400;line-height:1.25;color:#3a3530;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.atlas-back-text small{font-size:7px;color:#8a7a66;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.atlas-back-text em{font-style:normal;font-size:7px;color:#6b5c4a;font-variant-numeric:tabular-nums;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.atlas-back-text .atlas-stars{font-size:7px}
+.atlas-back-text p{margin:1px 0 0;font-size:6.5px;line-height:1.35;color:#5b5648;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.atlas-back-text .atlas-edit{margin-top:3px}
+.atlas-back-text .atlas-edit{background:#6b5c4a1f;color:#6b5c4a;font-family:inherit}
+.atlas-face.is-back .atlas-back-text strong{font-size:10px;color:#3a3530}
+.atlas-face.is-back .atlas-back-text small{font-size:7px;color:#8a7a66}
+.atlas-back-shape.is-art{background:color-mix(in srgb,var(--fill) 55%,#fffdf8)}
+.atlas-back-shape.is-cutout{background:color-mix(in srgb,var(--fill) 45%,#fffdf8)}
+/* In the app, a bean's Brew and Edit live in the native menu beside Back. */
+.native-tabs .detail-native-action{display:none!important}
+/* A turned sticker stays the size it was on the page; its writing is set a little larger to stay readable. */
+.atlas-cup.is-flipped .atlas-card{transform:rotate(var(--tilt)) rotateY(180deg)}
+.is-polaroids .atlas-cup.is-flipped .atlas-card{transform:rotateY(180deg)}
+.atlas-face.is-back .atlas-back-text strong{font-size:12.5px}
+.atlas-face.is-back .atlas-back-text small,.atlas-back-text em{font-size:9px}
+.atlas-back-text .atlas-stars{font-size:9px}
+.atlas-back-text p{font-size:8.5px}
+.atlas-back-text .atlas-edit{font-size:9.5px;padding:2px 9px}
+/* Calendar days keep their shape as the screen narrows (the folded Duo): the height follows the width. */
+.native-tabs .brew-calendar .rdp-day{height:auto}
+.native-tabs .brew-calendar .rdp-day button{height:auto!important;width:100%;aspect-ratio:1/1.06}
